@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vs-code-conan.helloWorld"
+		"workspaceContains:**/conan-settings.json"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
