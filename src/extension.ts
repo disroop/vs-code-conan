@@ -94,14 +94,14 @@ export function activate(context: vscode.ExtensionContext) {
 	function registerCreateCommand():string {
 		const createCommand = 'vs-code-conan.create';
 		let command = vscode.commands.registerCommand(createCommand, () => {
-			let buildFolder = config.getBuildFolder(activeProfile);
+			let profile = config.getProfile(activeProfile);		
 			let createArg = "";
 			try {
 				createArg=config.getCreateArg(activeProfile);
 			} catch (error) {
 			}	
 
-			var commad = `conan create ${rootPath} ${createArg}`;
+			var commad = `conan create ${rootPath} --profile=${profile} ${createArg}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
