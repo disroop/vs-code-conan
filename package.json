@@ -3,6 +3,7 @@
 	"displayName": "vs-code-conan",
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"version": "0.0.1",
+	"publisher": "disroop",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
@@ -16,8 +17,20 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vs-code-conan.helloWorld",
-				"title": "Hello World"
+				"command": "vs-code-conan.profilePick",
+				"title": "Conan: Pick profile "
+			},
+			{
+				"command": "vs-code-conan.install",
+				"title": "Conan: Install packages"
+			},
+			{
+				"command": "vs-code-conan.build",
+				"title": "Conan: Build"
+			},
+			{
+				"command": "vs-code-conan.create",
+				"title": "Conan: Create package"
 			}
 		]
 	},

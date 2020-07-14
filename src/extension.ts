@@ -53,11 +53,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	
 
-	context.subscriptions.push(disposable);
+	
 
 	function registerInstallCommand() {
-		const installCommand = 'conan.install';
-		vscode.commands.registerCommand(installCommand, () => {
+		const installCommand = 'vs-code-conan.install';
+		let command = vscode.commands.registerCommand(installCommand, () => {
 			let buildFolder = config.getBuildFolder(activeProfile);
 			let installArg = "";
 			try {
@@ -70,12 +70,13 @@ export function activate(context: vscode.ExtensionContext) {
 			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && conan install ${rootPath} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
+		context.subscriptions.push(command);
 		return installCommand;
 	}
 
 	function registerBuildCommand():string {
-		const buildCommand = 'conan.build';
-		vscode.commands.registerCommand(buildCommand, () => {
+		const buildCommand = 'vs-code-conan.build';
+		let command = vscode.commands.registerCommand(buildCommand, () => {
 			let buildFolder = config.getBuildFolder(activeProfile);
 			let buildArg = "";
 			try {
@@ -86,12 +87,13 @@ export function activate(context: vscode.ExtensionContext) {
 			var commad = `conan build ${rootPath} ${buildArg} --build-folder ${rootPath}/${buildFolder} && ln -nfs ${rootPath}/${buildFolder}/compile_commands.json ${rootPath}/compile_commands.json`;
 			executeCommand(commad);
 		});
+		context.subscriptions.push(command);
 		return buildCommand;
 	}
 
 	function registerCreateCommand():string {
-		const createCommand = 'conan.create';
-		vscode.commands.registerCommand(createCommand, () => {
+		const createCommand = 'vs-code-conan.create';
+		let command = vscode.commands.registerCommand(createCommand, () => {
 			let buildFolder = config.getBuildFolder(activeProfile);
 			let createArg = "";
 			try {
@@ -102,6 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
 			var commad = `conan create ${rootPath} ${createArg}`;
 			executeCommand(commad);
 		});
+		context.subscriptions.push(command);
 		return createCommand;
 	}
 
@@ -131,9 +134,9 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	function registerProfilePick() {
-		const myCommandId = 'sample.showSelectionCount';
+		const myCommandId = 'vs-code-conan.profilePick';
 		
-		vscode.commands.registerCommand(myCommandId, () => {
+		let command =vscode.commands.registerCommand(myCommandId, () => {
 			let options = <vscode.QuickPickOptions>{
 				placeHolder: 'Type a line number or a piece of code to navigate to',
 				//matchOnDescription: true,
@@ -146,6 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
 			};
 			vscode.window.showQuickPick(profiles, options);
 		});
+		context.subscriptions.push(command);
 
 		// create a new status bar item that we can now manage
 		var myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
@@ -156,6 +160,8 @@ export function activate(context: vscode.ExtensionContext) {
 			myStatusBarItem.text = activeProfile;
 			myStatusBarItem.show();
 		}
+
+		context.subscriptions.push(command);
 	}
 }
 
