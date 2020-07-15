@@ -4,6 +4,11 @@
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"version": "0.0.1",
 	"publisher": "disroop",
+	"preview": true,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/disroop/vs-code-conan.git"
+	  },
 	"engines": {
 		"vscode": "^1.46.0"
 	},
