@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerProfilePick();
 	
+	const output = vscode.window.createOutputChannel("conan");
 
 	var installStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
 	installStatusBarItem.text = "$(cloud-download)";
@@ -101,7 +102,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} catch (error) {
 			}	
 
-			var commad = `conan create ${rootPath} --profile=${profile} ${createArg}`;
+			var commad = `conan create ${rootPath} ${createArg} --profile=${profile}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
@@ -110,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	function executeCommand(commad: string) {
 		const { spawn } = require("child_process");
-		const output = vscode.window.createOutputChannel("conan");
+		
 		output.clear();
 		output.append(`command: ${commad}\n`);
 		const ls = spawn("sh", ['-c', commad], { stdio: 'pipe' });
