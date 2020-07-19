@@ -8,7 +8,7 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/disroop/vs-code-conan.git"
-	  },
+	},
 	"engines": {
 		"vscode": "^1.46.0"
 	},
