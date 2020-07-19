@@ -25,6 +25,14 @@ jobs:
     # Runs a single command using the runners shell
     - name: build in docker
       run: python3 ./createWithDocker.py
+    
+    - name: Upload a Build Artifact
+    uses: actions/upload-artifact@v2
+    with:
+    # Artifact name
+    name: *.vsix
+    # A file, directory or wildcard pattern that describes what to upload
+    path: .
 
 
 
