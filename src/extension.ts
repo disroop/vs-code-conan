@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} catch (error) {
 			}	
 
-			var commad = `conan build ${rootPath} ${buildArg} --build-folder ${rootPath}/${buildFolder} && ln -nfs ${rootPath}/${buildFolder}/compile_commands.json ${rootPath}/compile_commands.json`;
+			var commad = `conan build ${rootPath} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
