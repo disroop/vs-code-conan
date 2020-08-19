@@ -59,6 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
 	function registerInstallCommand() {
 		const installCommand = 'vs-code-conan.install';
 		let command = vscode.commands.registerCommand(installCommand, () => {
+			let conanfile = config.getConanFile(activeProfile);
 			let buildFolder = config.getBuildFolder(activeProfile);
 			let installArg = "";
 			try {
@@ -68,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			let profile = config.getProfile(activeProfile);		
 
-			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && conan install ${rootPath} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
+			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && conan install ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
@@ -78,6 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
 	function registerBuildCommand():string {
 		const buildCommand = 'vs-code-conan.build';
 		let command = vscode.commands.registerCommand(buildCommand, () => {
+			let conanfile = config.getConanFile(activeProfile);
 			let buildFolder = config.getBuildFolder(activeProfile);
 			let buildArg = "";
 			try {
@@ -85,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} catch (error) {
 			}	
 
-			var commad = `conan build ${rootPath} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
+			var commad = `conan build ${conanfile} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
@@ -95,14 +97,17 @@ export function activate(context: vscode.ExtensionContext) {
 	function registerCreateCommand():string {
 		const createCommand = 'vs-code-conan.create';
 		let command = vscode.commands.registerCommand(createCommand, () => {
+			let conanfile = config.getConanFile(activeProfile);
 			let profile = config.getProfile(activeProfile);		
+			let createUser = config.getCreateUser(activeProfile);
+			let createChannel = config.getCreateChannel(activeProfile);
 			let createArg = "";
 			try {
 				createArg=config.getCreateArg(activeProfile);
 			} catch (error) {
 			}	
 
-			var commad = `conan create ${rootPath} ${createArg} --profile=${profile}`;
+			var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
