@@ -17,6 +17,14 @@ export class Configurator {
         this.profiles = obj.convert();
     }
 
+    getConanFile(name : string): string{
+        let conanFile = this.profiles.get(name)?.getConanFile();
+        if(!conanFile){
+            throw new Error("No Profile found"); 
+        }
+        return conanFile;
+    }
+
     getAllProfileNames():string[]{
         return Array.from(this.profiles.keys());
     }
@@ -59,5 +67,21 @@ export class Configurator {
             throw new Error("No createArg found"); 
         }
         return createArg;
+    }
+
+    getCreateUser(name : string):string{
+        let createUser = this.profiles.get(name)?.getCreateUser();
+        if(!createUser){
+            throw new Error("No createUser found"); 
+        }
+        return createUser;
+    }
+
+    getCreateChannel(name : string):string{
+        let createChannel = this.profiles.get(name)?.getCreateChannel();
+        if(!createChannel){
+            throw new Error("No createChannel found"); 
+        }
+        return createChannel;
     }
 }
