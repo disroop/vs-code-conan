@@ -22,26 +22,35 @@ For example:
 ```json
 {
     "profiles": [
-        { 
-            "name":"linux-debug", 
+        {
+            "name":"linux-debug",
+            "conanFile": "${workspaceFolder}/conanfile.py",
             "profile":"clang-linux",
             "installArg": "--build missing",
             "buildArg":"",
-            "createArg":"disroop/development" 
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
         },
-        { 
-            "name":"arm-debug", 
+        {
+            "name":"arm-debug",
+            "conanFile": "${workspaceFolder}/conanfile.py",
             "profile":"gcc-arm-debug",
             "installArg": "--build missing",
             "buildArg":"",
-            "createArg":"disroop/development" 
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
         },
-        { 
-            "name":"arm-release", 
+        {
+            "name":"arm-release",
+            "conanFile": "${workspaceFolder}/conanfile.py",
             "profile":"gcc-arm-release",
             "installArg": "--build missing",
             "buildArg":"",
-            "createArg":"disroop/development" 
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
         }
     ]
 }
