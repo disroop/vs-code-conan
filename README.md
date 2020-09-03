@@ -10,10 +10,15 @@ The VsCode Conan extension helps with integrating conan into vscode
 - Create Conan Packages
 - Supports Multiple Profiles
 
-### Install and build
+### Install and build 
 To install and build your the conan package use the instal and the build button at the bottom!
 
-![Build and install](doc/buildinstall.gif)
+![Build and install](doc/installbuild.gif)
+
+### Create
+To create package use the create button at the bottom!
+
+![Build and install](doc/create.gif)
 
 ## Requirements
 
