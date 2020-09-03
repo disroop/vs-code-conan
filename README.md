@@ -1,5 +1,7 @@
 # Disroop vs-code-conan extension
 
+![Build](https://github.com/disroop/vs-code-conan/workflows/Build/badge.svg)
+
 The VsCode Conan extension helps with integrating conan into vscode
 
 
