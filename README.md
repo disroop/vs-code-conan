@@ -2,12 +2,18 @@
 
 The VsCode Conan extension helps with integrating conan into vscode
 
+
 ## Features
 
 - Install Conan packages
 - Build Conan Packages
 - Create Conan Packages
 - Supports Multiple Profiles
+
+### Install and build
+To install and build your the conan package use the instal and the build button at the bottom!
+
+![Build and install](doc/buildinstall.gif)
 
 ## Requirements
 
@@ -25,7 +31,7 @@ For example:
         {
             "name":"linux-debug",
             "conanFile": "${workspaceFolder}/conanfile.py",
-            "profile":"clang-linux",
+            "profile":"clang-linux-debug",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",
@@ -35,7 +41,7 @@ For example:
         {
             "name":"arm-debug",
             "conanFile": "${workspaceFolder}/conanfile.py",
-            "profile":"gcc-arm-debug",
+            "profile":"arm-cortex-m4-debug",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",
@@ -45,7 +51,7 @@ For example:
         {
             "name":"arm-release",
             "conanFile": "${workspaceFolder}/conanfile.py",
-            "profile":"gcc-arm-release",
+            "profile":"arm-cortex-m4-release",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",

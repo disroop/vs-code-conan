@@ -117,6 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
 	function executeCommand(commad: string) {
 		const { spawn } = require("child_process");
 		
+		output.dispose();
 		output.clear();
 		output.append(`command: ${commad}\n`);
 		const ls = spawn("sh", ['-c', commad], { stdio: 'pipe' });
