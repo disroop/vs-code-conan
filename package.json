@@ -5,6 +5,7 @@
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"version": "0.0.1",
 	"publisher": "disroop",
+	"icon": "images/disroop-icon.png",
 	"preview": true,
 	"repository": {
 		"type": "git",
