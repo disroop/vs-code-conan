@@ -1,6 +1,7 @@
 {
-	"name": "vs-code-conan",
-	"displayName": "vs-code-conan",
+	"license": "MIT",
+	"name": "conan",
+	"displayName": "conan",
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"version": "0.0.1",
 	"publisher": "disroop",
@@ -10,7 +11,7 @@
 		"url": "https://github.com/disroop/vs-code-conan.git"
 	},
 	"engines": {
-		"vscode": "^1.46.0"
+		"vscode": "^1.48.2"
 	},
 	"categories": [
 		"Other"
