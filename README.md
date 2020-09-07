@@ -1,7 +1,6 @@
 # Disroop vs-code-conan extension
 
-The VsCode Conan extension helps with integrating conan into vscode
-
+The VsCode Conan extension helps with integrating conan into vscode.
 
 ## Features
 
@@ -10,15 +9,17 @@ The VsCode Conan extension helps with integrating conan into vscode
 - Create Conan Packages
 - Supports Multiple Profiles
 
-### Install and build 
+### Install and build
+
 To install and build your the conan package use the instal and the build button at the bottom!
 
-![Build and install](doc/installbuild.gif)
+![Build and install](images/installbuild.gif)
 
 ### Create
+
 To create package use the create button at the bottom!
 
-![Build and install](doc/create.gif)
+![Build and install](images/create.gif)
 
 ## Requirements
 
@@ -67,25 +68,12 @@ For example:
 }
 ```
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
 ## Release Notes
-
-Users appreciate release notes as you update your extension.
 
 ### 0.0.1
 
-Test Release
-
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-
-### For more information
-
-
-**Enjoy!**
+- Install Conan packages
+- Build Conan Packages
+- Create Conan Packages
+- Supports Multiple Profiles
+- Set conanFile parameter in settings
