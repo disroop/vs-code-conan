@@ -115,12 +115,12 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	function executeCommand(commad: string) {
-		const { spawn } = require("child_process");
-		
-		output.dispose();
+		const spawn = require("child_process").spawn;
 		output.clear();
+		output.show();
 		output.append(`command: ${commad}\n`);
-		const ls = spawn("sh", ['-c', commad], { stdio: 'pipe' });
+		const ls = spawn("sh", ['-c', commad]);
+
 
 		ls.stdout.on("data", (data: string) => {
 			output.append(`conan: ${data}`);
@@ -137,7 +137,6 @@ export function activate(context: vscode.ExtensionContext) {
 		ls.on("close", (code: any) => {
 			output.append(`child process exited with code ${code}`);
 		});
-		output.show();
 	}
 
 	function registerProfilePick() {
