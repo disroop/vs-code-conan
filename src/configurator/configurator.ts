@@ -1,13 +1,16 @@
 
 import { SettingsParser } from "./settings-parser";
 import { Profile } from "./profile";
+import { Workspace } from "./workspace";
 export class Configurator {
     private file : string;
     private profiles: Map<string,Profile>;
+    private workspaces: Map<string,Workspace>;
 
     constructor(file : string) {
         this.file = file;
         this.profiles = new Map<string,Profile>();
+        this.workspaces = new Map<string,Workspace>();
     }
 
     readFile(){
@@ -15,6 +18,7 @@ export class Configurator {
         let data = fs.readFileSync(this.file);
         let obj = new SettingsParser(data);
         this.profiles = obj.convert();
+        //this.workspaces = obj.convertWs();
     }
 
     getConanFile(name : string): string{
@@ -25,8 +29,10 @@ export class Configurator {
         return conanFile;
     }
 
-    getAllProfileNames():string[]{
-        return Array.from(this.profiles.keys());
+    getAllNames():string[]{
+        var namesProfiles = Array.from(this.profiles.keys());
+        var namesWs = Array.from(this.workspaces.keys());
+        return namesProfiles.concat(namesWs);
     }
 
     getProfile(name : string):string{
