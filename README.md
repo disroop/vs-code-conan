@@ -57,7 +57,7 @@ For example:
         {
             "name":"arm-release",
             "conanFile": "${workspaceFolder}/conanfile.py",
-            "profile":"arm-cortex-m4-release",
+            "profile":"${workspaceFolder}/.profiles/arm-cortex-m4-release",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",
@@ -69,6 +69,10 @@ For example:
 ```
 
 ## Release Notes
+
+### 0.0.2
+
+- use profile from workspace-folder
 
 ### 0.0.1
 

@@ -21,6 +21,7 @@ export class Profile {
         let rootpath = vscode.workspace.rootPath!;
         conanFile = conanFile.replace("${workspaceFolder}", rootpath);
         this.conanFile = conanFile;
+        profile = profile.replace("${workspaceFolder}", rootpath);
         this.profile = profile;
         this.installArg = installArg;
         this.buildArg = buildArg;

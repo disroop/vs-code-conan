@@ -13,17 +13,17 @@ export function activate(context: vscode.ExtensionContext) {
 	const config = new Configurator(settingsFile);
 	
 	config.readFile();
-	var profiles = config.getAllProfileNames();
+	var profiles = config.getAllNames();
 	var activeProfile = profiles[0];
 
 	registerProfilePick();
 	
 	const output = vscode.window.createOutputChannel("conan");
 
-	var installStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
-	installStatusBarItem.text = "$(cloud-download)";
-	installStatusBarItem.command = registerInstallCommand();
-	installStatusBarItem.show();
+	var instalsubprocesstatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
+	instalsubprocesstatusBarItem.text = "$(cloud-download)";
+	instalsubprocesstatusBarItem.command = registerInstallCommand();
+	instalsubprocesstatusBarItem.show();
 
 	var buildStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -102);
 	buildStatusBarItem.text = "$(run)";
@@ -115,28 +115,36 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	function executeCommand(commad: string) {
-		const spawn = require("child_process").spawn;
+		const child_process = require("child_process");
 		output.clear();
-		output.show();
 		output.append(`command: ${commad}\n`);
-		const ls = spawn("sh", ['-c', commad]);
-
-
-		ls.stdout.on("data", (data: string) => {
+		const subprocess = child_process.spawn("sh", ['-c', commad],{
+			stdio: [
+			  0, // Use parent's stdin for child
+			  'pipe', // Pipe child's stdout to parent
+			  'pipe', // Pipe child's stderror to parent
+			]
+		  });
+		subprocess.stdout.on("data", (data: string) => {
 			output.append(`conan: ${data}`);
+			output.show();
 
 		});
-		ls.stderr.on("data", (data: any) => {
+		subprocess.stderr.on("data", (data: any) => {
 			output.append(`stderr: ${data}`);
+			output.show();
 		});
 
-		ls.on('error', (error: { message: any; }) => {
+		subprocess.on('error', (error: { message: any; }) => {
 			output.append(`error: ${error.message}`);
+			output.show();
 		});
 
-		ls.on("close", (code: any) => {
+		subprocess.on("close", (code: any) => {
 			output.append(`child process exited with code ${code}`);
+			output.show();
 		});
+
 	}
 
 	function registerProfilePick() {
