@@ -70,7 +70,7 @@ For example:
 
 ## Release Notes
 
-### 0.0.2
+### 0.1.0
 
 - use profile from workspace-folder
 
