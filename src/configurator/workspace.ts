@@ -6,6 +6,7 @@ export class Workspace {
     private arg : string;
     private conanWs : string;
 
+
     constructor(name : string = "default", 
                 conanWs : string = ".",
                 profile : string = "",
