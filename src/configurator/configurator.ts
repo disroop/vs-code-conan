@@ -13,38 +13,50 @@ export class Configurator {
         this.workspaces = new Map<string,Workspace>();
     }
 
+    checkUniqueName(names: string[]):boolean{
+        return new Set(names).size !== names.length;
+    }
+
     readFile(){
         let fs = require('fs');
         let data = fs.readFileSync(this.file);
         let obj = new SettingsParser(data);
         this.profiles = obj.convert();
-        //this.workspaces = obj.convertWs();
+        this.workspaces = obj.convertWs();
     }
 
     getConanFile(name : string): string{
-        let conanFile = this.profiles.get(name)?.getConanFile();
+        let conanFile = this.isWorkspace(name) ? this.workspaces.get(name)?.getConanWorkspace() : this.profiles.get(name)?.getConanFile();
         if(!conanFile){
-            throw new Error("No Profile found"); 
+            throw new Error("No profile found"); 
         }
         return conanFile;
     }
 
     getAllNames():string[]{
-        var namesProfiles = Array.from(this.profiles.keys());
-        var namesWs = Array.from(this.workspaces.keys());
-        return namesProfiles.concat(namesWs);
+        let namesProfiles = Array.from(this.profiles.keys());
+        let namesWs = Array.from(this.workspaces.keys());
+        namesProfiles = namesProfiles.concat(namesWs);
+        if(this.checkUniqueName(namesProfiles)){
+            throw new Error("Duplication of names"); 
+        }
+        return namesProfiles;
     }
-
+    
     getProfile(name : string):string{
-        let profile = this.profiles.get(name)?.getProfile();
-        if(!profile){
+        let profile = this.isWorkspace(name) ? this.workspaces.get(name)?.getProfile():this.profiles.get(name)?.getProfile();
+        if(!profile) {
             throw new Error("No Profile found"); 
         }
         return profile;
     }
 
+    isWorkspace(name:string):boolean{
+        return this.workspaces.has(name);
+    }
+
     getBuildFolder(name : string):string{
-        let buildfolder = this.profiles.get(name)?.getBuildFolder();
+        let buildfolder =  this.isWorkspace(name) ? this.workspaces.get(name)?.getBuildFolder() : this.profiles.get(name)?.getBuildFolder();
         if(!buildfolder){
             throw new Error("No build folder found"); 
         }
@@ -52,7 +64,7 @@ export class Configurator {
     }
 
     getInstallArg(name : string):string{
-        let installArg = this.profiles.get(name)?.getInstallArguments();
+        let installArg = this.isWorkspace(name) ? this.workspaces.get(name)?.getArguments() : this.profiles.get(name)?.getInstallArguments();
         if(!installArg){
             throw new Error("No installArg found"); 
         }
