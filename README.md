@@ -35,7 +35,7 @@ For example:
 {
     "profiles": [
         {
-            "name":"linux-debug",
+            "name":"linux",
             "conanFile": "${workspaceFolder}/conanfile.py",
             "profile":"clang-linux-debug",
             "installArg": "--build missing",
@@ -57,18 +57,31 @@ For example:
         {
             "name":"arm-release",
             "conanFile": "${workspaceFolder}/conanfile.py",
-            "profile":"${workspaceFolder}/.profiles/arm-cortex-m4-release",
+            "profile":"${workspaceFolder}/arm-cortex-m4-release",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",
             "createChannel": "development",
             "createArg":"--build=missing"
         }
+    ],
+    "workspace":[
+        {
+            "name":"ws-arm",
+            "conanWs": "${workspaceFolder}/conan-ws",
+            "profile":"arm-cortex-m4-release",
+            "Arg": "--build missing"
+        }
     ]
 }
 ```
 
 ## Release Notes
+
+### 0.2.0
+
+- enable conan workspace install
+- add tooltip hint over buttons
 
 ### 0.1.0
 
