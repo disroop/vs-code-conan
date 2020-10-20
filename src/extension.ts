@@ -39,25 +39,6 @@ export function activate(context: vscode.ExtensionContext) {
 	registerProfilePick();
 	
 
-    
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vs-code-conan" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vs-code-conan.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vs-code-conan!');
-	});
-
-	
-
-	
-
 	function registerInstallCommand() {
 		const installCommand = 'vs-code-conan.install';
 		let command = vscode.commands.registerCommand(installCommand, () => {
@@ -70,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let profile = config.getProfile(activeProfile);		
-			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install " : "conan install ";
+			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
 			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && ${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
@@ -154,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		let command =vscode.commands.registerCommand(myCommandId, () => {
 			let options = <vscode.QuickPickOptions>{
-				placeHolder: 'Type a line number or a piece of code to navigate to',
+				placeHolder: 'Choose your profile to build for conan',
 				//matchOnDescription: true,
 				onDidSelectItem: item => {
 					if(item){
