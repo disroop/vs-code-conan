@@ -14,46 +14,29 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	config.readFile();
 	var profiles = config.getAllNames();
-	var activeProfile = profiles[0];
+	var activeProfile = config.getAllNames()[0];
 
-	registerProfilePick();
-	
 	const output = vscode.window.createOutputChannel("conan");
 
 	var instalsubprocesstatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
 	instalsubprocesstatusBarItem.text = "$(cloud-download)";
+	instalsubprocesstatusBarItem.tooltip = "conan install";
 	instalsubprocesstatusBarItem.command = registerInstallCommand();
-	instalsubprocesstatusBarItem.show();
-
+	instalsubprocesstatusBarItem.hide();
+	
 	var buildStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -102);
 	buildStatusBarItem.text = "$(run)";
+	buildStatusBarItem.tooltip = "conan build";
 	buildStatusBarItem.command = registerBuildCommand();
-	buildStatusBarItem.show();
+	buildStatusBarItem.hide();
 
 	var createStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -103);
 	createStatusBarItem.text = "$(gift)";
+	createStatusBarItem.tooltip = "conan create";
 	createStatusBarItem.command = registerCreateCommand();
-	createStatusBarItem.show();
+	createStatusBarItem.hide();
 
-	
-
-    
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vs-code-conan" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('vs-code-conan.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from vs-code-conan!');
-	});
-
-	
-
+	registerProfilePick();
 	
 
 	function registerInstallCommand() {
@@ -68,8 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let profile = config.getProfile(activeProfile);		
-
-			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && conan install ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
+			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
+			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && ${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
@@ -152,7 +135,7 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		let command =vscode.commands.registerCommand(myCommandId, () => {
 			let options = <vscode.QuickPickOptions>{
-				placeHolder: 'Type a line number or a piece of code to navigate to',
+				placeHolder: 'Choose your profile to build for conan',
 				//matchOnDescription: true,
 				onDidSelectItem: item => {
 					if(item){
@@ -173,8 +156,19 @@ export function activate(context: vscode.ExtensionContext) {
 		function updateProfile() {
 			myStatusBarItem.text = activeProfile;
 			myStatusBarItem.show();
+			if(config.isWorkspace(activeProfile)){
+				instalsubprocesstatusBarItem.show();
+				instalsubprocesstatusBarItem.tooltip = "workspace install";
+				buildStatusBarItem.hide();
+				createStatusBarItem.hide();
+			}
+			else{
+				instalsubprocesstatusBarItem.show();
+				instalsubprocesstatusBarItem.tooltip = "conan install";
+				buildStatusBarItem.show();
+				createStatusBarItem.show();
+			}
 		}
-
 		context.subscriptions.push(command);
 	}
 }
