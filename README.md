@@ -78,6 +78,10 @@ For example:
 
 ## Release Notes
 
+### 0.2.2
+
+- bugfix: workspace: enable profiles from workspace same as profile
+
 ### 0.2.1
 
 - bugfix: continue if profiles or workspace doesn't exist

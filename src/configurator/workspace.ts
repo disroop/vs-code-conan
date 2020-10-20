@@ -14,6 +14,7 @@ export class Workspace {
         let rootpath = vscode.workspace.rootPath!;
         conanWs = conanWs.replace("${workspaceFolder}", rootpath);
         this.conanWs = conanWs;
+        profile = profile.replace("${workspaceFolder}", rootpath);
         this.profile = profile;
         this.arg = arg;
         var buildFolder = "build/"+name;
