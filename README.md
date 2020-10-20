@@ -78,6 +78,10 @@ For example:
 
 ## Release Notes
 
+### 0.2.1
+
+- bugfix: continue if profiles or workspace doesn't exist
+
 ### 0.2.0
 
 - enable conan workspace install
