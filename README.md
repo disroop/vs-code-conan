@@ -70,7 +70,7 @@ For example:
             "name":"ws-arm",
             "conanWs": "${workspaceFolder}/conan-ws",
             "profile":"arm-cortex-m4-release",
-            "Arg": "--build missing"
+            "arg": "--build missing"
         }
     ]
 }
