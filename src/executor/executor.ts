@@ -9,7 +9,7 @@ export class Executor {
 		const child_process = require("child_process");
 		output.clear();
 		output.append(`command: ${commad}\n`);
-		this.subprocess = child_process.spawn("/bin/bash", ['-c', commad],{
+		this.subprocess = child_process.spawn("sh", ['-c', commad],{
 			stdio: [
 			  0, // Use parent's stdin for child
 			  'pipe', // Pipe child's stdout to parent
