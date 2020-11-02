@@ -23,7 +23,7 @@ To create package use the create button at the bottom!
 
 ### Install Workspace
 
-To create package use the create button at the bottom!
+To install a conan workspace use the install workspace button at the bottom!
 
 ![Build and install](images/workspace.gif)
 
