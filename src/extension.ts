@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { Configurator } from './configurator/configurator';
 import { config } from 'process';
+import { Executor } from './executor/executor';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -11,12 +12,10 @@ export function activate(context: vscode.ExtensionContext) {
 	let vscodepath = rootPath + '/.vscode';
 	let settingsFile = vscodepath+'/conan-settings.json';
 	const config = new Configurator(settingsFile);
-	
+	const executor = new Executor();
 	config.readFile();
 	var profiles = config.getAllNames();
 	var activeProfile = config.getAllNames()[0];
-
-	const output = vscode.window.createOutputChannel("conan");
 
 	var instalsubprocesstatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
 	instalsubprocesstatusBarItem.text = "$(cloud-download)";
@@ -38,7 +37,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerProfilePick();
 	
-
 	function registerInstallCommand() {
 		const installCommand = 'vs-code-conan.install';
 		let command = vscode.commands.registerCommand(installCommand, () => {
@@ -53,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 			let profile = config.getProfile(activeProfile);		
 			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
 			var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
-			executeCommand(commad);
+			executor.runCommand(commad, "installing");
 		});
 		context.subscriptions.push(command);
 		return installCommand;
@@ -71,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}	
 
 			var commad = `conan build ${conanfile} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
-			executeCommand(commad);
+			executor.runCommand(commad,"building");
 		});
 		context.subscriptions.push(command);
 		return buildCommand;
@@ -91,45 +89,13 @@ export function activate(context: vscode.ExtensionContext) {
 			}	
 
 			var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
-			executeCommand(commad);
+			executor.runCommand(commad, "creating a package");
 		});
 		context.subscriptions.push(command);
 		return createCommand;
 	}
 
-	function executeCommand(commad: string) {
-		const child_process = require("child_process");
-		output.clear();
-		output.append(`command: ${commad}\n`);
-		const subprocess = child_process.spawn("sh", ['-c', commad],{
-			stdio: [
-			  0, // Use parent's stdin for child
-			  'pipe', // Pipe child's stdout to parent
-			  'pipe', // Pipe child's stderror to parent
-			]
-		  });
-		subprocess.stdout.on("data", (data: string) => {
-			output.append(`conan: ${data}`);
-			output.show();
-
-		});
-		subprocess.stderr.on("data", (data: any) => {
-			output.append(`stderr: ${data}`);
-			output.show();
-		});
-
-		subprocess.on('error', (error: { message: any; }) => {
-			output.append(`error: ${error.message}`);
-			output.show();
-		});
-
-		subprocess.on("close", (code: any) => {
-			output.append(`child process exited with code ${code}`);
-			output.show();
-		});
-
-	}
-
+	
 	function registerProfilePick() {
 		const myCommandId = 'vs-code-conan.profilePick';
 		
