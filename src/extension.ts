@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			let profile = config.getProfile(activeProfile);		
 			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
-			var commad = `rm -rf ${rootPath}/${buildFolder} && mkdir -p ${rootPath}/${buildFolder} && ${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
+			var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
 			executeCommand(commad);
 		});
 		context.subscriptions.push(command);
