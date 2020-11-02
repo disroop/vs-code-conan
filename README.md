@@ -84,6 +84,10 @@ For example:
 
 ## Release Notes
 
+### 0.3.1
+
+- remove cleanup befor installing
+
 ### 0.3.0
 
 - add progress window
