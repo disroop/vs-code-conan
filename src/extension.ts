@@ -8,21 +8,16 @@ import { Executor } from './executor/executor';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	let rootPath = vscode.workspace.rootPath;
-	let vscodepath = rootPath + '/.vscode';
-	let settingsFile = vscodepath+'/conan-settings.json';
-	const config = new Configurator(settingsFile);
 	const executor = new Executor();
-	config.readFile();
-	var profiles = config.getAllNames();
-	var activeProfile = config.getAllNames()[0];
+	var rootPath = vscode.workspace.rootPath;
+	var { config, activeProfile, profiles } = loadconfig(rootPath);
 
 	var instalsubprocesstatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -101);
 	instalsubprocesstatusBarItem.text = "$(cloud-download)";
 	instalsubprocesstatusBarItem.tooltip = "conan install";
 	instalsubprocesstatusBarItem.command = registerInstallCommand();
 	instalsubprocesstatusBarItem.hide();
-	
+
 	var buildStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -102);
 	buildStatusBarItem.text = "$(run)";
 	buildStatusBarItem.tooltip = "conan build";
@@ -36,81 +31,130 @@ export function activate(context: vscode.ExtensionContext) {
 	createStatusBarItem.hide();
 
 	registerProfilePick();
-	
+
+	let command = vscode.workspace.onDidChangeWorkspaceFolders(() => {
+		rootPath = vscode.workspace.rootPath;
+		let configuration = loadconfig(rootPath);
+		config = configuration.config;
+		profiles = configuration.profiles;
+		activeProfile = configuration.activeProfile;
+	});
+
+	context.subscriptions.push(command);
+
+	function loadconfig(workspaceFolderPath: string | undefined) {
+		let config = undefined;
+		let profiles = undefined;
+		let activeProfile = undefined;
+		if (workspaceFolderPath) {
+			let settingsFile = workspaceFolderPath + '/.vscode/conan-settings.json';
+			config = new Configurator(settingsFile);
+			config.readFile();
+			profiles = config.getAllNames();
+			activeProfile = config.getAllNames()[0];
+		}
+		else {
+			vscode.window.showErrorMessage("No valid conan-settings.json file could be found!");
+		}
+		return { config, activeProfile, profiles }
+	}
+
 	function registerInstallCommand() {
 		const installCommand = 'vs-code-conan.install';
 		let command = vscode.commands.registerCommand(installCommand, () => {
-			let conanfile = config.getConanFile(activeProfile);
-			let buildFolder = config.getBuildFolder(activeProfile);
-			let installArg = "";
-			try {
-				installArg=config.getInstallArg(activeProfile);
-			} catch (error) {
+			if (config && activeProfile) {
+
+				let conanfile = config.getConanFile(activeProfile);
+				let buildFolder = config.getBuildFolder(activeProfile);
+				let installArg = "";
+				try {
+					installArg = config.getInstallArg(activeProfile);
+				} catch (error) {
+				}
+
+				let profile = config.getProfile(activeProfile);
+				let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
+				var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
+				executor.runCommand(commad, "installing");
 			}
-			
-			let profile = config.getProfile(activeProfile);		
-			let installCommand = config.isWorkspace(activeProfile) ? "conan workspace install" : "conan install";
-			var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${rootPath}/${buildFolder}`;
-			executor.runCommand(commad, "installing");
+			else {
+				vscode.window.showErrorMessage("It is not possible to install  with no valid config!")
+			}
 		});
 		context.subscriptions.push(command);
 		return installCommand;
 	}
 
-	function registerBuildCommand():string {
+	function registerBuildCommand(): string {
 		const buildCommand = 'vs-code-conan.build';
 		let command = vscode.commands.registerCommand(buildCommand, () => {
-			let conanfile = config.getConanFile(activeProfile);
-			let buildFolder = config.getBuildFolder(activeProfile);
-			let buildArg = "";
-			try {
-				buildArg=config.getBuildArg(activeProfile);
-			} catch (error) {
-			}	
+			if (config && activeProfile && rootPath) {
+				let conanfile = config.getConanFile(activeProfile);
+				let buildFolder = config.getBuildFolder(activeProfile);
+				let buildArg = "";
+				try {
+					buildArg = config.getBuildArg(activeProfile);
+				} catch (error) {
+				}
 
-			var commad = `conan build ${conanfile} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
-			executor.runCommand(commad,"building");
+				var commad = `conan build ${conanfile} ${buildArg} --build-folder ${rootPath}/${buildFolder}`;
+				executor.runCommand(commad, "building");
+			}
+			else {
+				vscode.window.showErrorMessage("It is not possible to build with no valid config!")
+			}
 		});
 		context.subscriptions.push(command);
 		return buildCommand;
 	}
 
-	function registerCreateCommand():string {
+	function registerCreateCommand(): string {
 		const createCommand = 'vs-code-conan.create';
 		let command = vscode.commands.registerCommand(createCommand, () => {
-			let conanfile = config.getConanFile(activeProfile);
-			let profile = config.getProfile(activeProfile);		
-			let createUser = config.getCreateUser(activeProfile);
-			let createChannel = config.getCreateChannel(activeProfile);
-			let createArg = "";
-			try {
-				createArg=config.getCreateArg(activeProfile);
-			} catch (error) {
-			}	
+			if (config && activeProfile) {
+				let conanfile = config.getConanFile(activeProfile);
+				let profile = config.getProfile(activeProfile);
+				let createUser = config.getCreateUser(activeProfile);
+				let createChannel = config.getCreateChannel(activeProfile);
+				let createArg = "";
+				try {
+					createArg = config.getCreateArg(activeProfile);
+				} catch (error) {
+				}
 
-			var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
-			executor.runCommand(commad, "creating a package");
+				var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
+				executor.runCommand(commad, "creating a package");
+			}
+			else {
+				vscode.window.showErrorMessage("It is not possible to create a package with no valid config!")
+			}
 		});
 		context.subscriptions.push(command);
 		return createCommand;
 	}
 
-	
+
 	function registerProfilePick() {
 		const myCommandId = 'vs-code-conan.profilePick';
-		
-		let command =vscode.commands.registerCommand(myCommandId, () => {
-			let options = <vscode.QuickPickOptions>{
-				placeHolder: 'Choose your profile to build for conan',
-				//matchOnDescription: true,
-				onDidSelectItem: item => {
-					if(item){
-						activeProfile = item.toString();
-						updateProfile();
+
+		let command = vscode.commands.registerCommand(myCommandId, () => {
+			if (profiles && activeProfile) {
+				let options = <vscode.QuickPickOptions>{
+					placeHolder: 'Choose your profile to build for conan',
+					//matchOnDescription: true,
+					onDidSelectItem: item => {
+						if (item) {
+							activeProfile = item.toString();
+							updateProfile();
+						}
 					}
-				}
-			};
-			vscode.window.showQuickPick(profiles, options);
+				};
+
+				vscode.window.showQuickPick(profiles, options);
+			}
+			else {
+				vscode.window.showErrorMessage("It is not possible to choose a profile with no valid config!")
+			}
 		});
 		context.subscriptions.push(command);
 
@@ -120,19 +164,24 @@ export function activate(context: vscode.ExtensionContext) {
 		updateProfile();
 
 		function updateProfile() {
-			myStatusBarItem.text = activeProfile;
-			myStatusBarItem.show();
-			if(config.isWorkspace(activeProfile)){
-				instalsubprocesstatusBarItem.show();
-				instalsubprocesstatusBarItem.tooltip = "workspace install";
-				buildStatusBarItem.hide();
-				createStatusBarItem.hide();
+			if (config && activeProfile) {
+				myStatusBarItem.text = activeProfile;
+				myStatusBarItem.show();
+				if (config.isWorkspace(activeProfile)) {
+					instalsubprocesstatusBarItem.show();
+					instalsubprocesstatusBarItem.tooltip = "workspace install";
+					buildStatusBarItem.hide();
+					createStatusBarItem.hide();
+				}
+				else {
+					instalsubprocesstatusBarItem.show();
+					instalsubprocesstatusBarItem.tooltip = "conan install";
+					buildStatusBarItem.show();
+					createStatusBarItem.show();
+				}
 			}
-			else{
-				instalsubprocesstatusBarItem.show();
-				instalsubprocesstatusBarItem.tooltip = "conan install";
-				buildStatusBarItem.show();
-				createStatusBarItem.show();
+			else {
+				vscode.window.showErrorMessage("It is not possible to update profile with no valid config!")
 			}
 		}
 		context.subscriptions.push(command);
@@ -142,4 +191,4 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
