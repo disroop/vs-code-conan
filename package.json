@@ -18,7 +18,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"workspaceContains:**/conan-settings.json"
+		"workspaceContains:**/conanfile.py",
+		"workspaceContains:**/.vscode/conan-settings.json"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
