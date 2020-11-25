@@ -73,8 +73,9 @@ export class Configurator {
 
     getBuildArg(name : string):string{
         let buildArg = this.profiles.get(name)?.getBuildArguments();
-        if(!buildArg){
-            throw new Error("No buildArg found"); 
+        if(!buildArg)
+        {
+            buildArg = "";
         }
         return buildArg;
     }
@@ -82,7 +83,7 @@ export class Configurator {
     getCreateArg(name : string):string{
         let createArg = this.profiles.get(name)?.getCreateArguments();
         if(!createArg){
-            throw new Error("No createArg found"); 
+             createArg = "";
         }
         return createArg;
     }
