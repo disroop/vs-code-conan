@@ -5,12 +5,12 @@ const output = vscode.window.createOutputChannel("conan");
 export class Executor {
     private subprocess: any;
 
-    private executeConanCommand(commad: string, resolve: any, reject: any) {
+    private executeConanCommand(command: string, resolve: any, reject: any) {
         const child_process = require("child_process");
         output.clear();
-        output.append(`command: ${commad}\n`);
+        output.append(`command: ${command}\n`);
         //Frage: get das auch unter windows mit sh?
-        this.subprocess = child_process.spawn("sh", ['-c', commad], {
+        this.subprocess = child_process.spawn("sh", ['-c', command], {
             stdio: [
                 0, // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent

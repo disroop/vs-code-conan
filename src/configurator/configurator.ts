@@ -57,13 +57,13 @@ export class Configurator {
     }
 
     getBuildFolder(name: string): string {
-        let buildfolder = this.isWorkspace(name)
+        let buildFolder = this.isWorkspace(name)
             ? this.workspaces.get(name)?.getBuildFolder()
             : this.profiles.get(name)?.getBuildFolder();
-        if (!buildfolder) {
+        if (!buildFolder) {
             throw new Error("No build folder found");
         }
-        return buildfolder;
+        return buildFolder;
     }
 
     getInstallArg(name: string): string {
