@@ -11,7 +11,7 @@ The VsCode Conan extension helps with integrating conan into vscode.
 
 ### Install and build packages
 
-To install and build your the conan package use the instal and the build button at the bottom!
+To install and build your conan package use the _install_ and _build_ button at the bottom!
 
 ![Build and install](images/installbuild.gif)
 
@@ -23,7 +23,7 @@ To create package use the create button at the bottom!
 
 ### Install Workspace
 
-To install a conan workspace use the install workspace button at the bottom!
+To install a conan workspace use the _install workspace_ button at the bottom!
 
 ![Build and install](images/workspace.gif)
 
@@ -86,7 +86,7 @@ For example:
 
 ### 0.3.1
 
-- remove cleanup befor installing
+- remove cleanup before installing
 
 ### 0.3.0
 
