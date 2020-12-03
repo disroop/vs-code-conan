@@ -29,26 +29,4 @@ suite('Extension Test Suite', () => {
         assert.strictEqual(profile.getCreateUser(), "aCreateUser");
         assert.strictEqual(profile.getCreateChannel(), "aCreateChannel");
     });
-
-    test('Profile test2', () => {
-
-        const profile = new Profile(
-            "aName",
-            "aConanFile",
-            "aProfile",
-            "aInstallArg",
-            "aBuildArg",
-            "aCreateArg",
-            "aCreateUser",
-            "aCreateChannel",
-        );
-        // vscode.workspace.rootPath
-        assert.strictEqual(profile.getConanFile(), "aConanFile");
-        assert.strictEqual(profile.getProfile(), "aProfile");
-        assert.strictEqual(profile.getBuildFolder(), "build/aName");
-        assert.strictEqual(profile.getInstallArguments(), "aInstallArg");
-        assert.strictEqual(profile.getCreateArguments(), "aCreateArg");
-        assert.strictEqual(profile.getCreateUser(), "aCreateUser");
-        assert.strictEqual(profile.getCreateChannel(), "aCreateChannel");
-    });
 });

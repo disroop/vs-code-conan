@@ -18,9 +18,8 @@ export class Profile {
                 createArg: string = "",
                 createUser: string = "",
                 createChannel: string = "") {
-        const rootpath = vscode.workspace.rootPath!;
-        this.conanFile = conanFile.replace("${workspaceFolder}", rootpath);
-        this.profile = profile.replace("${workspaceFolder}", rootpath);
+        this.conanFile = conanFile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+        this.profile = profile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         this.installArg = installArg;
         this.buildArg = buildArg;
         this.createArg = createArg;

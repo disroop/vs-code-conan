@@ -10,9 +10,8 @@ export class Workspace {
                 conanWs: string = ".",
                 profile: string = "",
                 arg: string = "") {
-        let rootpath = vscode.workspace.rootPath!;
-        this.conanWs = conanWs.replace("${workspaceFolder}", rootpath);
-        this.profile = profile.replace("${workspaceFolder}", rootpath);
+        this.conanWs = conanWs.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+        this.profile = profile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         this.arg = arg;
         this.buildFolder = "build/" + name;
     }
