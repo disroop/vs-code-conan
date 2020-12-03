@@ -1,40 +1,35 @@
 import * as vscode from 'vscode';
 
 export class Workspace {
-    private profile : string;
-    private buildFolder : string;   
-    private arg : string;
-    private conanWs : string;
+    private readonly profile: string;
+    private readonly buildFolder: string;
+    private readonly arg: string;
+    private readonly conanWs: string;
 
-
-    constructor(name : string = "default", 
-                conanWs : string = ".",
-                profile : string = "",
-                arg : string = "") {
+    constructor(name: string = "default",
+                conanWs: string = ".",
+                profile: string = "",
+                arg: string = "") {
         let rootpath = vscode.workspace.rootPath!;
-        conanWs = conanWs.replace("${workspaceFolder}", rootpath);
-        this.conanWs = conanWs;
-        profile = profile.replace("${workspaceFolder}", rootpath);
-        this.profile = profile;
+        this.conanWs = conanWs.replace("${workspaceFolder}", rootpath);
+        this.profile = profile.replace("${workspaceFolder}", rootpath);
         this.arg = arg;
-        var buildFolder = "build/"+name;
-        this.buildFolder = buildFolder;
+        this.buildFolder = "build/" + name;
     }
 
-    getConanWorkspace():string{
+    getConanWorkspace(): string {
         return this.conanWs;
     }
 
-    getProfile():string{
+    getProfile(): string {
         return this.profile;
     }
 
-    getBuildFolder():string{
+    getBuildFolder(): string {
         return this.buildFolder;
     }
-    
-    getArguments():string{
+
+    getArguments(): string {
         return this.arg;
     }
-
 }
