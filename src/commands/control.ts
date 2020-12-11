@@ -76,7 +76,8 @@ export class CommandController {
         const buildCommand = 'vs-code-conan.build';
         let command = vscode.commands.registerCommand(buildCommand, () => {
             if (this.state.activeProfile === ALL) {
-                this.state.config.getAllNames().forEach(item => this.build(item));
+                this.state.config.getAllNames().forEach(item => {
+                    if (!this.state.config.isWorkspace(item)) {this.build(item);}});
             } else {
                 this.build(this.state.activeProfile);
             }
@@ -91,7 +92,8 @@ export class CommandController {
 
         let command = vscode.commands.registerCommand(createCommand, () => {
             if (this.state.activeProfile === ALL) {
-                this.state.config.getAllNames().forEach(item => this.create(item));
+                this.state.config.getAllNames().forEach(item => {
+                    if (!this.state.config.isWorkspace(item)){this.create(item);}});
             } else {
                 this.create(this.state.activeProfile);
             }
