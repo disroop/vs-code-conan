@@ -1,15 +1,10 @@
-import { Profile } from "./profile";
+import {Profile} from "./profile";
 import * as vscode from 'vscode';
-import { Workspace } from "./workspace";
-import { isDate } from "util";
+import {Workspace} from "./workspace";
+
 export class SettingsParser {
-    private jsonData: string;
 
-    constructor(jsonData: string) {
-        this.jsonData = jsonData;
-    }
-
-    convert(): Map<string, Profile> {
+    static convert(jsonData: string): Map<string, Profile> {
         interface ProfileObj {
             name: string;
             conanFile: string;
@@ -21,28 +16,26 @@ export class SettingsParser {
             createChannel: string;
         }
 
-        let jsonObj: { profiles: ProfileObj[] } = JSON.parse(this.jsonData);
-        var profiles = new Map<string, Profile>();
-        var counterNonValidSettings = 0;
+        const jsonObj: { profiles: ProfileObj[] } = JSON.parse(jsonData);
+        const profiles = new Map<string, Profile>();
+        let counterNonValidSettings = 0;
         if (jsonObj.profiles) {
             jsonObj.profiles.forEach(function (profileJson) {
                 if (profileJson.name !== undefined && profileJson.name.length > 0) {
                     if (!profiles.has(profileJson.name)) {
-                        let profile = new Profile(profileJson.name,
+                        profiles.set(profileJson.name, new Profile(
+                            profileJson.name,
                             profileJson.conanFile,
                             profileJson.profile,
                             profileJson.installArg,
                             profileJson.buildArg,
                             profileJson.createArg,
                             profileJson.createUser,
-                            profileJson.createChannel);
-                        profiles.set(profileJson.name, profile);
-                    }
-                    else {
+                            profileJson.createChannel));
+                    } else {
                         vscode.window.showWarningMessage("Profile with name: " + profileJson.name + " already exist! Use first setting in settings.json.");
                     }
-                }
-                else {
+                } else {
                     counterNonValidSettings++;
                 }
             });
@@ -53,18 +46,17 @@ export class SettingsParser {
         return new Map(profiles);
     }
 
-    convertWs(): Map<string, Workspace> {
+    static convertWs(jsonData: string): Map<string, Workspace> {
         interface WorkspaceObj {
             name: string;
             conanWs: string;
             profile: string;
             arg: string;
-
         }
 
-        let jsonObj: { workspace: WorkspaceObj[] } = JSON.parse(this.jsonData);
-        var workspaces = new Map<string, Workspace>();
-        var counterNonValidSettings = 0;
+        const jsonObj: { workspace: WorkspaceObj[] } = JSON.parse(jsonData);
+        const workspaces = new Map<string, Workspace>();
+        let counterNonValidSettings = 0;
         if (jsonObj.workspace) {
             jsonObj.workspace.forEach(function (workspaceJson) {
                 if (workspaceJson.name !== undefined && workspaceJson.name.length > 0) {
@@ -74,12 +66,10 @@ export class SettingsParser {
                             workspaceJson.profile,
                             workspaceJson.arg);
                         workspaces.set(workspaceJson.name, workspace);
-                    }
-                    else {
+                    } else {
                         vscode.window.showWarningMessage("Workspace with name: " + workspaceJson.name + " already exist! Use first setting in settings.json.");
                     }
-                }
-                else {
+                } else {
                     counterNonValidSettings++;
                 }
             });

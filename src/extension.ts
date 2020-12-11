@@ -15,19 +15,21 @@ import { CommandView } from "./commands/view";
 export function activate(context: vscode.ExtensionContext) {
 
 	const executor = new Executor();
+	var commandController;
 	var rootPath = vscode.workspace.rootPath;
 	if (rootPath) {
 		try {
 			let state = loadconfig(rootPath);
-			let installCommand = CommandController.registerInstallCommand(context, state, executor);
-			let buildCommand = CommandController.registerBuildCommand(context, state, executor);
-			let createCommand = CommandController.registerCreateCommand(context, state, executor);
+			commandController = new CommandController(context,state,executor);
+			let installCommand = commandController.registerInstallCommand();
+			let buildCommand = commandController.registerBuildCommand();
+			let createCommand = commandController.registerCreateCommand();
 
 			let installButton = CommandView.registerInstallButton(installCommand);
 			let buildButton = CommandView.regitsterBuildButton(buildCommand);
 			let createButton = CommandView.registerCreateButton(createCommand);
 			let barItems = {install: installButton, build: buildButton, create: createButton};
-			CommandController.registerProfilePick(context, state, barItems);
+			commandController.registerProfilePick(barItems);
 		} catch (err) {
 			vscode.window.showErrorMessage(err);
 		}
@@ -49,12 +51,9 @@ export function activate(context: vscode.ExtensionContext) {
 			throw new Error("Disroop Conan: No valid conan-settings.json file could be found!");
 		}
 	}
-
-
-
 }
 
 
-
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {
+}
