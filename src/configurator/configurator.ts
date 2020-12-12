@@ -71,23 +71,24 @@ export class Configurator {
             ? this.workspaces.get(name)?.getArguments()
             : this.profiles.get(name)?.getInstallArguments();
         if (!installArg) {
-            throw new Error("No installArg found");
+            installArg = "";
         }
         return installArg;
     }
 
     getBuildArg(name: string): string {
         let buildArg = this.profiles.get(name)?.getBuildArguments();
-        if (!buildArg) {
-            throw new Error("No buildArg found");
+        if(!buildArg)
+        {
+            buildArg = "";
         }
         return buildArg;
     }
 
     getCreateArg(name: string): string {
         let createArg = this.profiles.get(name)?.getCreateArguments();
-        if (!createArg) {
-            throw new Error("No createArg found");
+        if(!createArg){
+             createArg = "";
         }
         return createArg;
     }
