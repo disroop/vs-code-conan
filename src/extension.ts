@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 			let createCommand = commandController.registerCreateCommand();
 
 			let installButton = CommandView.registerInstallButton(installCommand);
-			let buildButton = CommandView.regitsterBuildButton(buildCommand);
+			let buildButton = CommandView.registerBuildButton(buildCommand);
 			let createButton = CommandView.registerCreateButton(createCommand);
 			let barItems = {install: installButton, build: buildButton, create: createButton};
 			commandController.registerProfilePick(barItems);
