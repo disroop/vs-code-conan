@@ -20,12 +20,11 @@ const ALL = "[all]";
 export class CommandController {
 
     private state: AppState;
-    private readonly executor: Executor;
+    private readonly executor: Executor = new Executor();
     private context: vscode.ExtensionContext;
 
-    constructor(context: vscode.ExtensionContext, state: AppState, executor: Executor) {
+    constructor(context: vscode.ExtensionContext, state: AppState) {
         this.state = state;
-        this.executor = executor;
         this.context = context;
         state.profiles.push(ALL);
         state.activeProfile = ALL;
@@ -37,7 +36,7 @@ export class CommandController {
         let installArg = this.state.config.getInstallArg(profileToRun);
         let profile = this.state.config.getProfile(profileToRun);
         let installCommand = this.state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-        var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this.state.rootPath}/${buildFolder}`;
+        const commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this.state.rootPath}/${buildFolder}`;
         this.executor.runCommand(commad, "installing");
     }
 
@@ -45,7 +44,7 @@ export class CommandController {
         let conanfile = this.state.config.getConanFile(profileToBuild);
         let buildFolder = this.state.config.getBuildFolder(profileToBuild);
         let buildArg = this.state.config.getBuildArg(profileToBuild);
-        var commad = `conan build ${conanfile} ${buildArg} --build-folder ${this.state.rootPath}/${buildFolder}`;
+        const commad = `conan build ${conanfile} ${buildArg} --build-folder ${this.state.rootPath}/${buildFolder}`;
         this.executor.runCommand(commad, "building");
     }
 
@@ -55,7 +54,7 @@ export class CommandController {
         let createUser = this.state.config.getCreateUser(profileToCreate);
         let createChannel = this.state.config.getCreateChannel(profileToCreate);
         let createArg = this.state.config.getCreateArg(profileToCreate);
-        var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
+        const commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
         this.executor.runCommand(commad, "creating a package");
     }
 
@@ -122,7 +121,7 @@ export class CommandController {
         this.context.subscriptions.push(command);
 
         // create a new status bar item that we can now manage
-        var myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+        const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
         myStatusBarItem.command = myCommandId;
         updateProfile(this.state);
 
