@@ -14,13 +14,12 @@ import { CommandView } from "./commands/view";
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	const executor = new Executor();
 	var commandController;
 	var rootPath = vscode.workspace.rootPath;
 	if (rootPath) {
 		try {
 			let state = loadconfig(rootPath);
-			commandController = new CommandController(context,state,executor);
+			commandController = new CommandController(context,state);
 			let installCommand = commandController.registerInstallCommand();
 			let buildCommand = commandController.registerBuildCommand();
 			let createCommand = commandController.registerCreateCommand();
