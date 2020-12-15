@@ -28,7 +28,7 @@ jobs:
     
       
     - name: Upload a Build Artifact
-      if: ${{ github.ref == 'ref/head/master' }}
+      if: contains('refs/heads/master', github.ref)
       uses: actions/upload-artifact@v2
       with:
         path: ./*.vsix
