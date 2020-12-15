@@ -1,6 +1,7 @@
 import { Configurator } from '../configurator/configurator';
 import * as vscode from 'vscode';
 import { Executor } from '../executor/executor';
+import {StatusBarItem} from "vscode";
 
 
 export interface AppState {
@@ -17,55 +18,59 @@ export interface StatusBarItems {
 }
 
 const ALL = "[all]";
+
 export class CommandController {
 
-    private state: AppState;
-    private readonly executor: Executor;
+    private _state: AppState;
+    private readonly executor: Executor = new Executor();
     private context: vscode.ExtensionContext;
 
-    constructor(context: vscode.ExtensionContext, state: AppState, executor: Executor) {
-        this.state = state;
-        this.executor = executor;
+    constructor(context: vscode.ExtensionContext, state: AppState) {
+        this.setState(state);
         this.context = context;
-        state.profiles.push(ALL);
         state.activeProfile = ALL;
-    } 
+    }
+
+    setState(state: AppState) {
+        this._state = state;
+        this._state.profiles.push(ALL);
+    }
 
     private install(profileToRun: any) {
-        let conanfile = this.state.config.getConanFile(profileToRun);
-        let buildFolder = this.state.config.getBuildFolder(profileToRun);
-        let installArg = this.state.config.getInstallArg(profileToRun);
-        let profile = this.state.config.getProfile(profileToRun);
-        let installCommand = this.state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-        var commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this.state.rootPath}/${buildFolder}`;
+        let conanfile = this._state.config.getConanFile(profileToRun);
+        let buildFolder = this._state.config.getBuildFolder(profileToRun);
+        let installArg = this._state.config.getInstallArg(profileToRun);
+        let profile = this._state.config.getProfile(profileToRun);
+        let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
+        const commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this._state.rootPath}/${buildFolder}`;
         this.executor.runCommand(commad, "installing");
     }
 
     private build(profileToBuild: any) {
-        let conanfile = this.state.config.getConanFile(profileToBuild);
-        let buildFolder = this.state.config.getBuildFolder(profileToBuild);
-        let buildArg = this.state.config.getBuildArg(profileToBuild);
-        var commad = `conan build ${conanfile} ${buildArg} --build-folder ${this.state.rootPath}/${buildFolder}`;
+        let conanfile = this._state.config.getConanFile(profileToBuild);
+        let buildFolder = this._state.config.getBuildFolder(profileToBuild);
+        let buildArg = this._state.config.getBuildArg(profileToBuild);
+        const commad = `conan build ${conanfile} ${buildArg} --build-folder ${this._state.rootPath}/${buildFolder}`;
         this.executor.runCommand(commad, "building");
     }
 
     private create(profileToCreate: any) {
-        let conanfile = this.state.config.getConanFile(profileToCreate);
-        let profile = this.state.config.getProfile(profileToCreate);
-        let createUser = this.state.config.getCreateUser(profileToCreate);
-        let createChannel = this.state.config.getCreateChannel(profileToCreate);
-        let createArg = this.state.config.getCreateArg(profileToCreate);
-        var commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
+        let conanfile = this._state.config.getConanFile(profileToCreate);
+        let profile = this._state.config.getProfile(profileToCreate);
+        let createUser = this._state.config.getCreateUser(profileToCreate);
+        let createChannel = this._state.config.getCreateChannel(profileToCreate);
+        let createArg = this._state.config.getCreateArg(profileToCreate);
+        const commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
         this.executor.runCommand(commad, "creating a package");
     }
 
     registerInstallCommand() {
         const installCommand = 'vs-code-conan.install';
         let command = vscode.commands.registerCommand(installCommand, () => {
-            if (this.state.activeProfile === ALL) {
-                this.state.config.getAllNames().forEach(item => this.install(item));
+            if (this._state.activeProfile === ALL) {
+                this._state.config.getAllNames().forEach(item => this.install(item));
             } else {
-                this.install(this.state.activeProfile);
+                this.install(this._state.activeProfile);
             }
         });
         this.context.subscriptions.push(command);
@@ -75,11 +80,11 @@ export class CommandController {
     registerBuildCommand(): string {
         const buildCommand = 'vs-code-conan.build';
         let command = vscode.commands.registerCommand(buildCommand, () => {
-            if (this.state.activeProfile === ALL) {
-                this.state.config.getAllNames().forEach(item => {
-                    if (!this.state.config.isWorkspace(item)) {this.build(item);}});
+            if (this._state.activeProfile === ALL) {
+                this._state.config.getAllNames().forEach(item => {
+                    if (!this._state.config.isWorkspace(item)) {this.build(item);}});
             } else {
-                this.build(this.state.activeProfile);
+                this.build(this._state.activeProfile);
             }
 
         });
@@ -91,11 +96,11 @@ export class CommandController {
         const createCommand = 'vs-code-conan.create';
 
         let command = vscode.commands.registerCommand(createCommand, () => {
-            if (this.state.activeProfile === ALL) {
-                this.state.config.getAllNames().forEach(item => {
-                    if (!this.state.config.isWorkspace(item)){this.create(item);}});
+            if (this._state.activeProfile === ALL) {
+                this._state.config.getAllNames().forEach(item => {
+                    if (!this._state.config.isWorkspace(item)){this.create(item);}});
             } else {
-                this.create(this.state.activeProfile);
+                this.create(this._state.activeProfile);
             }
         });
         this.context.subscriptions.push(command);
@@ -112,37 +117,37 @@ export class CommandController {
                 //matchOnDescription: true,
                 onDidSelectItem: item => {
                     if (item) {
-                        this.state.activeProfile = item.toString();
-                        updateProfile(this.state);
+                        this._state.activeProfile = item.toString();
+                        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
                     }
                 }
             };
-            vscode.window.showQuickPick(this.state.profiles, options);
+            vscode.window.showQuickPick(this._state.profiles, options);
         });
         this.context.subscriptions.push(command);
 
         // create a new status bar item that we can now manage
-        var myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+        const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
         myStatusBarItem.command = myCommandId;
-        updateProfile(this.state);
-
-        function updateProfile(state: AppState) {
-            myStatusBarItem.text = state.activeProfile;
-            myStatusBarItem.show();
-            //TODO: Refactor this
-            if (state.config.isWorkspace(state.activeProfile)) {
-                barItems.install.show();
-                barItems.install.tooltip = "workspace install";
-                barItems.build.hide();
-                barItems.create.hide();
-            }
-            else {
-                barItems.install.show();
-                barItems.install.tooltip = "conan install";
-                barItems.build.show();
-                barItems.create.show();
-            }
-        }
+        CommandController.updateProfile(this._state ,barItems, myStatusBarItem);
         this.context.subscriptions.push(command);
+    }
+
+    private static updateProfile(state: AppState, barItems: StatusBarItems, myStatusBarItem: StatusBarItem) {
+        myStatusBarItem.text = state.activeProfile;
+        myStatusBarItem.show();
+        //TODO: Refactor this
+        if (state.config.isWorkspace(state.activeProfile)) {
+            barItems.install.show();
+            barItems.install.tooltip = "workspace install";
+            barItems.build.hide();
+            barItems.create.hide();
+        }
+        else {
+            barItems.install.show();
+            barItems.install.tooltip = "conan install";
+            barItems.build.show();
+            barItems.create.show();
+        }
     }
 }
