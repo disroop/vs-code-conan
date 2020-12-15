@@ -1,69 +1,59 @@
+// The module 'vscode' contains the VS Code extensibility API
+// Import the module and reference it with the alias vscode in your code below
+import { stat } from 'fs';
 import * as vscode from 'vscode';
-import {Configurator} from './configurator/configurator';
-import {CommandController} from "./commands/control";
-import {CommandView} from "./commands/view";
+import { Configurator } from './configurator/configurator';
+import { Executor } from './executor/executor';
+import { AppState } from "./commands/control";
+import { CommandController } from "./commands/control";
+import { CommandView } from "./commands/view";
 
+
+
+// this method is called when your extension is activated
+// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-    let commandController: CommandController;
-    let barItems;
-    const rootPath: string | undefined = vscode.workspace.rootPath;
+	const executor = new Executor();
+	var commandController;
+	var rootPath = vscode.workspace.rootPath;
+	if (rootPath) {
+		try {
+			let state = loadconfig(rootPath);
+			commandController = new CommandController(context,state,executor);
+			let installCommand = commandController.registerInstallCommand();
+			let buildCommand = commandController.registerBuildCommand();
+			let createCommand = commandController.registerCreateCommand();
 
-    function setupConanSettingsFileWatcher() {
-        const uri = vscode.window.activeTextEditor!.document.uri;
-        let watcher = vscode.workspace.createFileSystemWatcher(
-            new vscode.RelativePattern(
-                vscode.workspace.getWorkspaceFolder(uri)!,
-                '.vscode/conan-settings.json'
-            ),
-            false,
-            false,
-            false
-        );
+			let installButton = CommandView.registerInstallButton(installCommand);
+			let buildButton = CommandView.regitsterBuildButton(buildCommand);
+			let createButton = CommandView.registerCreateButton(createCommand);
+			let barItems = {install: installButton, build: buildButton, create: createButton};
+			commandController.registerProfilePick(barItems);
+		} catch (err) {
+			vscode.window.showErrorMessage(err);
+		}
+	}
 
-        watcher.onDidChange(onConanSettingChanged);
-        watcher.onDidCreate(onConanSettingChanged);
-    }
 
-    function onConanSettingChanged() {
-        console.log('onConanSettingChanged');
-        commandController.setState(loadConfig(rootPath));
-    }
-
-    if (rootPath) {
-        try {
-            setupConanSettingsFileWatcher();
-            let state = loadConfig(rootPath);
-            commandController = new CommandController(context, state);
-            commandController.state = state;
-            let installCommand = commandController.registerInstallCommand();
-            let buildCommand = commandController.registerBuildCommand();
-            let createCommand = commandController.registerCreateCommand();
-
-            let installButton = CommandView.registerInstallButton(installCommand);
-            let buildButton = CommandView.registerBuildButton(buildCommand);
-            let createButton = CommandView.registerCreateButton(createCommand);
-            barItems = {install: installButton, build: buildButton, create: createButton};
-            commandController.registerProfilePick(barItems);
-        } catch (err) {
-            vscode.window.showErrorMessage(err);
-        }
-    }
-
-    function loadConfig(workspaceFolderPath: string) {
-        let settingsFile = workspaceFolderPath + '/.vscode/conan-settings.json';
-        const fs = require('fs');
-        if (fs.existsSync(settingsFile)) {
-            let config = new Configurator(settingsFile);
-            config.readFile();
-            let profiles = config.getAllNames();
-            let activeProfile = config.getAllNames()[0];
-            return {rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile};
-        } else {
-            throw new Error("Disroop Conan: No valid conan-settings.json file could be found!");
-        }
-    }
+	function loadconfig(workspaceFolderPath: string) {
+		let settingsFile = workspaceFolderPath + '/.vscode/conan-settings.json';
+		const fs = require('fs');
+		if (fs.existsSync(settingsFile)) {
+			let config = new Configurator(settingsFile);
+			config.readFile();
+			let profiles = config.getAllNames();
+			let activeProfile = config.getAllNames()[0];
+			let state: AppState = { rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile };
+			return state;
+		}
+		else {
+			throw new Error("Disroop Conan: No valid conan-settings.json file could be found!");
+		}
+	}
 }
 
+
+// this method is called when your extension is deactivated
 export function deactivate() {
 }
