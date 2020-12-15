@@ -21,7 +21,7 @@ const ALL = "[all]";
 
 export class CommandController {
 
-    private _state: AppState;
+    private _state!: AppState;
     private readonly executor: Executor = new Executor();
     private context: vscode.ExtensionContext;
 
