@@ -1,4 +1,4 @@
-import os
+import os, sys, traceback
 
 def run(cmd, assert_error=False):
     print("*********** Running: %s" % cmd)
@@ -9,5 +9,9 @@ def run(cmd, assert_error=False):
         raise Exception("Failed command: %s" % cmd)
 
 if __name__ == "__main__":
-    run('npm install')
-    run('vsce package')
+    try:
+        run('npm install')
+        run('vsce package')
+    except:
+        traceback.print_exc()
+        sys.exit(1)
