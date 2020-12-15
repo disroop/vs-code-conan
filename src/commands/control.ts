@@ -21,7 +21,7 @@ const ALL = "[all]";
 
 export class CommandController {
 
-    private _state!: AppState;
+    private _state: AppState;
     private readonly executor: Executor = new Executor();
     private context: vscode.ExtensionContext;
 
@@ -130,6 +130,7 @@ export class CommandController {
         const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
         myStatusBarItem.command = myCommandId;
         CommandController.updateProfile(this._state ,barItems, myStatusBarItem);
+
         this.context.subscriptions.push(command);
     }
 
@@ -137,7 +138,7 @@ export class CommandController {
         myStatusBarItem.text = state.activeProfile;
         myStatusBarItem.show();
         //TODO: Refactor this
-        if (state.config.isWorkspace(state.activeProfile)) {
+        if (isWorkspace(state.activeProfile)) {
             barItems.install.show();
             barItems.install.tooltip = "workspace install";
             barItems.build.hide();
@@ -148,6 +149,20 @@ export class CommandController {
             barItems.install.tooltip = "conan install";
             barItems.build.show();
             barItems.create.show();
+        }
+
+        function isWorkspace(activeProfile: string) {
+            let onlyHasWorkspaces : boolean = state.config.isWorkspace(activeProfile);
+            if(activeProfile === ALL){
+                state.profiles.forEach(profile => {
+                    if(!state.config.isWorkspace(profile))
+                    {
+                        return false;
+                    }
+                    onlyHasWorkspaces = true;
+                });
+            }
+            return onlyHasWorkspaces;
         }
     }
 }
