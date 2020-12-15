@@ -27,7 +27,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     function onConanSettingChanged() {
         console.log('onConanSettingChanged');
-        commandController.setState(loadConfig(rootPath));
+        if(rootPath) {
+            commandController.setState(loadConfig(rootPath));
+        }
     }
 
     if (rootPath) {
@@ -35,7 +37,6 @@ export function activate(context: vscode.ExtensionContext) {
             setupConanSettingsFileWatcher();
             let state = loadConfig(rootPath);
             commandController = new CommandController(context, state);
-            commandController.state = state;
             let installCommand = commandController.registerInstallCommand();
             let buildCommand = commandController.registerBuildCommand();
             let createCommand = commandController.registerCreateCommand();
