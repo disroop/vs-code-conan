@@ -26,14 +26,20 @@ export class CommandController {
     private context: vscode.ExtensionContext;
 
     constructor(context: vscode.ExtensionContext, state: AppState) {
-        this.setState(state);
+        this._state = this.updateState(state);
+        
         this.context = context;
         state.activeProfile = ALL;
     }
+    
+    private updateState(state: AppState):AppState{
+        let _state: AppState = state;
+        _state.profiles.push(ALL);
+        return _state;
+    }
 
     setState(state: AppState) {
-        this._state = state;
-        this._state.profiles.push(ALL);
+        this._state = this.updateState(state);
     }
 
     private install(profileToRun: any) {
