@@ -1,7 +1,7 @@
 import { Configurator } from '../configurator/configurator';
 import * as vscode from 'vscode';
 import { Executor } from '../executor/executor';
-import {StatusBarItem} from "vscode";
+import { StatusBarItem } from "vscode";
 
 
 export interface AppState {
@@ -27,12 +27,12 @@ export class CommandController {
 
     constructor(context: vscode.ExtensionContext, state: AppState) {
         this._state = this.updateState(state);
-        
+
         this.context = context;
         state.activeProfile = ALL;
     }
-    
-    private updateState(state: AppState):AppState{
+
+    private updateState(state: AppState): AppState {
         let _state: AppState = state;
         _state.profiles.push(ALL);
         return _state;
@@ -88,7 +88,8 @@ export class CommandController {
         let command = vscode.commands.registerCommand(buildCommand, () => {
             if (this._state.activeProfile === ALL) {
                 this._state.config.getAllNames().forEach(item => {
-                    if (!this._state.config.isWorkspace(item)) {this.build(item);}});
+                    if (!this._state.config.isWorkspace(item)) { this.build(item); }
+                });
             } else {
                 this.build(this._state.activeProfile);
             }
@@ -104,7 +105,8 @@ export class CommandController {
         let command = vscode.commands.registerCommand(createCommand, () => {
             if (this._state.activeProfile === ALL) {
                 this._state.config.getAllNames().forEach(item => {
-                    if (!this._state.config.isWorkspace(item)){this.create(item);}});
+                    if (!this._state.config.isWorkspace(item)) { this.create(item); }
+                });
             } else {
                 this.create(this._state.activeProfile);
             }
@@ -114,7 +116,7 @@ export class CommandController {
     }
 
 
-    registerProfilePick( barItems: StatusBarItems) {
+    registerProfilePick(barItems: StatusBarItems) {
         const myCommandId = 'vs-code-conan.profilePick';
 
         let command = vscode.commands.registerCommand(myCommandId, () => {
@@ -135,7 +137,7 @@ export class CommandController {
         // create a new status bar item that we can now manage
         const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
         myStatusBarItem.command = myCommandId;
-        CommandController.updateProfile(this._state ,barItems, myStatusBarItem);
+        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
 
         this.context.subscriptions.push(command);
     }
@@ -158,15 +160,15 @@ export class CommandController {
         }
 
         function isWorkspace(activeProfile: string) {
-            let onlyHasWorkspaces : boolean = state.config.isWorkspace(activeProfile);
-            if(activeProfile === ALL){
-                state.profiles.forEach(profile => {
-                    if(!state.config.isWorkspace(profile))
-                    {
-                        return false;
+            let onlyHasWorkspaces: boolean = state.config.isWorkspace(activeProfile);
+            if (activeProfile === ALL) {
+                onlyHasWorkspaces = true;
+                for (let i = 0; i < state.profiles.length; i++) {
+                    if (!state.config.isWorkspace(state.profiles[i])) {
+                        onlyHasWorkspaces = false;
+                        break;
                     }
-                    onlyHasWorkspaces = true;
-                });
+                }
             }
             return onlyHasWorkspaces;
         }
