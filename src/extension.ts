@@ -8,21 +8,21 @@ export function activate(context: vscode.ExtensionContext) {
     let commandController: CommandController;
     let barItems;
     const rootPath: string | undefined = vscode.workspace.rootPath;
+    const settingsFile: string = rootPath+'/.vscode/conan-settings.json';
 
     function setupConanSettingsFileWatcher() {
-        const uri = vscode.window.activeTextEditor!.document.uri;
-        let watcher = vscode.workspace.createFileSystemWatcher(
-            new vscode.RelativePattern(
-                vscode.workspace.getWorkspaceFolder(uri)!,
-                '.vscode/conan-settings.json'
-            ),
-            false,
-            false,
-            false
-        );
+        const folder = vscode.workspace.workspaceFolders?.[0];
+        if (folder) {
+            //Could not use new RelativePath solution
+            //https://github.com/disroop/vs-code-conan/issues/4#issuecomment-748337898
+            let watcher = vscode.workspace.createFileSystemWatcher(settingsFile);
+            watcher.onDidChange(onConanSettingChanged);
+            watcher.onDidCreate(onConanSettingChanged);
+            watcher.onDidDelete(onConanSettingChanged);
+        } else {
+            throw new Error("Unexpected error");
+        }
 
-        watcher.onDidChange(onConanSettingChanged);
-        watcher.onDidCreate(onConanSettingChanged);
     }
 
     function onConanSettingChanged() {
@@ -52,7 +52,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     function loadConfig(workspaceFolderPath: string) {
-        let settingsFile = workspaceFolderPath + '/.vscode/conan-settings.json';
         const fs = require('fs');
         if (fs.existsSync(settingsFile)) {
             let config = new Configurator(settingsFile);
