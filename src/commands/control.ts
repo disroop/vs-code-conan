@@ -164,7 +164,8 @@ export class CommandController {
             if (activeProfile === ALL) {
                 onlyHasWorkspaces = true;
                 for (let i = 0; i < state.profiles.length; i++) {
-                    if (!state.config.isWorkspace(state.profiles[i])) {
+                    let currentProfile = state.profiles[i];
+                    if (!state.config.isWorkspace(currentProfile) && currentProfile!==ALL) {
                         onlyHasWorkspaces = false;
                         break;
                     }
