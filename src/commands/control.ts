@@ -1,6 +1,7 @@
 import { Configurator } from '../configurator/configurator';
 import * as vscode from 'vscode';
 import { Executor } from '../executor/executor';
+import { Command } from '../executor/executor';
 import { StatusBarItem } from "vscode";
 
 
@@ -48,16 +49,18 @@ export class CommandController {
         let installArg = this._state.config.getInstallArg(profileToRun);
         let profile = this._state.config.getProfile(profileToRun);
         let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-        const commad = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this._state.rootPath}/${buildFolder}`;
-        this.executor.runCommand(commad, "installing");
+        const stringCommand = `${installCommand} ${conanfile} --profile=${profile} ${installArg} --install-folder ${this._state.rootPath}/${buildFolder}`;
+        let command = { executionCommand: stringCommand, description: "installing" };
+        this.executor.pushCommand(command);
     }
 
     private build(profileToBuild: any) {
         let conanfile = this._state.config.getConanFile(profileToBuild);
         let buildFolder = this._state.config.getBuildFolder(profileToBuild);
         let buildArg = this._state.config.getBuildArg(profileToBuild);
-        const commad = `conan build ${conanfile} ${buildArg} --build-folder ${this._state.rootPath}/${buildFolder}`;
-        this.executor.runCommand(commad, "building");
+        const stringCommand = `conan build ${conanfile} ${buildArg} --build-folder ${this._state.rootPath}/${buildFolder}`;
+        let command = { executionCommand: stringCommand, description: "building" };
+        this.executor.pushCommand(command);
     }
 
     private create(profileToCreate: any) {
@@ -66,17 +69,22 @@ export class CommandController {
         let createUser = this._state.config.getCreateUser(profileToCreate);
         let createChannel = this._state.config.getCreateChannel(profileToCreate);
         let createArg = this._state.config.getCreateArg(profileToCreate);
-        const commad = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
-        this.executor.runCommand(commad, "creating a package");
+        const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} --profile=${profile}`;
+        let command = { executionCommand: stringCommand, description: "creating a package" };
+        this.executor.pushCommand(command);
     }
 
     registerInstallCommand() {
         const installCommand = 'vs-code-conan.install';
         let command = vscode.commands.registerCommand(installCommand, () => {
-            if (this._state.activeProfile === ALL) {
-                this._state.config.getAllNames().forEach(item => this.install(item));
+            if (!this.executor.processIsStillRunning()) {
+                if (this._state.activeProfile === ALL) {
+                    this._state.config.getAllNames().forEach(item => this.install(item));
+                } else {
+                    this.install(this._state.activeProfile);
+                }
             } else {
-                this.install(this._state.activeProfile);
+                vscode.window.showWarningMessage("Process is already running - Install will not be processed!");
             }
         });
         this.context.subscriptions.push(command);
@@ -86,14 +94,17 @@ export class CommandController {
     registerBuildCommand(): string {
         const buildCommand = 'vs-code-conan.build';
         let command = vscode.commands.registerCommand(buildCommand, () => {
-            if (this._state.activeProfile === ALL) {
-                this._state.config.getAllNames().forEach(item => {
-                    if (!this._state.config.isWorkspace(item)) { this.build(item); }
-                });
+            if (!this.executor.processIsStillRunning()) {
+                if (this._state.activeProfile === ALL) {
+                    this._state.config.getAllNames().forEach(item => {
+                        if (!this._state.config.isWorkspace(item)) { this.build(item); }
+                    });
+                } else {
+                    this.build(this._state.activeProfile);
+                }
             } else {
-                this.build(this._state.activeProfile);
+                vscode.window.showWarningMessage("Process is already running - Build will not be processed!");
             }
-
         });
         this.context.subscriptions.push(command);
         return buildCommand;
@@ -103,12 +114,16 @@ export class CommandController {
         const createCommand = 'vs-code-conan.create';
 
         let command = vscode.commands.registerCommand(createCommand, () => {
-            if (this._state.activeProfile === ALL) {
-                this._state.config.getAllNames().forEach(item => {
-                    if (!this._state.config.isWorkspace(item)) { this.create(item); }
-                });
+            if (!this.executor.processIsStillRunning()) {
+                if (this._state.activeProfile === ALL) {
+                    this._state.config.getAllNames().forEach(item => {
+                        if (!this._state.config.isWorkspace(item)) { this.create(item); }
+                    });
+                } else {
+                    this.create(this._state.activeProfile);
+                }
             } else {
-                this.create(this._state.activeProfile);
+                vscode.window.showWarningMessage("Process is already running - Create will not be processed!");
             }
         });
         this.context.subscriptions.push(command);
@@ -165,7 +180,7 @@ export class CommandController {
                 onlyHasWorkspaces = true;
                 for (let i = 0; i < state.profiles.length; i++) {
                     let currentProfile = state.profiles[i];
-                    if (!state.config.isWorkspace(currentProfile) && currentProfile!==ALL) {
+                    if (!state.config.isWorkspace(currentProfile) && currentProfile !== ALL) {
                         onlyHasWorkspaces = false;
                         break;
                     }
