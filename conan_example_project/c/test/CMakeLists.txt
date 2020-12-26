@@ -1,0 +1,5 @@
+include(GoogleTest)
+add_executable(cTest c_test.cpp)
+target_link_libraries(cTest PUBLIC c CONAN_PKG::gtest)
+target_include_directories(cTest PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+gtest_discover_tests(cTest TEST_PREFIX new:)

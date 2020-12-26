@@ -1,0 +1,5 @@
+include(GoogleTest)
+add_executable(bTest b_test.cpp)
+target_link_libraries(bTest PUBLIC b)
+target_include_directories(bTest PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+gtest_discover_tests(bTest TEST_PREFIX new:)
