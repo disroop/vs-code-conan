@@ -2,5 +2,5 @@ cmake_minimum_required(VERSION 3.17)
 
 project(WorkspaceProject)
 
-include(${CMAKE_BINARY_DIR}/conanworkspace.cmake)
+include(conanworkspace.cmake)
 conan_workspace_subdirectories()

@@ -1,4 +1,7 @@
 import os
+import os.path
+from os import path
+from sys import platform
 
 conan_file_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -9,73 +12,99 @@ def run(cmd):
         raise Exception('System command \"' + cmd + '\" failed')
 
 
-# class Dmtp(object):
-#
-#     def __init__(self, recepies, profiles):
-#         self.recepies = recepies
-#         self.profiles = profiles
-#         self.conan_file_path = os.path.dirname(os.path.realpath(__file__))
-#
-#     def genTrees(self):
-#         # run(f'conan info --profile=default_debug --build=missing {conan_file_path}/{n} {version}@disroop/{channel}')
-#         run(f'conan info ./a -j -g ./a-tree.dot -j ./build/.dmpt/a-tree.json')
-#         run(f'conan info ./b -j -g ./b-tree.dot -j ./build/.dmpt/b-tree.json')
-#         run(f'conan info ./c -j -g ./c-tree.dot -j ./build/.dmpt/c-tree.json')
-#
-#     # def genWorkspace(self):
-#     #     for recepy in self.recepies:
-#
-#     def treeCreate(self):
-#         pass
-#
-#     def clean(self):
-#         shutil.rmtree(f'{conan_file_path}/build', ignore_errors=True)
+def localDev(version, user, channel, profile):
+    localdev("a", user, channel, profile, version)
+    localdev("b", user, channel, profile, version)
+    localdev("c", user, channel, profile, version)
 
 
-def conan_create_packages(version, channel):
-    # recepies= "./a/conanfile.py", "./b/conanfile.py", "./c/conanfile.py"
-    # profiles="default_debug", "default"
-    # dmpt =Dmtp(recepies, profiles)
-    # dmpt.clean()
-    # dmpt.genTrees()
-    # dmpt.genWorkspace()# generate a workspace including all dmtpRecepies
-    # dmpt.treeCreate()#"ci build" which run conan create for all recepies in the required order
-    # # localdev("a","default_debug")
-    # # localdev("c","default_debug")
+def workspace(profile):
+    run(f'conan workspace install ./.workspace/ws-linux.yml --profile={profile}')
 
 
-    # localdev("a", channel, "default_debug")
-    # localdev("b", channel, "default_debug")
-    localdev("c", channel, "default_debug")
-
-    # run(f'conan create --profile=default_debug --build=missing {conan_file_path}/a {version}@disroop/{channel}')
-    # run(f'conan create --profile=default_debug --build=missing {conan_file_path}/b {version}@disroop/{channel}')
-    # run(f'conan create --profile=default_debug --build=missing {conan_file_path}/c {version}@disroop/{channel}')
-    # run(f'$ conan workspace install ../conanws_gcc.yml --profile=default_debug')
+def create(version, user, channel, profile):
+    run(f'conan create --profile={profile} --build=missing {conan_file_path}/a {version}@{user}/{channel}')
+}    run(f'conan create --profile={profile} --build=missing {conan_file_path}/b {version}@{user}/{channel}')
+    run(f'conan create --profile={profile} --build=missing {conan_file_path}/c {version}@{user}/{channel}')
+    # todo delegate this work to https://github.com/conan-io/conan-package-tools
 
 
-def create(channel, version, n):
-    run(f'conan create --profile=default_debug --build=missing {conan_file_path}/{n} {version}@disroop/{channel}')
+def localdev(fodlerName, user, channel, profile, version):
+    x = f"demo{fodlerName}/{version}@{user}/{channel}"
+    run(f'conan source     ./{fodlerName}         --source-folder=build/{fodlerName}/source')
+    run(
+        f'conan install    ./{fodlerName}                                                     --install-folder=build/{fodlerName}   --profile={profile}')
+    run(
+        f'conan build      ./{fodlerName}         --source-folder=build/{fodlerName}/source   --install-folder=build/{fodlerName}                           --build-folder=build/{fodlerName}')
+    run(
+        f'conan package    ./{fodlerName}         --source-folder=build/{fodlerName}/source   --install-folder=build/{fodlerName}                           --build-folder=build/{fodlerName} --package-folder=build/{fodlerName}/package')
+    run(
+        f'conan export-pkg ./{fodlerName}  {x}    --source-folder=build/{fodlerName}/source                                                                 --build-folder=build/{fodlerName} --profile={profile} --force')  # fails with --package-folder=build/{n}/package why?if
 
-
-# @format:off
-def localdev(n, channel, profile):
-    run(f'conan source     ./{n}              --source-folder=build/{n}/source')
-    run(f'conan install    ./{n}                                                 --install-folder=build/{n}   --profile={profile}')
-    run(f'conan build      ./{n}              --source-folder=build/{n}/source   --install-folder=build/{n}                           --build-folder=build/{n}')
-    run(f'conan package    ./{n}              --source-folder=build/{n}/source   --install-folder=build/{n}                           --build-folder=build/{n} --package-folder=build/{n}/package')
-    run(f'conan export-pkg ./{n}  demo{n}/{project_version}@{user}/{channel}    --source-folder=build/{n}/source                                                        --build-folder=build/{n}  --profile=default_debug --force')  # fails with --package-folder=build/{n}/package why?
-    # $ conan export-pkg . hello/0.1@user/stable -s os=Windows -s arch=x86 -s build_type=Release --package-folder=Release_x86
-
-    # run(f'conan test       test_package hello/1.1@user/channel')
+    if path.exists("./{n}/test_package"):
+        # conan new mypackage/1.0@myuser/stable -t -s
+        run(f'conan test test_package {x}')
 
 
 # @format:on
 
 
+def get_profile():
+    if platform == "linux" or platform == "linux2":
+        return f"{conan_file_path}/.infrastructure/conan_config/profiles/clang-linux-debug"
+    elif platform == "darwin":
+        return f"{conan_file_path}/.infrastructure/conan_config/profiles/clang-apple-debug"
+    elif platform == "win32":
+        raise Exception('win32 is no supported yet')
+
+
+def get_graph(recipes):
+    # see dagTest.py
+    pass
+
+
+def get_roots(graph):
+    pass
+
+
 if __name__ == "__main__":
     channel = "development"
     user = "disroop"
-    project_version = "0.1"
-    os.environ["PROJECT_VERSION"] = project_version
-    conan_create_packages(project_version, channel)
+    version = "0.1"
+    profile = get_profile()
+
+    run("conan export ./Base disroopbase/0.1@disroop/development")
+    create(version, user, channel, profile)
+    # localDev(version, user, channel, profile)
+    # workspace(profile)
+
+    recipes = "./a/conanfile.py", "./b/conanfile.py", "./c/conanfile.py"
+    # profiles = "default_debug", "default"
+    # dmpt = Dmtp(recipes, profiles, user, channel, version)
+    # dmpt.clean()
+    #
+    # # localdev per recepies
+    # local_dev: list[LocalDev] = dmpt.local_dev()
+    # for l in local_dev:
+    #     l.source()
+    #     l.install()
+    #     l.build()
+    #     l.package()
+    #     l.exportPkg()
+    #
+    # # workspace
+    # ws: Workspace = dmpt.workspace()
+    # ws.gen().install()
+    # # ws.checkDependencyConvergence()
+
+    #     def genTrees(self):
+    #         # run(f'conan info --profile=default_debug --build=missing {conan_file_path}/{n} {version}@disroop/{channel}')
+    #         run(f'conan info ./a -j -g ./a-tree.dot -j ./build/.dmpt/a-tree.json')
+    #         run(f'conan info ./b -j -g ./b-tree.dot -j ./build/.dmpt/b-tree.json')
+    #         run(f'conan info ./c -j -g ./c-tree.dot -j ./build/.dmpt/c-tree.json')
+
+    # dmpt.genTrees()
+    # dmpt.genWorkspace()# generate a workspace including all dmtpRecepies
+    # l.# dmpt.treeCreate()#"ci build" which run conan create for all recepies in theorder()
+    # # localdev("a","default_debug")
+    # # localdev("c","default_debug")

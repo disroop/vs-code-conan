@@ -1,0 +1,20 @@
+cc_compiler=clang
+cxx_compiler=clang++
+
+[settings]
+compiler=clang
+compiler.version=10
+compiler.libcxx=libstdc++11
+arch=x86_64
+os=Linux
+build_type=Debug
+
+[env]
+CC                      = $cc_compiler
+CXX                     = $cxx_compiler
+CONAN_C_COMPILER        = $cc_compiler
+CONAN_CXX_COMPILER      = $cxx_compiler
+CONAN_CMAKE_SYSTEM_NAME = "Linux"
+DISROOP_TOOL_FORMATTER  = clang-format
+DISROOP_TOOL_COVERAGE   = llvm-cov
+DISROOP_TOOL_PROFDATA   = llvm-profdata

@@ -1,0 +1,14 @@
+[build_folder]
+../build/ws-{{reference.name}}/{{settings.build_type}}/{{settings.os}}
+
+[includedirs]
+src
+
+[source_folder]
+
+
+[libdirs]
+../build/ws-{{reference.name}}/{{settings.build_type}}/{{settings.os}}/lib
+
+[bindirs]
+../build/ws-{{reference.name}}/{{settings.build_type}}/{{settings.os}}/bin
