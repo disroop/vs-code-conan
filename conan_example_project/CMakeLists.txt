@@ -4,3 +4,4 @@ project(WorkspaceProject)
 
 include(conanworkspace.cmake)
 conan_workspace_subdirectories()
+enable_testing()

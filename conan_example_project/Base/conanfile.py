@@ -1,4 +1,5 @@
 from conans import ConanFile, CMake
+from conans import tools
 
 
 class Base(object):
@@ -24,6 +25,7 @@ class Base(object):
 
     def package_info(self):
         self.output.info("My cool package_info!")
+        self.cpp_info.libs = tools.collect_libs(self)
 
     def requirements(self):
         self.output.info("My cool requirements!")
