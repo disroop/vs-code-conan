@@ -5,14 +5,6 @@ from conans import tools
 
 class AConan(ConanFile):
     name = "demoa"
-
-
-    # def set_version(self):
-    #     self.version =
-    # version = "0.1"
-    # settings = "os", "compiler", "build_type", "arch"
-    # generators = "cmake"
-    # exports_sources = "src/*", "CMakeLists.txt", "test/*"
     python_requires = "disroopbase/0.1@disroop/development"
     python_requires_extend = "disroopbase.Base"
     #

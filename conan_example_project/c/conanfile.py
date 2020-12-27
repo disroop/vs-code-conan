@@ -1,4 +1,3 @@
-
 from conans import ConanFile, CMake, tools
 
 
@@ -8,7 +7,7 @@ class CConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     exports_sources = "src/*", "CMakeLists.txt", "test/*"
-    requires = "gtest/1.10.0","demob/0.1@disroop/development"
+    requires = "gtest/1.10.0", "demob/0.1@disroop/development"
 
     def build(self):
         cmake = CMake(self)

@@ -24,7 +24,7 @@ def workspace(profile):
 
 def create(version, user, channel, profile):
     run(f'conan create --profile={profile} --build=missing {conan_file_path}/a {version}@{user}/{channel}')
-}    run(f'conan create --profile={profile} --build=missing {conan_file_path}/b {version}@{user}/{channel}')
+    run(f'conan create --profile={profile} --build=missing {conan_file_path}/b {version}@{user}/{channel}')
     run(f'conan create --profile={profile} --build=missing {conan_file_path}/c {version}@{user}/{channel}')
     # todo delegate this work to https://github.com/conan-io/conan-package-tools
 
