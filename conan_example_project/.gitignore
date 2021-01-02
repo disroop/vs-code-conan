@@ -1,4 +1,4 @@
-.idea
+.idea/
 build*/
-cmake-*
-test_package/build
+cmake-*/
+test_package/build/
