@@ -19,7 +19,7 @@ def localDev(version, user, channel, profile):
 
 
 def workspace(profile):
-    run(f'conan workspace install ./.workspace/ws-linux.yml --profile={profile}')
+    run(f'conan workspace install ./.infrastructure/workspace/ws-linux.yml --profile={profile} --install-folder=build')
 
 
 def create(version, user, channel, profile):
@@ -58,15 +58,6 @@ def get_profile():
         raise Exception('win32 is no supported yet')
 
 
-def get_graph(recipes):
-    # see dagTest.py
-    pass
-
-
-def get_roots(graph):
-    pass
-
-
 if __name__ == "__main__":
     channel = "development"
     user = "disroop"
@@ -75,36 +66,5 @@ if __name__ == "__main__":
 
     run("conan export ./Base disroopbase/0.1@disroop/development")
     create(version, user, channel, profile)
-    # localDev(version, user, channel, profile)
-    # workspace(profile)
-
-    recipes = "./a/conanfile.py", "./b/conanfile.py", "./c/conanfile.py"
-    # profiles = "default_debug", "default"
-    # dmpt = Dmtp(recipes, profiles, user, channel, version)
-    # dmpt.clean()
-    #
-    # # localdev per recepies
-    # local_dev: list[LocalDev] = dmpt.local_dev()
-    # for l in local_dev:
-    #     l.source()
-    #     l.install()
-    #     l.build()
-    #     l.package()
-    #     l.exportPkg()
-    #
-    # # workspace
-    # ws: Workspace = dmpt.workspace()
-    # ws.gen().install()
-    # # ws.checkDependencyConvergence()
-
-    #     def genTrees(self):
-    #         # run(f'conan info --profile=default_debug --build=missing {conan_file_path}/{n} {version}@disroop/{channel}')
-    #         run(f'conan info ./a -j -g ./a-tree.dot -j ./build/.dmpt/a-tree.json')
-    #         run(f'conan info ./b -j -g ./b-tree.dot -j ./build/.dmpt/b-tree.json')
-    #         run(f'conan info ./c -j -g ./c-tree.dot -j ./build/.dmpt/c-tree.json')
-
-    # dmpt.genTrees()
-    # dmpt.genWorkspace()# generate a workspace including all dmtpRecepies
-    # l.# dmpt.treeCreate()#"ci build" which run conan create for all recepies in theorder()
-    # # localdev("a","default_debug")
-    # # localdev("c","default_debug")
+    localDev(version, user, channel, profile)
+    workspace(profile)
