@@ -141,7 +141,7 @@ export class CommandController {
                 onDidSelectItem: item => {
                     if (item) {
                         this._state.activeProfile = item.toString();
-                        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
+                        CommandController.updateProfile(this._state, barItems, activeProfileStatusBarItem);
                     }
                 }
             };
@@ -150,16 +150,16 @@ export class CommandController {
         this.context.subscriptions.push(command);
 
         // create a new status bar item that we can now manage
-        const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
-        myStatusBarItem.command = myCommandId;
-        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
+        const activeProfileStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+        activeProfileStatusBarItem.command = myCommandId;
+        CommandController.updateProfile(this._state, barItems, activeProfileStatusBarItem);
 
         this.context.subscriptions.push(command);
     }
 
-    private static updateProfile(state: AppState, barItems: StatusBarItems, myStatusBarItem: StatusBarItem) {
-        myStatusBarItem.text = state.activeProfile;
-        myStatusBarItem.show();
+    private static updateProfile(state: AppState, barItems: StatusBarItems, activeProfileStatusBarItem: StatusBarItem) {
+        activeProfileStatusBarItem.text = state.activeProfile;
+        activeProfileStatusBarItem.show();
         //TODO: Refactor this
         if (isWorkspace(state.activeProfile)) {
             barItems.install.show();
