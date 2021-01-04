@@ -1,0 +1,6 @@
+[
+  {
+    "name": "ws-debug",
+    "environmentSetupScript": "/workspace/build/ws-blinky/Debug/NRF52_DK/activate.sh"
+  }
+]
