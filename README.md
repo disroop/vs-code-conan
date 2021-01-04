@@ -83,6 +83,9 @@ For example:
 ```
 
 ## Release Notes
+### 0.5.1
+- Fix information dialog view count of builds
+
 ### 0.5.0
 - Add Filewatcher for Linux
 - Add All functionality to Build all Profile/Workspaces at once
