@@ -1,0 +1,12 @@
+editables:
+    demoa/0.1@disroop/development:
+        path: ../../a
+    demob/0.1@disroop/development:
+        path: ../../b
+    democ/0.1@disroop/development:
+        path: ../../c
+
+layout: layout_linux
+workspace_generator: cmake
+root: 
+    - democ/0.1@disroop/development

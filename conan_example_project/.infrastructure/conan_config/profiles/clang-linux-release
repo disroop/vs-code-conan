@@ -1,0 +1,3 @@
+include(clang-linux-debug)
+[settings]
+build_type=Release

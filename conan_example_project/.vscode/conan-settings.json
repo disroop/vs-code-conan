@@ -1,0 +1,42 @@
+{
+    "profiles": [
+        { 
+            "name":"a", 
+            "conanFile":"${workspaceFolder}/a/conanfile.py",
+            "profile":"${workspaceFolder}/.infrastructure/conan_config/profiles/clang-apple-debug",
+            "installArg": "--build=missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg": "--build=missing" 
+        },
+        {
+            "name":"b",
+            "conanFile":"${workspaceFolder}/b/conanfile.py",
+            "profile":"${workspaceFolder}/.infrastructure/conan_config/profiles/clang-apple-debug",
+            "installArg": "--build=missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg": "--build=missing"
+        },
+        {
+            "name":"c",
+            "conanFile":"${workspaceFolder}/c/conanfile.py",
+            "profile":"${workspaceFolder}/.infrastructure/conan_config/profiles/clang-apple-debug",
+            "installArg": "--build=missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg": "--build=missing"
+        }
+    ],
+    "workspace":[
+        {
+            "name":"ws-debug",
+            "conanWs": "${workspaceFolder}/.infrastructure/workspace/ws-linux.yml",
+            "profile":"${workspaceFolder}/.infrastructure/conan_config/profiles/clang-apple-debug",
+            "arg": "--build=missing"
+        }
+    ]
+}
