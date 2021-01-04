@@ -76,7 +76,7 @@ export class Executor {
         let descriptionAddition = "";
         if(queueLength > 0){
             if(queueLength>1){
-                descriptionAddition = " (${queueLength-1} to go)";
+                descriptionAddition = " ("+String(queueLength-1)+" to go)";
             }
             let command = this.queue.dequeue();
             command.description = command.description + descriptionAddition;
