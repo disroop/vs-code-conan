@@ -9,6 +9,8 @@ export class SettingsParser {
             name: string;
             conanFile: string;
             profile: string;
+            profileBuild: string;
+            profileHost: string;
             installArg: string;
             buildArg: string;
             createArg: string;
@@ -27,6 +29,7 @@ export class SettingsParser {
                             profileJson.name,
                             profileJson.conanFile,
                             profileJson.profile,
+                            
                             profileJson.installArg,
                             profileJson.buildArg,
                             profileJson.createArg,
@@ -51,6 +54,8 @@ export class SettingsParser {
             name: string;
             conanWs: string;
             profile: string;
+            profileBuild: string;
+            profileHost: string;
             arg: string;
         }
 
@@ -64,6 +69,8 @@ export class SettingsParser {
                         let workspace = new Workspace(workspaceJson.name,
                             workspaceJson.conanWs,
                             workspaceJson.profile,
+                            workspaceJson.profileBuild,
+                            workspaceJson.profileHost,
                             workspaceJson.arg);
                         workspaces.set(workspaceJson.name, workspace);
                     } else {

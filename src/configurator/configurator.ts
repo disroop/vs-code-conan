@@ -1,6 +1,12 @@
+/* eslint-disable eqeqeq */
 import {SettingsParser} from "./settings-parser";
 import {Profile} from "./profile";
 import {Workspace} from "./workspace";
+
+interface ProfileExtended {
+    build : string | undefined;
+    host : string | undefined;
+}
 
 export class Configurator {
     private readonly file: string;
@@ -42,14 +48,40 @@ export class Configurator {
         return new Set(names).size !== names.length;
     }
 
-    getProfile(name: string): string {
-        let profile = this.isWorkspace(name)
-            ? this.workspaces.get(name)?.getProfile()
-            : this.profiles.get(name)?.getProfile();
-        if (!profile) {
-            throw new Error("No Profile found");
+    getProfile(name: string): string | ProfileExtended {
+        let { profile, retVal } = this.getActiveProfile(name);
+        if(profile == undefined) {
+            return retVal;
         }
-        return profile;
+        else{
+            if(retVal.build == undefined && retVal.host == undefined) {
+                throw new Error("A profile has to be set for this configuration!");
+            }
+            return profile;
+        }
+    }
+
+    private getActiveProfile(name: string) {
+        let profile : string | undefined;
+        let retVal : ProfileExtended;
+        if (this.isWorkspace(name)) {
+            let ws = this.workspaces.get(name);
+            if (ws == undefined) {
+                throw new Error("Workspace not found");
+            }
+            profile = ws.getProfile();
+            retVal = { build: ws.getProfileBuild(), host: ws.getProfileHost() };
+
+        }
+        else {
+            let pr = this.profiles.get(name);
+            if (pr == undefined) {
+                throw new Error("Profile not found");
+            }
+            profile = pr.getProfile();
+            retVal = { build: pr.getProfileBuild(), host: pr.getProfileHost() };
+        }
+        return { profile, retVal };
     }
 
     isWorkspace(name: string): boolean {
