@@ -44,6 +44,17 @@ For example:
             "name":"linux",
             "conanFile": "${workspaceFolder}/conanfile.py",
             "profile":"clang-linux-debug",
+            "installArg": "--build missing -if install",
+            "buildArg":"-bf install",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
+        },
+        {
+            "name":"linux-2",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profileBuild":"clang-linux-release",
+            "profileHost":"clang-linux-debug",
             "installArg": "--build missing",
             "buildArg":"",
             "createUser": "disroop",
@@ -77,12 +88,23 @@ For example:
             "conanWs": "${workspaceFolder}/conan-ws",
             "profile":"arm-cortex-m4-release",
             "arg": "--build missing"
+        },
+        {
+            "name":"ws-arm-2",
+            "conanWs": "${workspaceFolder}/conan-ws",
+            "profileBuild":"clang-linux-debug",
+            "profileHost":"arm-cortex-m4-release",
+            "arg": "--build missing"
         }
     ]
 }
 ```
 
 ## Release Notes
+### 0.6.0
+- Add Profile Build and Profile Host functionality
+- Default install and build folder can be overwritten in InstallArg and BuildArg
+
 ### 0.5.1
 - Fix information dialog view count of builds
 
