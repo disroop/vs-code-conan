@@ -1,8 +1,7 @@
-import { Configurator } from '../configurator/configurator';
+import {Configurator} from '../configurator/configurator';
 import * as vscode from 'vscode';
-import { Executor } from '../executor/executor';
-import { Command } from '../executor/executor';
-import { StatusBarItem } from "vscode";
+import {StatusBarItem} from 'vscode';
+import {Executor} from '../executor/executor';
 
 
 export interface AppState {
@@ -178,7 +177,7 @@ export class CommandController {
                 onDidSelectItem: item => {
                     if (item) {
                         this._state.activeProfile = item.toString();
-                        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
+                        CommandController.updateProfile(this._state, barItems, activeProfileStatusBarItem);
                     }
                 }
             };
@@ -187,26 +186,31 @@ export class CommandController {
         this.context.subscriptions.push(command);
 
         // create a new status bar item that we can now manage
-        const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
-        myStatusBarItem.command = myCommandId;
-        CommandController.updateProfile(this._state, barItems, myStatusBarItem);
+        const activeProfileStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+        activeProfileStatusBarItem.command = myCommandId;
+        activeProfileStatusBarItem.tooltip = "Set the active conan setting";
+        CommandController.updateProfile(this._state, barItems, activeProfileStatusBarItem);
 
         this.context.subscriptions.push(command);
     }
 
-    private static updateProfile(state: AppState, barItems: StatusBarItems, myStatusBarItem: StatusBarItem) {
-        myStatusBarItem.text = state.activeProfile;
-        myStatusBarItem.show();
+    private static updateProfile(state: AppState, barItems: StatusBarItems, activeProfileStatusBarItem: StatusBarItem) {
+        activeProfileStatusBarItem.text = state.activeProfile;
+        activeProfileStatusBarItem.show();
         //TODO: Refactor this
         if (isWorkspace(state.activeProfile)) {
             barItems.install.show();
-            barItems.install.tooltip = "workspace install";
+            barItems.install.tooltip = "Run conan workspace install";
             barItems.build.hide();
             barItems.create.hide();
         }
         else {
             barItems.install.show();
-            barItems.install.tooltip = "conan install";
+            if (state.activeProfile === ALL) {
+                barItems.install.tooltip = "Run conan install / conan workspace install";
+            }else{
+                barItems.install.tooltip = "Run conan install";
+            }
             barItems.build.show();
             barItems.create.show();
         }
