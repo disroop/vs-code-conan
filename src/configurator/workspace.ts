@@ -19,10 +19,10 @@ export class Workspace {
             this.profile = profile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         }
         if(profileHost.length > 0){
-            this.profileHost = profileBuild.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+            this.profileHost = profileHost.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         }
         if(profileBuild.length > 0){
-            this.profileBuild = profileHost.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+            this.profileBuild = profileBuild.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         }
         this.arg = arg;
         this.buildFolder = "build/" + name;
