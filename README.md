@@ -101,6 +101,10 @@ For example:
 ```
 
 ## Release Notes
+
+### 0.6.1
+- Fix Bugs Profile-Build/Profile-Host
+
 ### 0.6.0
 - Add Profile Build and Profile Host functionality
 - Default install and build folder can be overwritten in InstallArg and BuildArg
