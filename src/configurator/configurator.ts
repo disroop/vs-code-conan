@@ -1,11 +1,11 @@
 /* eslint-disable eqeqeq */
-import {SettingsParser} from "./settings-parser";
-import {Profile} from "./profile";
-import {Workspace} from "./workspace";
+import { SettingsParser } from "./settings-parser";
+import { Profile } from "./profile";
+import { Workspace } from "./workspace";
 
 interface ProfileExtended {
-    build : string | undefined;
-    host : string | undefined;
+    build: string | undefined;
+    host: string | undefined;
 }
 
 export class Configurator {
@@ -50,20 +50,18 @@ export class Configurator {
 
     getProfile(name: string): string | ProfileExtended {
         let { profile, retVal } = this.getActiveProfile(name);
-        if(profile == undefined) {
-            return retVal;
-        }
-        else{
-            if(retVal.build == undefined && retVal.host == undefined) {
-                throw new Error("A profile has to be set for this configuration!");
-            }
+        if (profile != undefined) {
             return profile;
         }
+        if (retVal.build == undefined && retVal.host == undefined) {
+            throw new Error("A profile has to be set for this configuration!");
+        }
+        return retVal;
     }
 
     private getActiveProfile(name: string) {
-        let profile : string | undefined;
-        let retVal : ProfileExtended;
+        let profile: string | undefined;
+        let retVal: ProfileExtended;
         if (this.isWorkspace(name)) {
             let ws = this.workspaces.get(name);
             if (ws == undefined) {
@@ -110,8 +108,7 @@ export class Configurator {
 
     getBuildArg(name: string): string {
         let buildArg = this.profiles.get(name)?.getBuildArguments();
-        if(!buildArg)
-        {
+        if (!buildArg) {
             buildArg = "";
         }
         return buildArg;
@@ -119,8 +116,8 @@ export class Configurator {
 
     getCreateArg(name: string): string {
         let createArg = this.profiles.get(name)?.getCreateArguments();
-        if(!createArg){
-             createArg = "";
+        if (!createArg) {
+            createArg = "";
         }
         return createArg;
     }
