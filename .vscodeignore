@@ -8,3 +8,4 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+conan_example_project
