@@ -44,18 +44,22 @@ export class CommandController {
     }
 
     private install(profileToRun: any) {
-        let conanfile = this._state.config.getConanFile(profileToRun);
-        let buildFolder = this._state.config.getBuildFolder(profileToRun);
-        let installArg = this._state.config.getInstallArg(profileToRun);
-        let profileCommand = this.getProfileCommand(profileToRun);
-        let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-        const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} --install-folder ${this._state.rootPath}/${buildFolder}`;
-        let command = { executionCommand: stringCommand, description: "installing" };
-        this.executor.pushCommand(command);
+        try {
+            let conanfile = this._state.config.getConanFile(profileToRun);
+            let buildFolder = this._state.config.getBuildFolder(profileToRun);
+            let installArg = this._state.config.getInstallArg(profileToRun);
+            let profileCommand = this.getProfileCommand(profileToRun);
+            let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
+            const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} --install-folder ${this._state.rootPath}/${buildFolder}`;
+            let command = { executionCommand: stringCommand, description: "installing" };
+            this.executor.pushCommand(command);
+        } catch (err) {
+            vscode.window.showErrorMessage("Install process canceled: " + err);
+        }
     }
 
     private getProfileCommand(profileToRun: any) {
-        let profileCommand : string = " ";
+        let profileCommand: string = " ";
         let profile = this._state.config.getProfile(profileToRun);
         if (typeof profile === "string") {
             profileCommand = "--profile=" + profile;
@@ -72,23 +76,31 @@ export class CommandController {
     }
 
     private build(profileToBuild: any) {
-        let conanfile = this._state.config.getConanFile(profileToBuild);
-        let buildFolder = this._state.config.getBuildFolder(profileToBuild);
-        let buildArg = this._state.config.getBuildArg(profileToBuild);
-        const stringCommand = `conan build ${conanfile} ${buildArg} --build-folder ${this._state.rootPath}/${buildFolder}`;
-        let command = { executionCommand: stringCommand, description: "building" };
-        this.executor.pushCommand(command);
+        try {
+            let conanfile = this._state.config.getConanFile(profileToBuild);
+            let buildFolder = this._state.config.getBuildFolder(profileToBuild);
+            let buildArg = this._state.config.getBuildArg(profileToBuild);
+            const stringCommand = `conan build ${conanfile} ${buildArg} --build-folder ${this._state.rootPath}/${buildFolder}`;
+            let command = { executionCommand: stringCommand, description: "building" };
+            this.executor.pushCommand(command);
+        } catch (err) {
+            vscode.window.showErrorMessage("Create process canceled: " + err);
+        }
     }
 
     private create(profileToCreate: any) {
-        let conanfile = this._state.config.getConanFile(profileToCreate);
-        let profileCommand = this.getProfileCommand(profileToCreate);
-        let createUser = this._state.config.getCreateUser(profileToCreate);
-        let createChannel = this._state.config.getCreateChannel(profileToCreate);
-        let createArg = this._state.config.getCreateArg(profileToCreate);
-        const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
-        let command = { executionCommand: stringCommand, description: "creating a package" };
-        this.executor.pushCommand(command);
+        try {
+            let conanfile = this._state.config.getConanFile(profileToCreate);
+            let profileCommand = this.getProfileCommand(profileToCreate);
+            let createUser = this._state.config.getCreateUser(profileToCreate);
+            let createChannel = this._state.config.getCreateChannel(profileToCreate);
+            let createArg = this._state.config.getCreateArg(profileToCreate);
+            const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
+            let command = { executionCommand: stringCommand, description: "creating a package" };
+            this.executor.pushCommand(command);
+        } catch (err) {
+            vscode.window.showErrorMessage("Create process canceled: " + err);
+        }
     }
 
     registerInstallCommand() {
