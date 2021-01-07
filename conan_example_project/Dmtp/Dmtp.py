@@ -235,7 +235,7 @@ class Workspace(object):
         return self
 
     def install(self):
-        run(f'conan workspace install {self.wsFileAbs} -pr={self.profile} -if=build')
+        run(f'conan workspace install {self.wsFileAbs} -pr={self.profile} -if=build --build=missing')
         return self
 
     def generate_workspace_file(self, recipes, layoutfilePath):

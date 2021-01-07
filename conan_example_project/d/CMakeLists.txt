@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-project(C)
+project(D)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 99)
@@ -10,5 +10,5 @@ conan_basic_setup(TARGETS)
 
 add_subdirectory(src)
 
-#enable_testing()
-#add_subdirectory(test)
+enable_testing()
+add_subdirectory(test)

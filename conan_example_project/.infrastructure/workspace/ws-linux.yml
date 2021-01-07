@@ -5,8 +5,10 @@ editables:
         path: ../../b
     democ/0.1@disroop/development:
         path: ../../c
+    demod/0.1@disroop/development:
+        path: ../../d
 
 layout: layout_linux
 workspace_generator: cmake
 root: 
-    - democ/0.1@disroop/development
+    - demod/0.1@disroop/development
