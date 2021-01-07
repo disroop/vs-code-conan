@@ -9,6 +9,5 @@ TEST(CalculatorTest, shouldAddTwoNumbers) {
   EXPECT_EQ(3, sum);
 }
 
-TEST(ATest, test1) {
-  EXPECT_EQ(97, a());
-}
+TEST(ATest, test1) { EXPECT_EQ(97, a()); }
+TEST(ATest, test2) { EXPECT_EQ(97, a()); }

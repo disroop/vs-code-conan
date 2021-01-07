@@ -28,7 +28,7 @@ if __name__ == "__main__":
     version = "0.1"
     profile = get_profile()
 
-    recipes = "./a/conanfile.py", "./b/conanfile.py", "./c/conanfile.py"
+    recipes = "./a/conanfile.py", "./b/conanfile.py", "./c/conanfile.py", "./d/conanfile.py"
     profiles = f"{conan_file_path}/.infrastructure/conan_config/profiles/clang-apple-debug", \
                f"{conan_file_path}/.infrastructure/conan_config/profiles/clang-apple-release"
     dmpt = Dmtp(recipes, profiles, user, channel, version)
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     dmpt.clean()
 
     # localdev per recipe
-    # local_dev: list[LocalDev] = dmpt.local_dev()
-    # for l in local_dev:
+    local_dev: list[LocalDev] = dmpt.local_dev()
+    for l in local_dev:
     #     recipe = l.getRecipeRef()
     #     print(f"recipe ref: {recipe}")
     #
@@ -50,9 +50,10 @@ if __name__ == "__main__":
     #     l.test()
     #
     #     # create
-    #     l.create()
+        l.create()
 
     # workspace for local multi recipe projects
-    ws: Workspace = dmpt.workspace()
-    ws.gen()
-    ws.install()
+    # ws: Workspace = dmpt.workspace()
+    # ws.gen()
+    # ws.install()
+

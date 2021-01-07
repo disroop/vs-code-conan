@@ -30,6 +30,8 @@ class Base(object):
     def requirements(self):
         self.output.info("My cool requirements!")
         self.requires("gtest/1.10.0", private=True)
+        self.requires("CppUTest/master@bryceschober/testing", private=True)
+
 
 
 class DisroopBase(ConanFile):
