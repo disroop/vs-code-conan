@@ -88,7 +88,7 @@ export class CommandController {
             if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
                 buildFolderArg = '';
             }
-            const stringCommand = `conan build ${conanfile} ${buildArg} --build-folder ${buildFolderArg}`;
+            const stringCommand = `conan build ${conanfile} ${buildArg} ${buildFolderArg}`;
             let command = { executionCommand: stringCommand, description: "building" };
             this.executor.pushCommand(command);
         } catch (err) {
