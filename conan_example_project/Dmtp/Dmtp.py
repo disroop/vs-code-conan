@@ -2,7 +2,6 @@ import inspect
 import marshmallow.validate
 import networkx as nx
 import os
-import path as path
 import pathlib
 import re
 import shutil
@@ -59,6 +58,7 @@ class Dmtp(object):
         self.user = user
         self.channel = channel
         self.version = version
+        self.buildFolder = "build"
 
     def local_dev(self):
         ret: list[LocalDev] = []
@@ -90,27 +90,37 @@ class LocalDev(object):
         self.recipePath = absPathw(recipe)
         self.recipeName = getRecipeName(recipe)
         self.recipe_reference = f"demo{self.recipeName}/{version}@{user}/{channel}"
+        self.buildFolder="build"
+        self.buildPath = f"{self.recipePath}/{self.buildFolder}"
 
     def getRecipeRef(self):
         return self.recipe_reference
 
+    def clean(self):
+        print(f"run clean")
+        build_dir = "build"
+        dirpath = Path(self.buildPath)
+        if dirpath.exists() and dirpath.is_dir():
+            shutil.rmtree(dirpath)
+
     def source(self):
-        run(f'conan source {self.recipePath} -sf=build/{self.recipeName}/source')
+        run(f'conan source {self.recipePath} -sf={self.buildPath}/{self.recipeName}/source')
 
     def install(self):
-        run(f'conan install {self.recipePath} -if=build/{self.recipeName} -pr={self.profile} -b=missing')
+        run(
+            f'conan install {self.recipePath} -if={self.buildPath}/{self.recipeName} -pr={self.profile} -b=missing')
 
     def build(self):
         run(
-            f'conan build {self.recipePath} -sf=build/{self.recipeName}/source -if=build/{self.recipeName} -bf=build/{self.recipeName}')
+            f'conan build {self.recipePath} -sf={self.buildPath}/{self.recipeName}/source -if={self.buildPath}/{self.recipeName} -bf={self.buildPath}/{self.recipeName}')
 
     def package(self):
         run(
-            f'conan package {self.recipePath} -sf=build/{self.recipeName}/source -if=build/{self.recipeName} -bf=build/{self.recipeName} -pf=build/{self.recipeName}/package')
+            f'conan package {self.recipePath} -sf={self.buildPath}/{self.recipeName}/source -if={self.buildPath}/{self.recipeName} -bf={self.buildPath}/{self.recipeName} -pf={self.buildPath}/{self.recipeName}/package')
 
     def exportPkg(self):
         run(
-            f'conan export-pkg {self.recipePath} {self.recipe_reference} -sf=build/{self.recipeName}/source -bf=build/{self.recipeName} -pr={self.profile} --force')  # fails with --package-folder=build/{n}/package why?if
+            f'conan export-pkg {self.recipePath} {self.recipe_reference} -sf={self.buildPath}/{self.recipeName}/source -bf={self.buildPath}/{self.recipeName} -pr={self.profile} --force')  # fails with --package-folder={self.buildPath2}}/{n}/package why?if
 
     def test(self):
         test_path = f"{self.recipePath}/test_package"
@@ -121,7 +131,6 @@ class LocalDev(object):
     def create(self):
         run(
             f'conan create -pr={self.profile} {self.recipePath} {self.recipe_reference}  ')
-
 
 
 def getRecipeName(recipe):
@@ -244,21 +253,21 @@ class Workspace(object):
         # graph = get_graph(recipes)
         # nodes = get_nodes(recipes)
         # for recipe in recipes:
-            # for node in nodes:
-            # hier recipe_reference erhalten
-            # alle nötigen argumente übergeben
-            # recipeName = getRecipeName(recipe,v)
-            # ref = runConanInfoAndGetRef(recipe)
-            # package_reference = getpackagereference(ref, self.user, self.channel)
-            # path = absPathw(recipe)
-            # ws += f"    {package_reference}:\n"
-            # ws += f"        path: {path}\n"
-        ws+="    demoa/0.1@disroop/development:\n"
-        ws+="        path: ../a\n"
-        ws+="    demob/0.1@disroop/development:\n"
-        ws+="        path: ../b\n"
-        ws+="    democ/0.1@disroop/development:\n"
-        ws+="        path: ../c\n"
+        # for node in nodes:
+        # hier recipe_reference erhalten
+        # alle nötigen argumente übergeben
+        # recipeName = getRecipeName(recipe,v)
+        # ref = runConanInfoAndGetRef(recipe)
+        # package_reference = getpackagereference(ref, self.user, self.channel)
+        # path = absPathw(recipe)
+        # ws += f"    {package_reference}:\n"
+        # ws += f"        path: {path}\n"
+        ws += "    demoa/0.1@disroop/development:\n"
+        ws += "        path: ../a\n"
+        ws += "    demob/0.1@disroop/development:\n"
+        ws += "        path: ../b\n"
+        ws += "    democ/0.1@disroop/development:\n"
+        ws += "        path: ../c\n"
         ws += f"layout: {layoutfilePath}\n"
         ws += f"layout: ws_layoutfile\n"
         ws += "workspace_generator: cmake\n"

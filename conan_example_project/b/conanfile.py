@@ -1,24 +1,10 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile
 
 
 class BConan(ConanFile):
     name = "demob"
-    version = "0.1"
-    settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
-    exports_sources = "src/*", "CMakeLists.txt", "test/*"
-    requires = "gtest/1.10.0", "demoa/0.1@disroop/development"
+    python_requires = "disroopbase/0.1@disroop/development"
+    python_requires_extend = "disroopbase.Base"
 
-    def build(self):
-        cmake = CMake(self)
-        cmake.configure()
-        cmake.build()
-        cmake.test()
+    requires = "demoa/0.1@disroop/development"
 
-    def package(self):
-        self.copy("*.h", dst="include", src="src")
-        self.copy("*.a", dst="lib", keep_path=False)
-
-    def package_info(self):
-        self.cpp_info.libs = ["libb.a"]
-        # self.cpp_info.libs = tools.collect_libs(self)
