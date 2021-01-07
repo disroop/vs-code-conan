@@ -29,7 +29,8 @@ export class SettingsParser {
                             profileJson.name,
                             profileJson.conanFile,
                             profileJson.profile,
-                            
+                            profileJson.profileBuild,
+                            profileJson.profileHost,
                             profileJson.installArg,
                             profileJson.buildArg,
                             profileJson.createArg,
