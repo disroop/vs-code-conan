@@ -19,8 +19,16 @@ export class Executor {
     private executeConanCommand(command: string, resolve: any, reject: any) {
         output.append(`command: ${command}\n`);
 
+        let executionPrg="sh";
+        let executionArg="-c";
+        if(process.platform === "win32")
+        {
+            executionPrg = "cmd";
+            executionArg='/c';
+        }
+        
         //Frage: get das auch unter windows mit sh?
-        this.subprocess = child.spawn("sh", ['-c', command], {
+        this.subprocess = child.spawn(executionPrg, [executionArg,command], {
             stdio: [
                 'pipe', // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent
