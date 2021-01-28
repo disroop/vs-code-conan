@@ -17,18 +17,17 @@ export class Executor {
         this.queue = new Queue<Command>();
     }
     private executeConanCommand(command: string, resolve: any, reject: any) {
-
-        output.clear();
         output.append(`command: ${command}\n`);
 
         //Frage: get das auch unter windows mit sh?
         this.subprocess = child.spawn("sh", ['-c', command], {
             stdio: [
-                0, // Use parent's stdin for child
+                'pipe', // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent
                 'pipe', // Pipe child's stderror to parent
             ]
         });
+
         this.subprocess.stdout.on("data", (data: string) => {
             output.append(`conan: ${data}`);
         });
@@ -44,9 +43,17 @@ export class Executor {
         });
 
         this.subprocess.on("close", (code: any) => {   
-            output.append(`child process exited with code ${code}`);
-            resolve();
-            this.dequeueCommand();
+            if(code !== null){
+                output.append(`child process exited with code ${code}`);
+                resolve();
+                this.dequeueCommand();
+            }
+            else{ 
+                output.append(`conan: process cancelled!`);
+                //Clear Queue
+                this.queue = new Queue<Command>();
+            }
+            output.appendLine("");
         });
     }
 
@@ -91,7 +98,7 @@ export class Executor {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                process.kill(this.subprocess.pid, 'SIGHUP');
+                this.subprocess.kill('SIGKILL');
             });
             progress.report({message: `I am ${command.description}`});
 
