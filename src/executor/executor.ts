@@ -58,8 +58,7 @@ export class Executor {
             }
             else{ 
                 output.append(`conan: process cancelled!`);
-                //Clear Queue
-                this.queue = new Queue<Command>();
+                this.clearCommandQueue();
             }
             output.appendLine("");
         });
