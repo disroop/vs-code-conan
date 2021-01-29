@@ -14,6 +14,7 @@ export class Executor {
     private subprocess: any;
     private queue: Queue<Command>;
     constructor() {
+        this.subprocess=null;
         this.queue = new Queue<Command>();
     }
     private executeConanCommand(command: string, resolve: any, reject: any) {
@@ -61,6 +62,7 @@ export class Executor {
                 this.clearCommandQueue();
             }
             output.appendLine("");
+            this.subprocess=null;
         });
     }
 
@@ -71,13 +73,10 @@ export class Executor {
     }
 
     processIsStillRunning():boolean {
-        if(!(this.subprocess as child.ChildProcess)){
+        if(this.subprocess === null) {
             return false;
         }
-        if(this.subprocess.exitCode === null) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
     pushCommand(command: Command){
