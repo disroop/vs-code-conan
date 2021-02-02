@@ -104,7 +104,7 @@ export class Executor {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                this.subprocess.kill('SIGKILL');
+                this.subprocess.kill();
             });
             progress.report({message: `I am ${command.description}`});
 
