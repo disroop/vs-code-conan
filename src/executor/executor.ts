@@ -13,6 +13,7 @@ export class Executor {
     
     private subprocess: any;
     private queue: Queue<Command>;
+
     constructor() {
         this.subprocess=null;
         this.queue = new Queue<Command>();
@@ -28,13 +29,12 @@ export class Executor {
             executionArg='/c';
         }
         
-        //Frage: get das auch unter windows mit sh?
         this.subprocess = child.spawn(executionPrg, [executionArg,command], {
             stdio: [
                 'pipe', // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent
                 'pipe', // Pipe child's stderror to parent
-            ]
+            ],
         });
 
         this.subprocess.stdout.on("data", (data: string) => {
@@ -104,7 +104,7 @@ export class Executor {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                this.subprocess.kill();
+                this.subprocess.kill("SIGINT");
             });
             progress.report({message: `I am ${command.description}`});
 
