@@ -3,7 +3,7 @@
 	"name": "conan",
 	"displayName": "conan",
 	"description": "Conan C/C++ package manager integration for VS-Code",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"publisher": "disroop",
 	"icon": "images/disroop-icon.png",
 	"preview": true,
@@ -67,6 +67,7 @@
 	},
 	"dependencies": {
 		"queue-typescript": "^1.0.1",
+		"tree-kill": "^1.2.2",
 		"vsce": "^1.77.0"
 	}
 }

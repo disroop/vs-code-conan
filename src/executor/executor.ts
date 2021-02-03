@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
-import { clear } from 'console';
 
 const output = vscode.window.createOutputChannel("conan");
 
@@ -91,7 +90,8 @@ export class Executor {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                this.subprocess.kill("SIGINT");
+                var kill = require('tree-kill');
+                kill(this.subprocess.pid);
             });
             progress.report({message: `I am ${command.description}`});
 

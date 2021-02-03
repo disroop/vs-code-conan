@@ -102,6 +102,9 @@ For example:
 
 ## Release Notes
 
+### 0.7.1
+- Fix Bug Cancel Process
+
 ### 0.7.0
 - Fix Bug Cancel Process
 - Add Text to Icons
