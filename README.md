@@ -102,6 +102,11 @@ For example:
 
 ## Release Notes
 
+### 0.7.0
+- Fix Bug Cancel Process
+- Add Text to Icons
+- Support Windows
+
 ### 0.6.1
 - Fix Bugs Profile-Build/Profile-Host
 
