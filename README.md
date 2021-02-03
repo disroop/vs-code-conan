@@ -29,7 +29,7 @@ To install a conan workspace use the _install workspace_ button at the bottom!
 
 ## Requirements
 
-Conan needs to be installed and currently only runs on linux (in the future windows will be supported).
+Conan needs to be installed.
 
 ## Extension Settings
 
