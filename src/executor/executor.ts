@@ -20,21 +20,14 @@ export class Executor {
     }
     private executeConanCommand(command: string, resolve: any, reject: any) {
         output.append(`command: ${command}\n`);
-
-        let executionPrg="sh";
-        let executionArg="-c";
-        if(process.platform === "win32")
-        {
-            executionPrg = "cmd";
-            executionArg='/c';
-        }
         
-        this.subprocess = child.spawn(executionPrg, [executionArg,command], {
+        this.subprocess = child.spawn(command, {
             stdio: [
                 'pipe', // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent
                 'pipe', // Pipe child's stderror to parent
             ],
+            shell: true, 
         });
 
         this.subprocess.stdout.on("data", (data: string) => {
@@ -84,15 +77,9 @@ export class Executor {
         if(!this.processIsStillRunning()) {this.dequeueCommand();}
     }
 
-    private dequeueCommand(){
-        let queueLength = this.queue.length;
-        let descriptionAddition = "";
-        if(queueLength > 0){
-            if(queueLength>1){
-                descriptionAddition = " ("+String(queueLength-1)+" to go)";
-            }
+    private dequeueCommand(){ 
+        if(this.queue.length > 0){
             let command = this.queue.dequeue();
-            command.description = command.description + descriptionAddition;
             this.executeCommand(command);
         }
     }
