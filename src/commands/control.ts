@@ -44,16 +44,17 @@ export class CommandController {
 
     private install(profileToRun: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToRun);
             let buildFolder = this._state.config.getBuildFolder(profileToRun);
             let installArg = this._state.config.getInstallArg(profileToRun);
             let profileCommand = this.getProfileCommand(profileToRun);
-            let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
+            let installCommand = this._state.config.isWorkspace(profileToRun) ? "workspace install" : "install";
             let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
             if (installArg.includes('-if') || installArg.includes('--install-folder')) {
                 installFolderArg = ''
             }
-            const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
+            const stringCommand = `${conanPath} ${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
             let command = { executionCommand: stringCommand, description: "installing" };
             this.executor.pushCommand(command);
         } catch (err) {
@@ -80,6 +81,7 @@ export class CommandController {
 
     private build(profileToBuild: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToBuild);
             let buildFolder = this._state.config.getBuildFolder(profileToBuild);
             let buildArg = this._state.config.getBuildArg(profileToBuild);
@@ -87,7 +89,7 @@ export class CommandController {
             if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
                 buildFolderArg = '';
             }
-            const stringCommand = `conan build ${conanfile} ${buildArg} ${buildFolderArg}`;
+            const stringCommand = `${conanPath} build ${conanfile} ${buildArg} ${buildFolderArg}`;
             let command = { executionCommand: stringCommand, description: "building" };
             this.executor.pushCommand(command);
         } catch (err) {
@@ -97,12 +99,13 @@ export class CommandController {
 
     private create(profileToCreate: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToCreate);
             let profileCommand = this.getProfileCommand(profileToCreate);
             let createUser = this._state.config.getCreateUser(profileToCreate);
             let createChannel = this._state.config.getCreateChannel(profileToCreate);
             let createArg = this._state.config.getCreateArg(profileToCreate);
-            const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
+            const stringCommand = `${conanPath} create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
             let command = { executionCommand: stringCommand, description: "creating a package" };
             this.executor.pushCommand(command);
         } catch (err) {
