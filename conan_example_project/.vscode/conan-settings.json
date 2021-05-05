@@ -1,6 +1,7 @@
 {
     "settings": {
-        "conanPath": "new_conan_path"
+        "conanPath": "new_conan_path",
+        "profilesDirectory": "profiles_directory"
     },
     "profiles": [
         { 
