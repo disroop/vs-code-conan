@@ -2,6 +2,7 @@
 import { SettingsParser } from "./settings-parser";
 import { Profile } from "./profile";
 import { Workspace } from "./workspace";
+import { GeneralSettings } from "./general-settings";
 
 interface ProfileExtended {
     build: string | undefined;
@@ -10,6 +11,7 @@ interface ProfileExtended {
 
 export class Configurator {
     private readonly file: string;
+    private settings: GeneralSettings = new GeneralSettings();
     private profiles: Map<string, Profile> = new Map<string, Profile>();
     private workspaces: Map<string, Workspace> = new Map<string, Workspace>();
 
@@ -20,8 +22,17 @@ export class Configurator {
     readFile() {
         let fs = require("fs");
         let data = fs.readFileSync(this.file);
+        this.settings = SettingsParser.readSettings(data);
         this.profiles = SettingsParser.convert(data);
         this.workspaces = SettingsParser.convertWs(data);
+    }
+
+    getConanPath(): string {
+        return this.settings.getConanPath();
+    }
+
+    getProfilesDirectory(): string {
+        return this.settings.getProfilesDirectory();
     }
 
     getConanFile(name: string): string {
