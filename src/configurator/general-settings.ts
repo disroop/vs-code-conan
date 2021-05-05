@@ -18,12 +18,4 @@ export class GeneralSettings {
     setConanPath(conanPath: string) {
         this.conanPath = conanPath;
     }
-
-    getProfilesDirectory(): string {
-        return this.profilesDirectory;
-    }
-
-    setProfilesDirectory(profilesDirectory: string) {
-        this.profilesDirectory = profilesDirectory;
-    }
 }

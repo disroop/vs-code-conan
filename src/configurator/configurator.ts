@@ -31,10 +31,6 @@ export class Configurator {
         return this.settings.getConanPath();
     }
 
-    getProfilesDirectory(): string {
-        return this.settings.getProfilesDirectory();
-    }
-
     getConanFile(name: string): string {
         let conanFile = this.isWorkspace(name)
             ? this.workspaces.get(name)?.getConanWorkspace()

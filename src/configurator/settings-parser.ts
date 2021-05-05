@@ -100,9 +100,6 @@ export class SettingsParser {
             if (jsonObj.settings.conanPath) {
                 generalSettings.setConanPath(jsonObj.settings.conanPath);
             }
-            if (jsonObj.settings.profilesDirectory) {
-                generalSettings.setProfilesDirectory(jsonObj.settings.profilesDirectory);
-            }
         }
         return generalSettings;
     }
