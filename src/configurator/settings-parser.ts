@@ -1,6 +1,7 @@
 import {Profile} from "./profile";
 import * as vscode from 'vscode';
 import {Workspace} from "./workspace";
+import { GeneralSettings } from "./general-settings";
 
 export class SettingsParser {
 
@@ -86,5 +87,23 @@ export class SettingsParser {
             }
         }
         return new Map(workspaces);
+    }
+
+    static readSettings(jsonData: string): GeneralSettings {
+        interface GeneralSettingsObj {
+            conanPath: string;
+            profilesDirectory: string;
+        }
+        const generalSettings = new GeneralSettings();
+        const jsonObj : { settings: GeneralSettingsObj } = JSON.parse(jsonData);
+        if (jsonObj.settings) {
+            if (jsonObj.settings.conanPath) {
+                generalSettings.setConanPath(jsonObj.settings.conanPath);
+            }
+            if (jsonObj.settings.profilesDirectory) {
+                generalSettings.setProfilesDirectory(jsonObj.settings.profilesDirectory);
+            }
+        }
+        return generalSettings;
     }
 }
