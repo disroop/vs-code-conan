@@ -1,4 +1,7 @@
 {
+    "settings": {
+        "conanPath": "new_conan_path"
+    },
     "profiles": [
         { 
             "name":"a", 
