@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os, sys, traceback
 
 def run(cmd, assert_error=False):
