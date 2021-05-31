@@ -1,6 +1,6 @@
 # Disroop vs-code-conan extension
 
-The VsCode Conan extension helps with integrating conan into vscode.
+The VsCode Conan extension helps integrating conan into vscode.
 
 ## Features
 
