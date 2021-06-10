@@ -1,6 +1,10 @@
 {
     "settings": {
-        "conanPath": "new_conan_path"
+        "conanPath": "conan",
+        "profilesDir": "${workspaceFolder}/.infrastructure/conan_config/profiles",
+        "workspacesDir": "${workspaceFolder}/.infrastructure/workspace",
+        "user": "disroop",
+        "channel": "development"
     },
     "profiles": [
         { 
