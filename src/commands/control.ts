@@ -18,6 +18,7 @@ export interface StatusBarItems {
 }
 
 const ALL = "[all]";
+const ALL_ENABLED = "[all_enabled]";
 
 export class CommandController {
 
@@ -34,12 +35,13 @@ export class CommandController {
 
     private updateState(state: AppState): AppState {
         let _state: AppState = state;
-        _state.profiles.push(ALL);
+        _state.profiles.push(ALL_ENABLED,ALL);
         return _state;
     }
 
     setState(state: AppState) {
         this._state = this.updateState(state);
+        console.log(this._state.profiles);
     }
 
     private install(profileToRun: any) {
@@ -52,7 +54,7 @@ export class CommandController {
             let installCommand = this._state.config.isWorkspace(profileToRun) ? "workspace install" : "install";
             let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
             if (installArg.includes('-if') || installArg.includes('--install-folder')) {
-                installFolderArg = ''
+                installFolderArg = '';
             }
             const stringCommand = `${conanPath} ${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
             let command = { executionCommand: stringCommand, description: "installing" };
@@ -85,7 +87,7 @@ export class CommandController {
             let conanfile = this._state.config.getConanFile(profileToBuild);
             let buildFolder = this._state.config.getBuildFolder(profileToBuild);
             let buildArg = this._state.config.getBuildArg(profileToBuild);
-            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`
+            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`;
             if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
                 buildFolderArg = '';
             }
@@ -119,6 +121,8 @@ export class CommandController {
             if (!this.executor.processIsStillRunning()) {
                 if (this._state.activeProfile === ALL) {
                     this._state.config.getAllNames().forEach(item => this.install(item));
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.install(this._state.activeProfile);
                 }
@@ -138,6 +142,8 @@ export class CommandController {
                     this._state.config.getAllNames().forEach(item => {
                         if (!this._state.config.isWorkspace(item)) { this.build(item); }
                     });
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.build(this._state.activeProfile);
                 }
@@ -158,6 +164,8 @@ export class CommandController {
                     this._state.config.getAllNames().forEach(item => {
                         if (!this._state.config.isWorkspace(item)) { this.create(item); }
                     });
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.create(this._state.activeProfile);
                 }
