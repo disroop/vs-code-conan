@@ -1,46 +1,47 @@
 
 image:https://static.deepsource.io/deepsource-badge-light.svg[DeepSource, link=https://deepsource.io/gh/disroop/vs-code-conan?ref=repository-badge]
 
-# Disroop vs-code-conan extension
+== Disroop vs-code-conan extension
 
-The VsCode Conan extension helps integrating conan into vscode.
+The VsCode Conan extension helps to integrate conan into vscode.
 
-## Features
+=== Features
 
 - Install Conan packages
 - Build Conan Packages
 - Create Conan Packages
 - Supports Multiple Profiles
 
-### Install and build packages
+==== Install and build packages
 
 To install and build your conan package use the _install_ and _build_ button at the bottom!
 
-![Build and install](images/installbuild.gif)
+image:images/installbuild.gif[Build and install]
 
-### Create Packages
+==== Create Packages
 
 To create package use the create button at the bottom!
 
 ![Build and install](images/create.gif)
 
-### Install Workspace
+==== Install Workspace
 
 To install a conan workspace use the _install workspace_ button at the bottom!
 
 ![Build and install](images/workspace.gif)
 
-## Requirements
+=== Requirements
 
 Conan needs to be installed.
 
-## Extension Settings
+=== Extension Settings
 
 Set the settings in the `./vscode/conan-settings.json` file.
 
 For example:
 
-```json
+[source,json]
+----
 {
     "profiles": [
         {
@@ -101,59 +102,59 @@ For example:
         }
     ]
 }
-```
+----
 
-## Release Notes
+=== Release Notes
 
-### 0.7.1
+==== 0.7.1
 - Fix Bug Cancel Process
 
-### 0.7.0
+==== 0.7.0
 - Fix Bug Cancel Process
 - Add Text to Icons
 - Support Windows
 
-### 0.6.1
+==== 0.6.1
 - Fix Bugs Profile-Build/Profile-Host
 
-### 0.6.0
+==== 0.6.0
 - Add Profile Build and Profile Host functionality
 - Default install and build folder can be overwritten in InstallArg and BuildArg
 
-### 0.5.1
+==== 0.5.1
 - Fix information dialog view count of builds
 
-### 0.5.0
+==== 0.5.0
 - Add Filewatcher for Linux
 - Add All functionality to Build all Profile/Workspaces at once
 
-### 0.3.1
+==== 0.3.1
 
 - remove cleanup before installing
 
-### 0.3.0
+==== 0.3.0
 
 - add progress window
 - cancel conan process
 
-### 0.2.2
+==== 0.2.2
 
 - bugfix: workspace: enable profiles from workspace same as profile
 
-### 0.2.1
+==== 0.2.1
 
 - bugfix: continue if profiles or workspace doesn't exist
 
-### 0.2.0
+==== 0.2.0
 
 - enable conan workspace install
 - add tooltip hint over buttons
 
-### 0.1.0
+==== 0.1.0
 
 - use profile from workspace-folder
 
-### 0.0.1
+==== 0.0.1
 
 - Install Conan packages
 - Build Conan Packages
