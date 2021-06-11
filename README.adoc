@@ -1,3 +1,6 @@
+
+image:https://static.deepsource.io/deepsource-badge-light.svg[DeepSource, link=https://deepsource.io/gh/disroop/vs-code-conan?ref=repository-badge]
+
 # Disroop vs-code-conan extension
 
 The VsCode Conan extension helps integrating conan into vscode.
