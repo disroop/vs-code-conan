@@ -18,6 +18,7 @@ export interface StatusBarItems {
 }
 
 const ALL = "[all]";
+const ALL_ENABLED = "[all_enabled]";
 
 export class CommandController {
 
@@ -34,26 +35,28 @@ export class CommandController {
 
     private updateState(state: AppState): AppState {
         let _state: AppState = state;
-        _state.profiles.push(ALL);
+        _state.profiles.push(ALL_ENABLED,ALL);
         return _state;
     }
 
     setState(state: AppState) {
         this._state = this.updateState(state);
+        console.log(this._state.profiles);
     }
 
     private install(profileToRun: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToRun);
             let buildFolder = this._state.config.getBuildFolder(profileToRun);
             let installArg = this._state.config.getInstallArg(profileToRun);
             let profileCommand = this.getProfileCommand(profileToRun);
-            let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
+            let installCommand = this._state.config.isWorkspace(profileToRun) ? "workspace install" : "install";
             let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
             if (installArg.includes('-if') || installArg.includes('--install-folder')) {
-                installFolderArg = ''
+                installFolderArg = '';
             }
-            const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
+            const stringCommand = `${conanPath} ${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
             let command = { executionCommand: stringCommand, description: "installing" };
             this.executor.pushCommand(command);
         } catch (err) {
@@ -80,14 +83,15 @@ export class CommandController {
 
     private build(profileToBuild: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToBuild);
             let buildFolder = this._state.config.getBuildFolder(profileToBuild);
             let buildArg = this._state.config.getBuildArg(profileToBuild);
-            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`
+            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`;
             if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
                 buildFolderArg = '';
             }
-            const stringCommand = `conan build ${conanfile} ${buildArg} ${buildFolderArg}`;
+            const stringCommand = `${conanPath} build ${conanfile} ${buildArg} ${buildFolderArg}`;
             let command = { executionCommand: stringCommand, description: "building" };
             this.executor.pushCommand(command);
         } catch (err) {
@@ -97,12 +101,13 @@ export class CommandController {
 
     private create(profileToCreate: any) {
         try {
+            let conanPath = this._state.config.getConanPath();
             let conanfile = this._state.config.getConanFile(profileToCreate);
             let profileCommand = this.getProfileCommand(profileToCreate);
             let createUser = this._state.config.getCreateUser(profileToCreate);
             let createChannel = this._state.config.getCreateChannel(profileToCreate);
             let createArg = this._state.config.getCreateArg(profileToCreate);
-            const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
+            const stringCommand = `${conanPath} create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
             let command = { executionCommand: stringCommand, description: "creating a package" };
             this.executor.pushCommand(command);
         } catch (err) {
@@ -116,6 +121,8 @@ export class CommandController {
             if (!this.executor.processIsStillRunning()) {
                 if (this._state.activeProfile === ALL) {
                     this._state.config.getAllNames().forEach(item => this.install(item));
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.install(this._state.activeProfile);
                 }
@@ -135,6 +142,8 @@ export class CommandController {
                     this._state.config.getAllNames().forEach(item => {
                         if (!this._state.config.isWorkspace(item)) { this.build(item); }
                     });
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.build(this._state.activeProfile);
                 }
@@ -155,6 +164,8 @@ export class CommandController {
                     this._state.config.getAllNames().forEach(item => {
                         if (!this._state.config.isWorkspace(item)) { this.create(item); }
                     });
+                } else if (this._state.activeProfile === ALL_ENABLED)  {
+                    this._state.config.getAllEnabledNames().forEach(item => this.install(item));
                 } else {
                     this.create(this._state.activeProfile);
                 }

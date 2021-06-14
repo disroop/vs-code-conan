@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
 
-const output = vscode.window.createOutputChannel("conan");
+import { output } from "../extension";
 
 export interface Command{
     executionCommand: string;

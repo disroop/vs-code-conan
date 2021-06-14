@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 export class Profile {
+    private readonly name: string;
     private readonly profile: string | undefined;
     private readonly profileBuild: string | undefined;
     private readonly profileHost: string | undefined;
@@ -11,7 +12,7 @@ export class Profile {
     private readonly conanFile: string;
     private readonly createUser: string;
     private readonly createChannel: string;
-    
+    private readonly enabled: boolean;
 
     constructor(name: string = "default",
                 conanFile: string = ".",
@@ -22,7 +23,9 @@ export class Profile {
                 buildArg: string = "",
                 createArg: string = "",
                 createUser: string = "",
-                createChannel: string = "") {
+                createChannel: string = "",
+                enabled: boolean = true) {
+        this.name = name;
         this.conanFile = conanFile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
         if(profile.length> 0){
             this.profile = profile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
@@ -39,6 +42,7 @@ export class Profile {
         this.createUser = createUser;
         this.createChannel = createChannel;
         this.buildFolder = "build/" + name;
+        this.enabled = enabled;
     }
 
     getConanFile(): string {
@@ -78,5 +82,33 @@ export class Profile {
 
     getCreateChannel(): string {
         return this.createChannel;
+    }
+
+    isEnabled(): boolean {
+        return this.enabled;
+    }
+
+    getJson(): object {
+        let profile_path = this.profile;
+        let conanfile_path = this.conanFile;
+        const rootPath = vscode.workspace.workspaceFolders?.[0];
+        if (rootPath) {
+            const rootFsPath : string = rootPath.uri.fsPath;
+            profile_path   = this.profile?.replace(rootFsPath,"${workspaceFolder}");
+            conanfile_path = this.conanFile.replace(rootFsPath,"${workspaceFolder}");
+        }
+        return {
+            name:           this.name,
+            conanFile:      conanfile_path,
+            profile:        profile_path,
+            profileBuild:   this.profileBuild,
+            profileHost:    this.profileHost,
+            installArg:     this.installArg,
+            buildArg:       this.buildArg,
+            createArg:      this.createArg,
+            createUser:     this.createUser,
+            createChannel:  this.createChannel,
+            enabled:        this.enabled
+        };
     }
 }
