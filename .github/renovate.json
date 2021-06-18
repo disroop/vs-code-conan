@@ -1,0 +1,9 @@
+{
+   "regexManagers": [
+      {
+        "fileMatch": ["^*.*$"],
+        "matchStrings": ["(?<depName>disroop/embedded.*):(?<currentValue>[0-9.]+)"],
+        "datasourceTemplate": "docker"
+      }
+    ]
+  }
