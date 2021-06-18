@@ -58,7 +58,7 @@
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
 		"@typescript-eslint/parser": "^2.30.0",
 		"eslint": "^7.28.0",
-		"eslint-config-prettier": "^6.15.0",
+		"eslint-config-prettier": "^8.0.0",
 		"glob": "^7.1.6",
 		"mocha": "^8.4.0",
 		"prettier": "2.2.1",
