@@ -47,7 +47,11 @@ export function activate(context: vscode.ExtensionContext) {
             barItems = {install: installButton, build: buildButton, create: createButton};
             commandController.registerProfilePick(barItems);
         } catch (err) {
-            vscode.window.showErrorMessage(err);
+            let errormessage = "Error in Setup Plugin";
+            if(err instanceof Error) {
+                errormessage = (err as Error).message;
+            }
+            vscode.window.showErrorMessage(errormessage);
         }
     }
 
