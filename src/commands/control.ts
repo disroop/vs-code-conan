@@ -51,7 +51,7 @@ export class CommandController {
             let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
             let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
             if (installArg.includes('-if') || installArg.includes('--install-folder')) {
-                installFolderArg = ''
+                installFolderArg = '';
             }
             const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
             let command = { executionCommand: stringCommand, description: "installing" };
@@ -83,7 +83,7 @@ export class CommandController {
             let conanfile = this._state.config.getConanFile(profileToBuild);
             let buildFolder = this._state.config.getBuildFolder(profileToBuild);
             let buildArg = this._state.config.getBuildArg(profileToBuild);
-            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`
+            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`;
             if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
                 buildFolderArg = '';
             }
