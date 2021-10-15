@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import * as vscode from 'vscode';
 import {Configurator} from './configurator/configurator';
 import {CommandController} from "./commands/control";

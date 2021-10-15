@@ -1,7 +1,8 @@
 import {Profile} from "./profile";
 import * as vscode from 'vscode';
 import {Workspace} from "./workspace";
-
+import { container } from "tsyringe";
+import { SystemPlugin } from "../system/plugin";
 export class SettingsParser {
 
     static convert(jsonData: string): Map<string, Profile> {
@@ -35,7 +36,7 @@ export class SettingsParser {
                             profileJson.buildArg,
                             profileJson.createArg,
                             profileJson.createUser,
-                            profileJson.createChannel));
+                            profileJson.createChannel, container.resolve(SystemPlugin)));
                     } else {
                         vscode.window.showWarningMessage("Profile with name: " + profileJson.name + " already exist! Use first setting in settings.json.");
                     }

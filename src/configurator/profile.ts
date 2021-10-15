@@ -1,4 +1,8 @@
-import * as vscode from 'vscode';
+
+// some other file
+import "reflect-metadata";
+
+import { System } from "../system/interface";
 
 export class Profile {
     private readonly profile: string | undefined;
@@ -11,27 +15,28 @@ export class Profile {
     private readonly conanFile: string;
     private readonly createUser: string;
     private readonly createChannel: string;
-    
+
 
     constructor(name: string = "default",
-                conanFile: string = ".",
-                profile: string = "",
-                profileBuild: string = "",
-                profileHost: string = "",
-                installArg: string = "",
-                buildArg: string = "",
-                createArg: string = "",
-                createUser: string = "",
-                createChannel: string = "") {
-        this.conanFile = conanFile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
-        if(profile.length> 0){
-            this.profile = profile.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+        conanFile: string = ".",
+        profile: string = "",
+        profileBuild: string = "",
+        profileHost: string = "",
+        installArg: string = "",
+        buildArg: string = "",
+        createArg: string = "",
+        createUser: string = "",
+        createChannel: string = "",
+        system: System) {
+        this.conanFile = conanFile.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
+        if (profile.length > 0) {
+            this.profile = profile.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
         }
-        if(profileBuild.length> 0){
-            this.profileBuild = profileBuild.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+        if (profileBuild.length > 0) {
+            this.profileBuild = profileBuild.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
         }
-        if(profileHost.length> 0){
-            this.profileHost = profileHost.replace("${workspaceFolder}", vscode.workspace.rootPath!);
+        if (profileHost.length > 0) {
+            this.profileHost = profileHost.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
         }
         this.installArg = installArg;
         this.buildArg = buildArg;
