@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Docker
 
 # Controls when the workflow will run
 on:
@@ -35,7 +35,6 @@ jobs:
         run: |
           docker build . -t disroop/vscode-plugin-builder:latest
           
-      - name: Install dependencies
+      - name: Publish
         run: |
-          docker push
-          pip install docker 
+          docker push disroop/vscode-plugin-builder:latest
