@@ -57,16 +57,27 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+
     - name: install dependencies
       run: npm install
+
     - name: lint
       run: npm run lint
+
     - name: compile
       run: npm run compile
+
     - name: run unit test
       run: npm run test
+
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
     - name: create vscode package
       run: vsce package
+
     - name: Upload a Build Artifact
       if: contains('refs/heads/master', github.ref)
       uses: actions/upload-artifact@v2
