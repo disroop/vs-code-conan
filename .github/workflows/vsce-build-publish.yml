@@ -11,35 +11,62 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  image_job:
+    name: Create Docker Image
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            dockerfile:
+              - 'Dockerfile'
+
+      - name: Docker Login
+        if: steps.changes.outputs.dockerfile == 'true'
+        uses: docker/login-action@v1.10.0
+        with:
+              username: ${{ secrets.DOCKER_USERNAME }}
+              password: ${{ secrets.DOCKER_PASSWORD }}
+              
+      - name: Docker Build
+        if: steps.changes.outputs.dockerfile == 'true'
+        run: |
+          docker build . -t disroop/vscode-plugin-builder:latest
+          
+      - name: Publish
+        if: steps.changes.outputs.dockerfile == 'true' 
+        run: |
+          docker push disroop/vscode-plugin-builder:latest
+
+
+  vscode_build_job:
+    name: VSCode Build Plugin
+    needs: [image_job]
+    if: always()
     runs-on: ubuntu-latest
     container:
-      image: Dockerfile
-
+      image: disroop/vscode-plugin-builder:latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-
     - name: install dependencies
       run: npm install
-    
     - name: install dependencies
       run: npm run compile
-
     - name: install dependencies
       run: npm run lint
-
     - name: install dependencies
       run: npm run test
-
     - name: create vscode package
       run: vsce package'
-      
     - name: Upload a Build Artifact
       if: contains('refs/heads/master', github.ref)
       uses: actions/upload-artifact@v2
