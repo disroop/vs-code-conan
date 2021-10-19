@@ -59,11 +59,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: install dependencies
       run: npm install
-    - name: install dependencies
-      run: npm run compile
-    - name: install dependencies
+    - name: lint
       run: npm run lint
-    - name: install dependencies
+    - name: compile
+      run: npm run compile
+    - name: run unit test
       run: npm run test
     - name: create vscode package
       run: vsce package
