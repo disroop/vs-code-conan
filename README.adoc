@@ -4,7 +4,7 @@ image:https://static.deepsource.io/deepsource-badge-light.svg[DeepSource, link=h
 
 == Disroop vs-code-conan extension
 
-The extension integrating [conan](https://conan.io/) into [VS Code](https://code.visualstudio.com/).
+The extension integrating https://conan.io/[conan] into https://code.visualstudio.com/[VS Code].
 
 === Features
 
