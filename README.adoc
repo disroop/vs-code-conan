@@ -1,4 +1,5 @@
 
+image:https://sonarcloud.io/images/project_badges/sonarcloud-white.svg[SonarCloud, link=https://sonarcloud.io/dashboard?id=disroop_vs-code-conan]
 image:https://static.deepsource.io/deepsource-badge-light.svg[DeepSource, link=https://deepsource.io/gh/disroop/vs-code-conan?ref=repository-badge]
 
 == Disroop vs-code-conan extension
