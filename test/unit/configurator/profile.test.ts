@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Profile } from '../../../src/configurator/profile';
+import { Profile, Workspace } from '../../../src/configurator/profile';
 import { System } from "../../../src/system/interface";
 
 class SystemPluginMock implements System{
@@ -23,7 +23,7 @@ describe('Profile', () => {
             "aCreateUser",
             "aCreateChannel");
         expect(profile.buildFolder).to.equal("build/aName");
-        expect(profile.conanFile).to.equal("aConanFile");
+        expect(profile.conanfilePath).to.equal("aConanFile");
         expect(profile.profile).to.equal("aProfile");
         expect(profile.profileBuild).to.equal("aProfileBuild");
         expect(profile.profileHost).to.equal("aProfileHost");
@@ -37,7 +37,7 @@ describe('Profile', () => {
     it('can use default parameter', () => {
         const profile = new Profile(new SystemPluginMock());
         expect(profile.buildFolder).to.equal("build/default");
-        expect(profile.conanFile).to.equal(".");
+        expect(profile.conanfilePath).to.equal(".");
         expect(profile.profile).to.equal("");
         expect(profile.profileBuild).to.equal("");
         expect(profile.profileHost).to.equal("");
@@ -56,7 +56,7 @@ describe('Profile', () => {
         "${workspaceFolder}/aProfileBuild",
         "${workspaceFolder}/aProfileHost",);
         expect(profile.buildFolder).to.equal("build/test");
-        expect(profile.conanFile).to.equal("root-workspace/aConanFile");
+        expect(profile.conanfilePath).to.equal("root-workspace/aConanFile");
         expect(profile.profile).to.equal("root-workspace/aProfile");
         expect(profile.profileBuild).to.equal("root-workspace/aProfileBuild");
         expect(profile.profileHost).to.equal("root-workspace/aProfileHost");
@@ -65,5 +65,50 @@ describe('Profile', () => {
         expect(profile.createArg).to.equal("");
         expect(profile.createUser).to.equal("");
         expect(profile.createChannel).to.equal("");      
+    });
+});
+
+
+describe('Workspace', () => {
+    it('can be initialized', () => {
+        const workspace = new Workspace(
+            new SystemPluginMock(),
+            "aName",
+            "aConanWs",
+            "aProfile",
+            "aProfileBuild",
+            "aProfileHost",
+            "aArg");
+        expect(workspace.buildFolder).to.equal("build/aName");
+        expect(workspace.conanworkspacePath).to.equal("aConanWs");
+        expect(workspace.profile).to.equal("aProfile");
+        expect(workspace.profileBuild).to.equal("aProfileBuild");
+        expect(workspace.profileHost).to.equal("aProfileHost");
+        expect(workspace.arg).to.equal("aArg");
+    });
+
+    it('can use default parameter', () => {
+        const workspace = new Workspace(new SystemPluginMock());
+        expect(workspace.buildFolder).to.equal("build/default");
+        expect(workspace.conanworkspacePath).to.equal(".");
+        expect(workspace.profile).to.equal("");
+        expect(workspace.profileBuild).to.equal("");
+        expect(workspace.profileHost).to.equal("");
+        expect(workspace.arg).to.equal("");    
+    });
+
+    it('can use workspace-folder', () => {
+        const workspace = new Workspace(new SystemPluginMock(), 
+        "test",
+        "${workspaceFolder}/path",
+        "${workspaceFolder}/aProfile",
+        "${workspaceFolder}/aProfileBuild",
+        "${workspaceFolder}/aProfileHost",);
+        expect(workspace.buildFolder).to.equal("build/test");
+        expect(workspace.conanworkspacePath).to.equal("root-workspace/path");
+        expect(workspace.profile).to.equal("root-workspace/aProfile");
+        expect(workspace.profileBuild).to.equal("root-workspace/aProfileBuild");
+        expect(workspace.profileHost).to.equal("root-workspace/aProfileHost");
+        expect(workspace.arg).to.equal("");     
     });
 });

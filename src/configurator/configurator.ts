@@ -1,7 +1,6 @@
 /* eslint-disable eqeqeq */
 import { SettingsParser } from "./settings-parser";
-import { Profile } from "./profile";
-import { Workspace } from "./workspace";
+import { Profile, Workspace } from "./profile";
 
 interface ProfileExtended {
     build: string | undefined;
@@ -26,8 +25,8 @@ export class Configurator {
 
     getConanFile(name: string): string {
         let conanFile = this.isWorkspace(name)
-            ? this.workspaces.get(name)?.getConanWorkspace()
-            : this.profiles.get(name)?.conanFile;
+            ? this.workspaces.get(name)?.conanworkspacePath
+            : this.profiles.get(name)?.conanfilePath;
         if (!conanFile) {
             throw new Error("No profile found");
         }
@@ -67,8 +66,8 @@ export class Configurator {
             if (ws == undefined) {
                 throw new Error("Workspace not found");
             }
-            profile = ws.getProfile();
-            retVal = { build: ws.getProfileBuild(), host: ws.getProfileHost() };
+            profile = ws.profile;
+            retVal = { build: ws.profileBuild, host: ws.profileHost };
 
         }
         else {
@@ -88,7 +87,7 @@ export class Configurator {
 
     getBuildFolder(name: string): string {
         let buildFolder = this.isWorkspace(name)
-            ? this.workspaces.get(name)?.getBuildFolder()
+            ? this.workspaces.get(name)?.buildFolder
             : this.profiles.get(name)?.buildFolder;
         if (!buildFolder) {
             throw new Error("No build folder found");
@@ -98,7 +97,7 @@ export class Configurator {
 
     getInstallArg(name: string): string {
         let installArg = this.isWorkspace(name)
-            ? this.workspaces.get(name)?.getArguments()
+            ? this.workspaces.get(name)?.arg
             : this.profiles.get(name)?.installArg;
         if (!installArg) {
             installArg = "";

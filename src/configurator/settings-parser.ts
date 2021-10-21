@@ -1,6 +1,5 @@
-import {Profile} from "./profile";
+import {Profile, Workspace} from "./profile";
 import * as vscode from 'vscode';
-import {Workspace} from "./workspace";
 import { container } from "tsyringe";
 import { SystemPlugin } from "../system/plugin";
 export class SettingsParser {
@@ -69,7 +68,8 @@ export class SettingsParser {
             jsonObj.workspace.forEach(function (workspaceJson) {
                 if (workspaceJson.name !== undefined && workspaceJson.name.length > 0) {
                     if (!workspaces.has(workspaceJson.name)) {
-                        let workspace = new Workspace(workspaceJson.name,
+                        let workspace = new Workspace(container.resolve(SystemPlugin),
+                            workspaceJson.name,
                             workspaceJson.conanWs,
                             workspaceJson.profile,
                             workspaceJson.profileBuild,
