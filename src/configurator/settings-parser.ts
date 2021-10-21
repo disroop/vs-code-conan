@@ -27,6 +27,7 @@ export class SettingsParser {
                 if (profileJson.name !== undefined && profileJson.name.length > 0) {
                     if (!profiles.has(profileJson.name)) {
                         profiles.set(profileJson.name, new Profile(
+                            container.resolve(SystemPlugin),
                             profileJson.name,
                             profileJson.conanFile,
                             profileJson.profile,
@@ -36,7 +37,7 @@ export class SettingsParser {
                             profileJson.buildArg,
                             profileJson.createArg,
                             profileJson.createUser,
-                            profileJson.createChannel, container.resolve(SystemPlugin)));
+                            profileJson.createChannel));
                     } else {
                         vscode.window.showWarningMessage("Profile with name: " + profileJson.name + " already exist! Use first setting in settings.json.");
                     }

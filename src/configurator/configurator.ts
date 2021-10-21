@@ -27,7 +27,7 @@ export class Configurator {
     getConanFile(name: string): string {
         let conanFile = this.isWorkspace(name)
             ? this.workspaces.get(name)?.getConanWorkspace()
-            : this.profiles.get(name)?.getConanFile();
+            : this.profiles.get(name)?.conanFile;
         if (!conanFile) {
             throw new Error("No profile found");
         }
@@ -76,8 +76,8 @@ export class Configurator {
             if (pr == undefined) {
                 throw new Error("Profile not found");
             }
-            profile = pr.getProfile();
-            retVal = { build: pr.getProfileBuild(), host: pr.getProfileHost() };
+            profile = pr.profile;
+            retVal = { build: pr.profileBuild, host: pr.profileHost };
         }
         return { profile, retVal };
     }
@@ -89,7 +89,7 @@ export class Configurator {
     getBuildFolder(name: string): string {
         let buildFolder = this.isWorkspace(name)
             ? this.workspaces.get(name)?.getBuildFolder()
-            : this.profiles.get(name)?.getBuildFolder();
+            : this.profiles.get(name)?.buildFolder;
         if (!buildFolder) {
             throw new Error("No build folder found");
         }
@@ -99,7 +99,7 @@ export class Configurator {
     getInstallArg(name: string): string {
         let installArg = this.isWorkspace(name)
             ? this.workspaces.get(name)?.getArguments()
-            : this.profiles.get(name)?.getInstallArguments();
+            : this.profiles.get(name)?.installArg;
         if (!installArg) {
             installArg = "";
         }
@@ -107,7 +107,7 @@ export class Configurator {
     }
 
     getBuildArg(name: string): string {
-        let buildArg = this.profiles.get(name)?.getBuildArguments();
+        let buildArg = this.profiles.get(name)?.buildArg;
         if (!buildArg) {
             buildArg = "";
         }
@@ -115,7 +115,7 @@ export class Configurator {
     }
 
     getCreateArg(name: string): string {
-        let createArg = this.profiles.get(name)?.getCreateArguments();
+        let createArg = this.profiles.get(name)?.createArg;
         if (!createArg) {
             createArg = "";
         }
@@ -123,7 +123,7 @@ export class Configurator {
     }
 
     getCreateUser(name: string): string {
-        let createUser = this.profiles.get(name)?.getCreateUser();
+        let createUser = this.profiles.get(name)?.createUser;
         if (!createUser) {
             throw new Error("No createUser found");
         }
@@ -131,7 +131,7 @@ export class Configurator {
     }
 
     getCreateChannel(name: string): string {
-        let createChannel = this.profiles.get(name)?.getCreateChannel();
+        let createChannel = this.profiles.get(name)?.createChannel;
         if (!createChannel) {
             throw new Error("No createChannel found");
         }
