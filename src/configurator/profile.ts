@@ -1,23 +1,21 @@
 
 // some other file
 import "reflect-metadata";
+import { container, injectable } from "tsyringe";
 
-import { System } from "../system/interface";
-
+import { SystemPlugin } from "../system/plugin";
+@injectable()
 class BuilProfile {
-    public readonly system: System;
     public readonly profile: string | undefined;
     public readonly profileHost: string | undefined;
     public readonly profileBuild: string | undefined;
     public readonly buildFolder: string | undefined;
 
-    constructor(system: System,
-        name: string,
+    constructor( name: string,
         profile: string,
         profileBuild: string,
         profileHost: string) {
 
-        this.system = system;
         this.profile = profile;
         this.profileBuild = profileBuild;
         this.profileHost = profileHost;
@@ -30,8 +28,9 @@ class BuilProfile {
     }
     protected replaceWorkspaceFolder(source: string) : string
     {
+        const system = container.resolve(SystemPlugin);
         if(source.length > 0){
-            return source.replace("${workspaceFolder}", this.system.getWorkspaceRootPath()!);
+            return source.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
         }
         return "";
     }
@@ -45,7 +44,7 @@ export class Profile extends BuilProfile {
     public readonly createChannel: string;
 
 
-    constructor(system: System,
+    constructor(
         name: string = "default",
         conanFile: string = ".",
         profile: string = "",
@@ -56,7 +55,7 @@ export class Profile extends BuilProfile {
         createArg: string = "",
         createUser: string = "",
         createChannel: string = "") {
-        super(system,name,profile,profileBuild,profileHost);
+        super(name,profile,profileBuild,profileHost);
 
         this.installArg = installArg;
         this.buildArg = buildArg;
@@ -70,15 +69,14 @@ export class Workspace extends BuilProfile {
     public readonly conanworkspacePath: string;
     public readonly arg: string;
 
-    constructor(system: System,
-        name: string = "default",
+    constructor(name: string = "default",
         conanWs: string = ".",
         profile: string = "",
         profileBuild: string = "",
         profileHost: string = "",
         arg: string = "") {
         
-        super(system,name,profile,profileBuild,profileHost);
+        super(name,profile,profileBuild,profileHost);
         
         this.conanworkspacePath = this.replaceWorkspaceFolder(conanWs);
 

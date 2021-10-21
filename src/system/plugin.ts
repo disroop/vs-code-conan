@@ -1,14 +1,11 @@
 /* eslint-disable eqeqeq */
-import * as vscode from 'vscode';
 import { singleton } from "tsyringe";
 import { System } from "./interface";
 
-
 @singleton()
-export class SystemPlugin implements System{
-    constructor() { }
-
+export class SystemPlugin{
     getWorkspaceRootPath() {
+        const vscode = require('vscode');
         if (vscode.workspace.workspaceFolders !== undefined) {
             if (vscode.workspace.workspaceFolders.length === 1) {
                 return vscode.workspace.workspaceFolders[0].uri.path;
@@ -19,5 +16,11 @@ export class SystemPlugin implements System{
         }
         throw new Error("No workspace folders");
     }
+
+    showWarningMessage(message:string){
+        const vscode = require('vscode');
+        vscode.window.showWarningMessage(message);
+    }
+
 }
 

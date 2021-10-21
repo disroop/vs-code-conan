@@ -1,17 +1,16 @@
+import "reflect-metadata";
 import { expect } from 'chai';
+import { container } from 'tsyringe';
 import { Profile, Workspace } from '../../../src/configurator/profile';
-import { System } from "../../../src/system/interface";
+import { SystemPlugin } from '../../../src/system/plugin';
+import { SystemPluginMock } from '../system-mock';
 
-class SystemPluginMock implements System{
-    getWorkspaceRootPath(){
-        return 'root-workspace';
-    }
-}
+container.registerInstance(SystemPlugin, new SystemPluginMock());
 
 describe('Profile', () => {
     it('can be initialized', () => {
+
         const profile = new Profile(
-            new SystemPluginMock(),
             "aName",
             "aConanFile",
             "aProfile",
@@ -35,7 +34,7 @@ describe('Profile', () => {
     });
 
     it('can use default parameter', () => {
-        const profile = new Profile(new SystemPluginMock());
+        const profile = new Profile();
         expect(profile.buildFolder).to.equal("build/default");
         expect(profile.conanfilePath).to.equal(".");
         expect(profile.profile).to.equal("");
@@ -49,7 +48,7 @@ describe('Profile', () => {
     });
 
     it('can use workspace-folder', () => {
-        const profile = new Profile(new SystemPluginMock(), 
+        const profile = new Profile(
         "test",
         "${workspaceFolder}/aConanFile",
         "${workspaceFolder}/aProfile",
@@ -72,7 +71,6 @@ describe('Profile', () => {
 describe('Workspace', () => {
     it('can be initialized', () => {
         const workspace = new Workspace(
-            new SystemPluginMock(),
             "aName",
             "aConanWs",
             "aProfile",
@@ -88,7 +86,7 @@ describe('Workspace', () => {
     });
 
     it('can use default parameter', () => {
-        const workspace = new Workspace(new SystemPluginMock());
+        const workspace = new Workspace();
         expect(workspace.buildFolder).to.equal("build/default");
         expect(workspace.conanworkspacePath).to.equal(".");
         expect(workspace.profile).to.equal("");
@@ -98,7 +96,7 @@ describe('Workspace', () => {
     });
 
     it('can use workspace-folder', () => {
-        const workspace = new Workspace(new SystemPluginMock(), 
+        const workspace = new Workspace( 
         "test",
         "${workspaceFolder}/path",
         "${workspaceFolder}/aProfile",
