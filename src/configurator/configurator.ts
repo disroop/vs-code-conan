@@ -40,7 +40,7 @@ export class Configurator {
 
     appendKeysOfMap(array: Array<string>, map : Map<string, Profile | Workspace> | undefined ): Array<string>{
         if (map) {
-            array.concat(Array.from(map.keys()));
+            array = array.concat(Array.from(map.keys()));
         }
         return array;
     }
