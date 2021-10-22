@@ -14,5 +14,7 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
-  }
+  },
+  "mochaExplorer.files": "test/unit/**/*.ts",
+  "mochaExplorer.require": "ts-node/register"
 }

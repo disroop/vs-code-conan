@@ -9,7 +9,7 @@ interface ProfileExtended {
 
 export class Configurator {
     private readonly file: string;
-    private profiles: Map<string, Profile> = new Map<string, Profile>();
+    private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> = new Map<string, Workspace>();
 
     constructor(file: string) {
@@ -19,24 +19,36 @@ export class Configurator {
     readFile() {
         let fs = require("fs");
         let data = fs.readFileSync(this.file);
-        this.profiles = SettingsParser.convert(data);
+        let parser = new SettingsParser(data);
+        this.profiles = parser.getProfiles();
         this.workspaces = SettingsParser.convertWs(data);
     }
 
     getConanFile(name: string): string {
-        let conanFile = this.isWorkspace(name)
-            ? this.workspaces.get(name)?.conanworkspacePath
-            : this.profiles.get(name)?.conanfilePath;
+        let conanFile = undefined;
+        if (this.isWorkspace(name)) {
+            conanFile = this.workspaces.get(name)?.conanworkspacePath;
+        }
+        if (this.profiles?.has(name)) {
+            conanFile = this.profiles.get(name)?.conanfilePath;
+        }
         if (!conanFile) {
             throw new Error("No profile found");
         }
         return conanFile;
     }
 
+    appendKeysOfMap(array: Array<string>, map : Map<string, Profile | Workspace> | undefined ): Array<string>{
+        if (map) {
+            array.concat(Array.from(map.keys()));
+        }
+        return array;
+    }
+
     getAllNames(): string[] {
-        const profileNames = Array.from(this.profiles.keys());
-        const workspaceNames = Array.from(this.workspaces.keys());
-        const names = profileNames.concat(workspaceNames);
+        let names : Array<string> = new Array<string>();
+        names = this.appendKeysOfMap(names,this.profiles);
+        names = this.appendKeysOfMap(names,this.workspaces);
         if (this.checkUniqueName(names)) {
             throw new Error("Duplication of names");
         }
@@ -71,7 +83,7 @@ export class Configurator {
 
         }
         else {
-            let pr = this.profiles.get(name);
+            let pr = this.profiles?.get(name);
             if (pr == undefined) {
                 throw new Error("Profile not found");
             }
@@ -88,7 +100,7 @@ export class Configurator {
     getBuildFolder(name: string): string {
         let buildFolder = this.isWorkspace(name)
             ? this.workspaces.get(name)?.buildFolder
-            : this.profiles.get(name)?.buildFolder;
+            : this.profiles?.get(name)?.buildFolder;
         if (!buildFolder) {
             throw new Error("No build folder found");
         }
@@ -98,7 +110,7 @@ export class Configurator {
     getInstallArg(name: string): string {
         let installArg = this.isWorkspace(name)
             ? this.workspaces.get(name)?.arg
-            : this.profiles.get(name)?.installArg;
+            : this.profiles?.get(name)?.installArg;
         if (!installArg) {
             installArg = "";
         }
@@ -106,7 +118,7 @@ export class Configurator {
     }
 
     getBuildArg(name: string): string {
-        let buildArg = this.profiles.get(name)?.buildArg;
+        let buildArg = this.profiles?.get(name)?.buildArg;
         if (!buildArg) {
             buildArg = "";
         }
@@ -114,7 +126,7 @@ export class Configurator {
     }
 
     getCreateArg(name: string): string {
-        let createArg = this.profiles.get(name)?.createArg;
+        let createArg = this.profiles?.get(name)?.createArg;
         if (!createArg) {
             createArg = "";
         }
@@ -122,7 +134,7 @@ export class Configurator {
     }
 
     getCreateUser(name: string): string {
-        let createUser = this.profiles.get(name)?.createUser;
+        let createUser = this.profiles?.get(name)?.createUser;
         if (!createUser) {
             throw new Error("No createUser found");
         }
@@ -130,7 +142,7 @@ export class Configurator {
     }
 
     getCreateChannel(name: string): string {
-        let createChannel = this.profiles.get(name)?.createChannel;
+        let createChannel = this.profiles?.get(name)?.createChannel;
         if (!createChannel) {
             throw new Error("No createChannel found");
         }

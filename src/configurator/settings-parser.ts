@@ -1,6 +1,7 @@
-import {Profile, Workspace} from "./profile";
+import {Profile, ProfileJson,Workspace} from "./profile";
 import { container } from "tsyringe";
 import { SystemPlugin } from "../system/plugin";
+import { workspace } from "vscode";
 
 export class SettingsParser {
     private readonly system;
@@ -13,11 +14,43 @@ export class SettingsParser {
         this.system = container.resolve(SystemPlugin);
         this.rawJasonData = jsonData;
         this.isConverted = false;
-        this.profiles = undefined;
+        this.update(jsonData);
     }
 
-    update(){
+    update(jsonData:string){
+        this.profiles = this.convertProfile(jsonData);
+    }
 
+    private isParameterCorrectlyDefined(parameter: string):Boolean {
+        if(parameter.length>0){
+            return true;
+        }
+        return false;
+    }
+
+    private isParameterNameAlreadyDefined(name: string, container: Map<string, Profile | Workspace>):Boolean {
+        if(container.has(name)){
+            return false;
+        }
+        return true;
+    }
+
+    private convertProfile(rawJson:string) : Map<string, Profile>{
+        const jsonObj: { profiles: ProfileJson[] } = JSON.parse(rawJson);
+
+        let profiles = new Map<string, Profile>();
+        for (let profile of jsonObj.profiles){
+            if(!this.isParameterCorrectlyDefined(profile.name)){
+                SettingsParser.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
+                continue;
+            }
+            if(!this.isParameterNameAlreadyDefined(profile.name,profiles)){
+                SettingsParser.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
+                continue;
+            }
+            profiles.set(profile.name,new Profile(profile));
+        }
+        return profiles;
     }
 
     getProfiles(): Map<string, Profile> | undefined{
@@ -32,54 +65,6 @@ export class SettingsParser {
         const system = container.resolve(SystemPlugin);
         system.showWarningMessage(message);
         
-    }
-    static convert(jsonData: string): Map<string, Profile> {
-        interface ProfileObj {
-            name: string;
-            conanFile: string;
-            profile: string;
-            profileBuild: string;
-            profileHost: string;
-            installArg: string;
-            buildArg: string;
-            createArg: string;
-            createUser: string;
-            createChannel: string;
-        }
-
-        const jsonObj: { profiles: ProfileObj[] } = JSON.parse(jsonData);
-
-
-        const profiles = new Map<string, Profile>();
-        let counterNonValidSettings = 0;
-        if (jsonObj.profiles) {
-            jsonObj.profiles.forEach(function (profileJson) {
-                if (profileJson.name !== undefined && profileJson.name.length > 0) {
-                    if (!profiles.has(profileJson.name)) {
-                        profiles.set(profileJson.name, new Profile(
-                            profileJson.name,
-                            profileJson.conanFile,
-                            profileJson.profile,
-                            profileJson.profileBuild,
-                            profileJson.profileHost,
-                            profileJson.installArg,
-                            profileJson.buildArg,
-                            profileJson.createArg,
-                            profileJson.createUser,
-                            profileJson.createChannel));
-                    } else {
-                        SettingsParser.showWarningMessage("Profile with name: " + profileJson.name + " already exist! Use first setting in settings.json.");
-  
-                    }
-                } else {
-                    counterNonValidSettings++;
-                }
-            });
-            if (counterNonValidSettings > 0) {
-                SettingsParser.showWarningMessage(counterNonValidSettings + " Not valid profiles: Profiles in settings.json with no correct name!");
-            }
-        }
-        return new Map(profiles);
     }
 
     static convertWs(jsonData: string): Map<string, Workspace> {
@@ -98,6 +83,7 @@ export class SettingsParser {
         if (jsonObj.workspace) {
             jsonObj.workspace.forEach(function (workspaceJson) {
                 if (workspaceJson.name !== undefined && workspaceJson.name.length > 0) {
+                    
                     if (!workspaces.has(workspaceJson.name)) {
                         let workspace = new Workspace(
                             workspaceJson.name,

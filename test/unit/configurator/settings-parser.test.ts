@@ -26,12 +26,12 @@ describe('SettingParser', () => {
         let parser = new SettingsParser(simpleDataSet);
         const profiles = parser.getProfiles();
         
-        expect(profiles?.keys.length).to.equal(1);
+        expect(profiles?.size).to.equal(1);
         expect(profiles?.has("a")).true;
         const a_value = profiles?.get("a");
         expect(a_value?.buildArg).to.equal("");
         expect(a_value?.buildFolder).to.equal("build/a");
-        expect(a_value?.conanfilePath).to.equal("root-workspace/a/onanfile.py");
+        expect(a_value?.conanfilePath).to.equal("root-workspace/a/conanfile.py");
         expect(a_value?.buildArg).to.equal("");
         expect(a_value?.installArg).to.equal("--build=missing");
         expect(a_value?.createUser).to.equal("disroop");
