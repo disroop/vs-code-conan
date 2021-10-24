@@ -5,38 +5,46 @@ import { container, injectable } from "tsyringe";
 
 import { SystemPlugin } from "../system/plugin";
 
-export interface ProfileJson {
+export interface ConanProfile{
     name: string;
-    conanFile?: string;
     profile?: string;
     profileBuild?: string;
     profileHost?: string;
+}
+export interface ProfileJson extends ConanProfile{
+    conanFile?: string;
     installArg?: string;
     buildArg?: string;
     createArg?: string;
     createUser?: string;
     createChannel?: string;
 }
+
+export interface WorkspaceJson extends ConanProfile{
+    conanWs?: string;
+    arg?: string;
+}
+
 @injectable()
-class BuilProfile {
+export class BuildProfile {
     public readonly profile: string | undefined;
     public readonly profileHost: string | undefined;
     public readonly profileBuild: string | undefined;
     public readonly buildFolder: string | undefined;
 
     constructor( name: string,
-        profile: string,
-        profileBuild: string,
-        profileHost: string) {
+        profile: string | undefined,
+        profileBuild: string | undefined,
+        profileHost: string | undefined) {
 
-        this.profile = profile;
-        this.profileBuild = profileBuild;
-        this.profileHost = profileHost;
+        profile = BuildProfile.getDefaultValue(profile,"default");
+        profileBuild = BuildProfile.getDefaultValue(profileBuild,"default");
+        profileHost = BuildProfile.getDefaultValue(profileHost,"default");
         this.buildFolder = "build/" + name;
 
-        this.profile = BuilProfile.replaceWorkspaceFolder(profile);
-        this.profileBuild = BuilProfile.replaceWorkspaceFolder(profileBuild);
-        this.profileHost = BuilProfile.replaceWorkspaceFolder(profileHost);
+        this.profile = BuildProfile.replaceWorkspaceFolder(profile);
+        this.profileBuild = BuildProfile.replaceWorkspaceFolder(profileBuild);
+        this.profileHost = BuildProfile.replaceWorkspaceFolder(profileHost);
 
     }
     static replaceWorkspaceFolder(source: string) : string
@@ -54,7 +62,7 @@ class BuilProfile {
         return value;
     }
 }
-export class Profile extends BuilProfile {
+export class Profile extends BuildProfile {
     public readonly conanfilePath: string;
     public readonly installArg: string;
     public readonly buildArg: string;
@@ -65,37 +73,28 @@ export class Profile extends BuilProfile {
 
     constructor(
         json: ProfileJson) {
-        
-        let profile = BuilProfile.getDefaultValue(json.profile,"default");
-        let profileHost = BuilProfile.getDefaultValue(json.profileHost,"default");
-        let profileBuild = BuilProfile.getDefaultValue(json.profileBuild,"default");
-        let conanfilePath = BuilProfile.getDefaultValue(json.conanFile,".");
-        
-        super(json.name, profile, profileBuild, profileHost);
 
-        this.installArg = BuilProfile.getDefaultValue(json.installArg,"");
-        this.buildArg = BuilProfile.getDefaultValue(json.buildArg,"");
-        this.createArg = BuilProfile.getDefaultValue(json.createArg,"");
-        this.createUser = BuilProfile.getDefaultValue(json.createUser,"");
-        this.createChannel = BuilProfile.getDefaultValue(json.createChannel,"");
-        this.conanfilePath = BuilProfile.replaceWorkspaceFolder(conanfilePath);
+        super(json.name, json.profile, json.profileBuild, json.profileHost);
+
+        this.installArg = BuildProfile.getDefaultValue(json.installArg,"");
+        this.buildArg = BuildProfile.getDefaultValue(json.buildArg,"");
+        this.createArg = BuildProfile.getDefaultValue(json.createArg,"");
+        this.createUser = BuildProfile.getDefaultValue(json.createUser,"");
+        this.createChannel = BuildProfile.getDefaultValue(json.createChannel,"");
+        let conanfilePath = BuildProfile.getDefaultValue(json.conanFile,".");
+        this.conanfilePath = BuildProfile.replaceWorkspaceFolder(conanfilePath);
     }
 }
-export class Workspace extends BuilProfile {
+
+
+export class Workspace extends BuildProfile {
     public readonly conanworkspacePath: string;
     public readonly arg: string;
 
-    constructor(name: string = "default",
-        conanWs: string = ".",
-        profile: string = "",
-        profileBuild: string = "",
-        profileHost: string = "",
-        arg: string = "") {
-        
-        super(name,profile,profileBuild,profileHost);
-        
-        this.conanworkspacePath = BuilProfile.replaceWorkspaceFolder(conanWs);
-
-        this.arg = arg;
+    constructor(json:WorkspaceJson) {
+        super(json.name,json.profile,json.profileBuild,json.profileHost);
+        let conanWs = BuildProfile.getDefaultValue(json.conanWs,".");
+        this.conanworkspacePath = BuildProfile.replaceWorkspaceFolder(conanWs);
+        this.arg = BuildProfile.getDefaultValue(json.arg,"");
     }
 }

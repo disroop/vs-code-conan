@@ -10,8 +10,7 @@ interface ProfileExtended {
 export class Configurator {
     private readonly file: string;
     private profiles: Map<string, Profile> | undefined;
-    private workspaces: Map<string, Workspace> = new Map<string, Workspace>();
-
+    private workspaces: Map<string, Workspace>| undefined;
     constructor(file: string) {
         this.file = file;
     }
@@ -21,12 +20,12 @@ export class Configurator {
         let data = fs.readFileSync(this.file);
         let parser = new SettingsParser(data);
         this.profiles = parser.getProfiles();
-        this.workspaces = SettingsParser.convertWs(data);
+        this.workspaces = parser.getWorkspaces();
     }
 
     getConanFile(name: string): string {
         let conanFile = undefined;
-        if (this.isWorkspace(name)) {
+        if (this.workspaces?.has(name)) {
             conanFile = this.workspaces.get(name)?.conanworkspacePath;
         }
         if (this.profiles?.has(name)) {
@@ -73,7 +72,7 @@ export class Configurator {
     private getActiveProfile(name: string) {
         let profile: string | undefined;
         let retVal: ProfileExtended;
-        if (this.isWorkspace(name)) {
+        if (this.workspaces?.has(name)) {
             let ws = this.workspaces.get(name);
             if (ws == undefined) {
                 throw new Error("Workspace not found");
@@ -94,11 +93,14 @@ export class Configurator {
     }
 
     isWorkspace(name: string): boolean {
-        return this.workspaces.has(name);
+        if (this.workspaces){
+            return this.workspaces.has(name);
+        }
+        return false;
     }
 
     getBuildFolder(name: string): string {
-        let buildFolder = this.isWorkspace(name)
+        let buildFolder = this.workspaces?.has(name)
             ? this.workspaces.get(name)?.buildFolder
             : this.profiles?.get(name)?.buildFolder;
         if (!buildFolder) {
@@ -108,7 +110,7 @@ export class Configurator {
     }
 
     getInstallArg(name: string): string {
-        let installArg = this.isWorkspace(name)
+        let installArg = this.workspaces?.has(name)
             ? this.workspaces.get(name)?.arg
             : this.profiles?.get(name)?.installArg;
         if (!installArg) {

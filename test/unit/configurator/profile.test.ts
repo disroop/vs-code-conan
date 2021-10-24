@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
-import { Profile, ProfileJson, Workspace } from '../../../src/configurator/profile';
+import { Profile, ProfileJson, Workspace, WorkspaceJson } from '../../../src/configurator/profile';
 import { SystemPlugin } from '../../../src/system/plugin';
 import { SystemPluginMock } from '../system-mock';
 
@@ -77,14 +77,16 @@ describe('Profile', () => {
 
 describe('Workspace', () => {
     it('can be initialized', () => {
-        const workspace = new Workspace(
-            "aName",
-            "aConanWs",
-            "aProfile",
-            "aProfileBuild",
-            "aProfileHost",
-            "aArg");
-        expect(workspace.buildFolder).to.equal("build/aName");
+        const workspaceJson: WorkspaceJson = {
+            "name": "test",
+            "conanWs": "aConanWs",
+            "profile": "aProfile",
+            "profileBuild": "aProfileBuild",
+            "profileHost": "aProfileHost",
+            "arg":"aArg",
+        };
+        const workspace = new Workspace(workspaceJson);
+        expect(workspace.buildFolder).to.equal("build/test");
         expect(workspace.conanworkspacePath).to.equal("aConanWs");
         expect(workspace.profile).to.equal("aProfile");
         expect(workspace.profileBuild).to.equal("aProfileBuild");
@@ -93,22 +95,27 @@ describe('Workspace', () => {
     });
 
     it('can use default parameter', () => {
-        const workspace = new Workspace();
-        expect(workspace.buildFolder).to.equal("build/default");
+        const workspaceJson: WorkspaceJson = {
+            "name": "test",
+        };
+        const workspace = new Workspace(workspaceJson);
+        expect(workspace.buildFolder).to.equal("build/test");
         expect(workspace.conanworkspacePath).to.equal(".");
-        expect(workspace.profile).to.equal("");
-        expect(workspace.profileBuild).to.equal("");
-        expect(workspace.profileHost).to.equal("");
+        expect(workspace.profile).to.equal("default");
+        expect(workspace.profileBuild).to.equal("default");
+        expect(workspace.profileHost).to.equal("default");
         expect(workspace.arg).to.equal("");
     });
 
     it('can use workspace-folder', () => {
-        const workspace = new Workspace(
-            "test",
-            "${workspaceFolder}/path",
-            "${workspaceFolder}/aProfile",
-            "${workspaceFolder}/aProfileBuild",
-            "${workspaceFolder}/aProfileHost");
+        const workspaceJson: WorkspaceJson = {
+            "name": "test",
+            "conanWs": "${workspaceFolder}/path",
+            "profile": "${workspaceFolder}/aProfile",
+            "profileBuild": "${workspaceFolder}/aProfileBuild",
+            "profileHost": "${workspaceFolder}/aProfileHost",
+        };
+        const workspace = new Workspace(workspaceJson);
         expect(workspace.buildFolder).to.equal("build/test");
         expect(workspace.conanworkspacePath).to.equal("root-workspace/path");
         expect(workspace.profile).to.equal("root-workspace/aProfile");
