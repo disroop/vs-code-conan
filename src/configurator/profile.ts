@@ -50,10 +50,7 @@ export class BuildProfile {
     static replaceWorkspaceFolder(source: string) : string
     {
         const system = container.resolve(SystemPlugin);
-        if(source.length > 0){
-            return source.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
-        }
-        return "";
+        return source.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
     }
     static getDefaultValue(value:string|undefined, defaultValue:string):string{
         if(value===undefined){
