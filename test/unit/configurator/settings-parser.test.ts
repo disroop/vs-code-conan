@@ -38,4 +38,29 @@ describe('SettingParser', () => {
         expect(a_value?.createChannel).to.equal("development");
         expect(a_value?.createArg).to.equal("--build=missing");
     });
+
+    it('get workspace', () => {
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin, new SystemPluginMock());
+
+        const simpleDataSet = `{"workspace": [
+            { 
+                "name":"ws-debug",
+                "conanWs": "\${workspaceFolder}/.infrastructure/workspace/ws-linux.yml",
+                "profile": "\${workspaceFolder}/.infrastructure/conan_config/profiles/clang-apple-debug",
+                "arg": "--build=missing"
+            }]}`;
+
+            
+        let parser = new SettingsParser(simpleDataSet);
+        const workspaces = parser.getWorkspaces();
+        
+        expect(workspaces?.size).to.equal(1);
+        expect(workspaces?.has("ws-debug")).true;
+        const wsdebug = workspaces?.get("ws-debug");
+        expect(wsdebug?.buildFolder).to.equal("build/ws-debug");
+        expect(wsdebug?.conanworkspacePath).to.equal("root-workspace/.infrastructure/workspace/ws-linux.yml");
+        expect(wsdebug?.arg).to.equal("--build=missing");
+        expect(wsdebug?.profile).to.equal("root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug");
+    });
 });

@@ -4,22 +4,17 @@ import { SystemPlugin } from "../system/plugin";
 import { workspace } from "vscode";
 
 export class SettingsParser {
-    private readonly system;
-    private isConverted: boolean;
-    private rawJasonData: string;
     private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> | undefined;
 
     constructor(jsonData: string){
-        this.system = container.resolve(SystemPlugin);
-        this.rawJasonData = jsonData;
-        this.isConverted = false;
+        //this.system = container.resolve(SystemPlugin);
         this.update(jsonData);
     }
 
     update(jsonData:string){
-        this.profiles = this.convertArrays<ProfileJson,Profile>(jsonData,Profile);
-        this.workspaces = this.convertArrays<WorkspaceJson,Workspace>(jsonData,Workspace);
+        this.profiles = this.parseProfile(jsonData);
+        this.workspaces = this.parseWorkspace(jsonData);
     }
 
     private isParameterCorrectlyDefined(parameter: string):Boolean {
@@ -36,23 +31,43 @@ export class SettingsParser {
         return true;
     }
 
-    private convertArrays<JsonType extends ConanProfile, Type extends BuildProfile>(rawJson:string, type: { new(json:ConanProfile): Type;} ) : Map<string, Type>{
-        const jsonObj: { profiles: JsonType[] } = JSON.parse(rawJson);
-
-        let profiles = new Map<string, Type>();
+    private checkProfile(profile:ConanProfile, profiles : Map<string, BuildProfile> ) : boolean{
+        if(!this.isParameterCorrectlyDefined(profile.name)){
+            SettingsParser.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
+            return false;
+        }
+        if(!this.isParameterNameAlreadyDefined(profile.name,profiles)){
+            SettingsParser.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
+            return false;
+        }
+        return true;
+    }
+    private parseProfile(rawJson: string):Map<string, Profile>|undefined{
+        const jsonObj: { profiles: ProfileJson[] } = JSON.parse(rawJson);
+        if(!jsonObj.profiles){
+            return this.profiles;
+        }
+        let profiles = new Map<string, Profile>();
         for (let profile of jsonObj.profiles){
-            if(!this.isParameterCorrectlyDefined(profile.name)){
-                SettingsParser.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
-                continue;
+            if(this.checkProfile(profile,profiles)){
+                profiles.set(profile.name,new Profile(profile));
             }
-            if(!this.isParameterNameAlreadyDefined(profile.name,profiles)){
-                SettingsParser.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
-                continue;
-            }
-            
-            profiles.set(profile.name,new type(profile));
         }
         return profiles;
+    }
+
+    private parseWorkspace(rawJson: string):Map<string, Workspace> | undefined{
+        const jsonObj: { workspace: WorkspaceJson[] } = JSON.parse(rawJson);
+        if(!jsonObj.workspace){
+            return this.workspaces;
+        }
+        let workspaces = new Map<string, Workspace>();
+        for (let workspace of jsonObj.workspace){
+            if(this.checkProfile(workspace,workspaces)){
+                workspaces.set(workspace.name,new Workspace(workspace));
+            }
+        }
+        return workspaces;
     }
 
 
