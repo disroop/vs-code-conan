@@ -63,4 +63,58 @@ describe('SettingParser', () => {
         expect(wsdebug?.arg).to.equal("--build=missing");
         expect(wsdebug?.profile).to.equal("root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug");
     });
+
+    it('non workspace name',() => {
+        const system = container.resolve(SystemPluginMock);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const simpleDataSet = `{"workspace": [
+            { 
+                "name":""
+            }]}`;
+
+        let parser = new SettingsParser(simpleDataSet);
+        const workspaces = parser.getWorkspaces();
+        
+        expect(workspaces?.size).to.equal(0);
+        expect(system.warningMessage?.length).above(0);
+    });
+
+    it('non workspace name',() => {
+        const system = container.resolve(SystemPluginMock);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const simpleDataSet = `{"workspace": [
+            { 
+                "name":""
+            }]}`;
+
+        let parser = new SettingsParser(simpleDataSet);
+        const workspaces = parser.getWorkspaces();
+        
+        expect(workspaces?.size).to.equal(0);
+        expect(system.warningMessage?.length).above(0);
+    });
+
+    it('non workspace name',() => {
+        const system = container.resolve(SystemPluginMock);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const simpleDataSet = `{"workspace": [
+            { 
+                "name":"double"
+            },
+            { 
+                "name":"double"
+            }]}`;
+
+        let parser = new SettingsParser(simpleDataSet);
+        const workspaces = parser.getWorkspaces();
+        
+        expect(workspaces?.size).to.equal(1);
+        expect(system.warningMessage?.length).above(0);
+    });
 });

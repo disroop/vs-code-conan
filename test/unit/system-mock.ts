@@ -1,3 +1,5 @@
+import { singleton } from "tsyringe";
+@singleton()
 export class SystemPluginMock{
     warningMessage:string | undefined;
     

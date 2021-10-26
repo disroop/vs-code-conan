@@ -1,7 +1,5 @@
 /* eslint-disable eqeqeq */
 import { singleton } from "tsyringe";
-import { System } from "./interface";
-
 @singleton()
 export class SystemPlugin{
     getWorkspaceRootPath() {
