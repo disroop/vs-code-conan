@@ -1,5 +1,4 @@
 import { SettingsParser } from "../../../src/configurator/settings-parser";
-import { System } from "../../../src/system/interface";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
 import { SystemPlugin } from "../../../src/system/plugin";
