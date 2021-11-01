@@ -52,7 +52,7 @@ export class Configurator {
         names = this.appendKeysOfMap(names,this.profiles);
         names = this.appendKeysOfMap(names,this.workspaces);
         if (this.checkUniqueName(names)) {
-            throw new Error("Duplication of names");
+            throw new Error("Duplication of names in profile and workspace");
         }
         return names;
     }

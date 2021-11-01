@@ -44,7 +44,7 @@ describe('Configurator', () => {
             "conanFile":"\${workspaceFolder}/a/conanfile.py",
             "profile":"\${workspaceFolder}/.profile/a-profile",
             "installArg": "--build=missing",
-            "buildArg":"",
+            "buildArg":"test",
             "createUser": "disroop",
             "createChannel": "development",
             "createArg": "--build=missing" 
@@ -53,11 +53,11 @@ describe('Configurator', () => {
             "name":"b", 
             "conanFile":"\${workspaceFolder}/b/conanfile.py",
             "profile":"\${workspaceFolder}/.profile/b-profile",
-            "installArg": "--build=missing",
+            "installArg": "",
             "buildArg":"",
             "createUser": "disroop",
             "createChannel": "development",
-            "createArg": "--build=missing" 
+            "createArg": "" 
         }
         ]}`;
 
@@ -74,7 +74,7 @@ describe('Configurator', () => {
         checkConfigurationProfile(configurator,"a",{ conanfile:"root-workspace/a/conanfile.py",
             profile:"root-workspace/.profile/a-profile",
             installArgument:"--build=missing",
-            buildArgument:"",
+            buildArgument:"test",
             createUser:"disroop",
             createChannel:"development",
             createArgument:"--build=missing",
@@ -82,11 +82,11 @@ describe('Configurator', () => {
        
         checkConfigurationProfile(configurator,"b",{ conanfile:"root-workspace/b/conanfile.py",
             profile:"root-workspace/.profile/b-profile",
-            installArgument:"--build=missing",
+            installArgument:"",
             buildArgument:"",
             createUser:"disroop",
             createChannel:"development",
-            createArgument:"--build=missing",
+            createArgument:"",
             buildFolder:"build/b"});
         
     });
@@ -171,6 +171,7 @@ describe('Configurator', () => {
             profile:"root-workspace/.profile/gcc",
             arguments:"--build=missing"});
     });
+
     it('can read none', () => {
         const filepath = "path";
 
@@ -186,11 +187,42 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names.length).to.eql(0); 
         expect(configurator.getBuildArg("x")).to.equal("");
+        expect(() => configurator.getProfile("x")).to.throw('Profile not found');
         expect(() => configurator.getCreateChannel("x")).to.throw('No createChannel found');
         expect(() => configurator.getCreateUser("x")).to.throw('No createUser found');
+    });
 
+    it('can read duplication', () => {
+        const filepath = "path";
 
-        //expect(system.warningMessage?.length).above(0);
+        const configString = `{"profiles": [{ 
+                "name":"a", 
+                "conanFile":"\${workspaceFolder}/a/conanfile.py",
+                "profile":"\${workspaceFolder}/.profile/a-profile",
+                "installArg": "--build=missing",
+                "buildArg":"",
+                "createUser": "disroop",
+                "createChannel": "development",
+                "createArg": "--build=missing" 
+            }
+            ],
+            "workspace": [
+            { 
+                "name":"a",
+                "conanWs": "\${workspaceFolder}/workspace/ws-arm.yml",
+                "profile": "\${workspaceFolder}/.profile/clang",
+                "arg": "--build=missing"
+            }
+        ]}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
     });
 });
 
