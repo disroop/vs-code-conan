@@ -57,7 +57,7 @@ export class Configurator {
         return names;
     }
 
-    checkUniqueName(names: string[]): boolean {
+    private checkUniqueName(names: string[]): boolean {
         return new Set(names).size !== names.length;
     }
 
