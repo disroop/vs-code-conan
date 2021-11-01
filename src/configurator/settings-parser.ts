@@ -1,7 +1,6 @@
 import {BuildProfile, ConanProfile, Profile, ProfileJson,Workspace, WorkspaceJson} from "./profile";
 import { container } from "tsyringe";
 import { SystemPlugin } from "../system/plugin";
-import { workspace } from "vscode";
 
 export class SettingsParser {
     private profiles: Map<string, Profile> | undefined;
@@ -17,14 +16,14 @@ export class SettingsParser {
         this.workspaces = this.parseWorkspace(jsonData);
     }
 
-    private isParameterCorrectlyDefined(parameter: string):Boolean {
+    private isParameterCorrectlyDefined(parameter: string):boolean {
         if(parameter.length>0){
             return true;
         }
         return false;
     }
 
-    private isParameterNameAlreadyDefined(name: string, container: Map<string, BuildProfile>):Boolean {
+    private isParameterNameAlreadyDefined(name: string, container: Map<string, BuildProfile>):boolean {
         if(container.has(name)){
             return false;
         }

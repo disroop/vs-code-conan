@@ -38,6 +38,43 @@ describe('SettingParser', () => {
         expect(a_value?.createArg).to.equal("--build=missing");
     });
 
+    it('non profile name',() => {
+        const system = container.resolve(SystemPluginMock);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const simpleDataSet = `{"profiles": [
+            { 
+                "name":""
+            }]}`;
+
+        let parser = new SettingsParser(simpleDataSet);
+        const profiles = parser.getProfiles();
+        
+        expect(profiles?.size).to.equal(0);
+        expect(system.warningMessage?.length).above(0);
+    });
+
+    it('double profile name',() => {
+        const system = container.resolve(SystemPluginMock);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const simpleDataSet = `{"profiles": [
+            { 
+                "name":"double"
+            },
+            { 
+                "name":"double"
+            }]}`;
+
+        let parser = new SettingsParser(simpleDataSet);
+        const profiles = parser.getProfiles();
+        
+        expect(profiles?.size).to.equal(1);
+        expect(system.warningMessage?.length).above(0);
+    });
+
     it('get workspace', () => {
         // We can mock a class at any level in the dependency tree without touching anything else
         container.registerInstance(SystemPlugin, new SystemPluginMock());
@@ -80,24 +117,7 @@ describe('SettingParser', () => {
         expect(system.warningMessage?.length).above(0);
     });
 
-    it('non workspace name',() => {
-        const system = container.resolve(SystemPluginMock);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
-
-        const simpleDataSet = `{"workspace": [
-            { 
-                "name":""
-            }]}`;
-
-        let parser = new SettingsParser(simpleDataSet);
-        const workspaces = parser.getWorkspaces();
-        
-        expect(workspaces?.size).to.equal(0);
-        expect(system.warningMessage?.length).above(0);
-    });
-
-    it('non workspace name',() => {
+    it('douple workspace name',() => {
         const system = container.resolve(SystemPluginMock);
         // We can mock a class at any level in the dependency tree without touching anything else
         container.registerInstance(SystemPlugin,system);
