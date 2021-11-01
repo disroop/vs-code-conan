@@ -171,5 +171,26 @@ describe('Configurator', () => {
             profile:"root-workspace/.profile/gcc",
             arguments:"--build=missing"});
     });
+    it('can read none', () => {
+        const filepath = "path";
+
+        const configString = `{}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        let names = configurator.getAllNames();
+        expect(names.length).to.eql(0); 
+        expect(configurator.getBuildArg("x")).to.equal("");
+        expect(() => configurator.getCreateChannel("x")).to.throw('No createChannel found');
+        expect(() => configurator.getCreateUser("x")).to.throw('No createUser found');
+
+
+        //expect(system.warningMessage?.length).above(0);
+    });
 });
 
