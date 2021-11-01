@@ -47,10 +47,11 @@
 		"compile": "tsc -p . ",
 		"lint": "eslint src --ext .ts",
 		"watch": "tsc -watch -p ./",
-		"test": "nyc --reporter=lcovonly --reporter=text mocha --require ts-node/register test/unit/**/*.ts",
+		"test": "nyc --reporter=lcovonly --reporter=text mocha --require ts-node/register -R @danmasta/mocha-sonar  test/unit/**/*.ts",
 		"integration-test": "node ./out/test/integration/runTest.js"
 	},
 	"devDependencies": {
+		"@danmasta/mocha-sonar": "^1.0.1",
 		"@types/chai": "^4.2.22",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^9.0.0",
