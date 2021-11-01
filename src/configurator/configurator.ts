@@ -1,6 +1,8 @@
 /* eslint-disable eqeqeq */
 import { SettingsParser } from "./settings-parser";
 import { Profile, Workspace } from "./profile";
+import { container } from "tsyringe";
+import { SystemPlugin } from "../system/plugin";
 
 interface ProfileExtended {
     build: string | undefined;
@@ -13,11 +15,12 @@ export class Configurator {
     private workspaces: Map<string, Workspace>| undefined;
     constructor(file: string) {
         this.file = file;
+        this.updateProfiles();
     }
 
-    readFile() {
-        let fs = require("fs");
-        let data = fs.readFileSync(this.file);
+    updateProfiles() {
+        const system = container.resolve(SystemPlugin);
+        let data = system.readFile(this.file);
         let parser = new SettingsParser(data);
         this.profiles = parser.getProfiles();
         this.workspaces = parser.getWorkspaces();

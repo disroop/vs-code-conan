@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
         const fs = require('fs');
         if (fs.existsSync(settingsFile)) {
             let config = new Configurator(settingsFile);
-            config.readFile();
+            config.updateProfiles();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];
             return {rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile};

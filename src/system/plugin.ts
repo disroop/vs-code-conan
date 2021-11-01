@@ -20,5 +20,10 @@ export class SystemPlugin{
         vscode.window.showWarningMessage(message);
     }
 
+    readFile(filepath:string) : string {
+        const fs = require("fs");
+        const data = fs.readFileSync(filepath);
+        return data;
+    }
 }
 
