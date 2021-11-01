@@ -122,8 +122,54 @@ describe('Configurator', () => {
         checkConfigurationWorkspace(configurator,"ws-debug-2",{ workspacePath:"root-workspace/workspace/ws-arm.yml",
             profile:"root-workspace/.profile/clang",
             arguments:"--build=missing"});
-       
+    });
+
+    it('can read workspace & profile', () => {
+        const filepath = "path";
+
+        const configString = `{
+            "profiles": [{ 
+                "name":"a", 
+                "conanFile":"\${workspaceFolder}/a/conanfile.py",
+                "profile":"\${workspaceFolder}/.profile/a-profile",
+                "installArg": "--build=missing",
+                "buildArg":"",
+                "createUser": "disroop",
+                "createChannel": "development",
+                "createArg": "--build=missing" 
+            }
+            ],
+            "workspace": [
+            { 
+                "name":"ws-debug",
+                "conanWs": "\${workspaceFolder}/workspace/ws-gcc.yml",
+                "profile": "\${workspaceFolder}/.profile/gcc",
+                "arg": "--build=missing"
+            }
+        ]}`;
+
+        const system = container.resolve(SystemPluginMock);
         
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        let names = configurator.getAllNames();
+        expect(names).to.eql(["a","ws-debug"]); 
+        
+        checkConfigurationProfile(configurator,"a",{ conanfile:"root-workspace/a/conanfile.py",
+            profile:"root-workspace/.profile/a-profile",
+            installArgument:"--build=missing",
+            buildArgument:"",
+            createUser:"disroop",
+            createChannel:"development",
+            createArgument:"--build=missing",
+            buildFolder:"build/a"});
+
+        checkConfigurationWorkspace(configurator,"ws-debug",{ workspacePath:"root-workspace/workspace/ws-gcc.yml",
+            profile:"root-workspace/.profile/gcc",
+            arguments:"--build=missing"});
     });
 });
 
