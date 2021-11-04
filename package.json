@@ -78,6 +78,6 @@
 		"queue-typescript": "^1.0.1",
 		"tree-kill": "^1.2.2",
 		"tsyringe": "^4.6.0",
-		"vsce": "^1.100.1"
+		"vsce": "^2.0.0"
 	}
 }
