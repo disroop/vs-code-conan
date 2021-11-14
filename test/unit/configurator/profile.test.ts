@@ -42,9 +42,9 @@ describe('Profile', () => {
         const profile = new Profile(profileJson);
         expect(profile.buildFolder).to.equal("build/default");
         expect(profile.conanfilePath).to.equal(".");
-        expect(profile.profile).to.equal("default");
-        expect(profile.profileBuild).to.equal("default");
-        expect(profile.profileHost).to.equal("default");
+        expect(profile.profile).to.equal(undefined);
+        expect(profile.profileBuild).to.equal(undefined);
+        expect(profile.profileHost).to.equal(undefined);
         expect(profile.installArg).to.equal("");
         expect(profile.buildArg).to.equal("");
         expect(profile.createArg).to.equal("");
@@ -101,9 +101,9 @@ describe('Workspace', () => {
         const workspace = new Workspace(workspaceJson);
         expect(workspace.buildFolder).to.equal("build/test");
         expect(workspace.conanworkspacePath).to.equal(".");
-        expect(workspace.profile).to.equal("default");
-        expect(workspace.profileBuild).to.equal("default");
-        expect(workspace.profileHost).to.equal("default");
+        expect(workspace.profile).to.equal(undefined);
+        expect(workspace.profileBuild).to.equal(undefined);
+        expect(workspace.profileHost).to.equal(undefined);
         expect(workspace.arg).to.equal("");
     });
 

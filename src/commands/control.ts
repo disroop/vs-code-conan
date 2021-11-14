@@ -1,4 +1,4 @@
-import {Configurator} from '../configurator/configurator';
+import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
 import {Executor} from '../executor/executor';
@@ -44,15 +44,20 @@ export class CommandController {
 
     private install(profileToRun: any) {
         try {
-            let conanfile = this._state.config.getConanFile(profileToRun);
-            let buildFolder = this._state.config.getBuildFolder(profileToRun);
-            let installArg = this._state.config.getInstallArg(profileToRun);
-            let profileCommand = this.getProfileCommand(profileToRun);
             let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-            let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
-            if (installArg.includes('-if') || installArg.includes('--install-folder')) {
-                installFolderArg = '';
+            let argument : WorkspaceArgument;
+            if(this._state.config.isWorkspace(profileToRun)){
+                argument = this._state.config.getConan(profileToRun);
             }
+            else{
+                argument = this._state.config.getWorkspace(profileToRun);
+            }
+            let conanfile = argument.path;
+            let buildFolder = argument.installFolder;
+            let installArg = argument.installArguments;
+            let profile = argument.installProfile;
+            let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
+            let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
             const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
             let command = { executionCommand: stringCommand, description: "installing" };
             this.executor.pushCommand(command);
@@ -61,32 +66,13 @@ export class CommandController {
         }
     }
 
-    private getProfileCommand(profileToRun: any) {
-        let profileCommand: string = " ";
-        let profile = this._state.config.getProfile(profileToRun);
-        if (typeof profile === "string") {
-            profileCommand = "--profile=" + profile;
-        }
-        else {
-            if (profile.build !== undefined) {
-                profileCommand = "--profile:build=" + profile.build + " ";
-            }
-            if (profile.host !== undefined) {
-                profileCommand = profileCommand + "--profile:host=" + profile.host;
-            }
-        }
-        return profileCommand;
-    }
-
     private build(profileToBuild: any) {
         try {
-            let conanfile = this._state.config.getConanFile(profileToBuild);
-            let buildFolder = this._state.config.getBuildFolder(profileToBuild);
-            let buildArg = this._state.config.getBuildArg(profileToBuild);
+            let argument = this._state.config.getConan(profileToBuild);
+            let conanfile = argument.path;
+            let buildFolder = argument.buildFolder;
+            let buildArg = argument.buildArguments;
             let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`;
-            if (buildArg.includes('-bf') || buildArg.includes('--build-folder')) {
-                buildFolderArg = '';
-            }
             const stringCommand = `conan build ${conanfile} ${buildArg} ${buildFolderArg}`;
             let command = { executionCommand: stringCommand, description: "building" };
             this.executor.pushCommand(command);
@@ -97,11 +83,13 @@ export class CommandController {
 
     private create(profileToCreate: any) {
         try {
-            let conanfile = this._state.config.getConanFile(profileToCreate);
-            let profileCommand = this.getProfileCommand(profileToCreate);
-            let createUser = this._state.config.getCreateUser(profileToCreate);
-            let createChannel = this._state.config.getCreateChannel(profileToCreate);
-            let createArg = this._state.config.getCreateArg(profileToCreate);
+            let argument = this._state.config.getConan(profileToCreate);
+            let conanfile = argument.path;
+            let profile = argument.installProfile;
+            let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
+            let createUser = argument.user;
+            let createChannel = argument.channel;
+            let createArg = argument.createArguments;
             const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
             let command = { executionCommand: stringCommand, description: "creating a package" };
             this.executor.pushCommand(command);

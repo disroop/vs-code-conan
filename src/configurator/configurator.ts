@@ -1,18 +1,43 @@
 /* eslint-disable eqeqeq */
 import { SettingsParser } from "./settings-parser";
-import { Profile, Workspace } from "./profile";
+import { BuildProfile, Profile, Workspace } from "./profile";
 import { container } from "tsyringe";
 import { SystemPlugin } from "../system/plugin";
+import { stripArgument } from "./argument-parser";
 
-interface ProfileExtended {
+interface ConanProfile {
     build: string | undefined;
     host: string | undefined;
+}
+export interface WorkspaceArgument {
+    installFolder: string | undefined;
+    path: string;
+    installProfile: ConanProfile;
+    installArguments: string | undefined;
+}
+export interface ConanArgument extends WorkspaceArgument {
+    buildFolder: string | undefined;
+    user: string;
+    channel: string;
+    createProfile: ConanProfile | undefined;
+    buildArguments: string | undefined;
+    createArguments: string | undefined;
+}
+
+interface ProfileVariant {
+    profileGeneric: string | undefined;
+    profileSpecific: ConanProfile;
+}
+interface installArgumentsExtracted {
+    installArg: string | undefined;
+    profile: ProfileVariant;
+    installFolder: string | undefined;
 }
 
 export class Configurator {
     private readonly file: string;
     private profiles: Map<string, Profile> | undefined;
-    private workspaces: Map<string, Workspace>| undefined;
+    private workspaces: Map<string, Workspace> | undefined;
     constructor(file: string) {
         this.file = file;
         this.updateProfiles();
@@ -26,73 +51,164 @@ export class Configurator {
         this.workspaces = parser.getWorkspaces();
     }
 
-    getConanFile(name: string): string {
-        let conanFile = undefined;
-        if (this.workspaces?.has(name)) {
-            conanFile = this.workspaces.get(name)?.conanworkspacePath;
+    private getConsoleProfile(strippedInstallArg: ProfileVariant, name: string): ConanProfile {
+        let installProfile;
+        if (strippedInstallArg.profileGeneric === undefined
+            && strippedInstallArg.profileSpecific.build === undefined
+            && strippedInstallArg.profileSpecific.host === undefined) {
+            installProfile = this.getProfiles(name);
         }
-        if (this.profiles?.has(name)) {
-            conanFile = this.profiles.get(name)?.conanfilePath;
+        else {
+            installProfile = this.convertProfile(strippedInstallArg.profileGeneric, strippedInstallArg.profileSpecific);
         }
-        if (!conanFile) {
-            throw new Error("No profile found");
-        }
-        return conanFile;
+        return installProfile;
     }
 
-    appendKeysOfMap(array: Array<string>, map : Map<string, Profile | Workspace> | undefined ): Array<string>{
+    private stripProfilesArg(argument: string): { argument: string, profile: ProfileVariant } {
+        let argStripped = stripArgument(argument, "p:b", "profile:build");
+        let installBuildProfile = argStripped.foundValue;
+        argStripped = stripArgument(argStripped.stripedArgument, "p:h", "profile:host");
+        let installHostProfile = argStripped.foundValue;
+        argStripped = stripArgument(argStripped.stripedArgument, "p", "profile");
+        let profileGeneric = argStripped.foundValue;
+        let profile: ProfileVariant = { profileGeneric, profileSpecific: { build: installBuildProfile, host: installHostProfile } };
+        return { argument: argStripped.stripedArgument, profile };
+    }
+
+    private stripInstallArg(profile: Profile | Workspace): installArgumentsExtracted {
+        let installArgRaw;
+        if(profile instanceof Profile){
+            installArgRaw = profile.installArg;
+        }
+        else{
+            installArgRaw = profile.arg;
+        }
+        let parsedProfile = this.stripProfilesArg(installArgRaw);
+        let installArg = stripArgument(parsedProfile.argument, "if", "install-folder");
+        let installFolder = installArg.foundValue;
+        let stripedArgument = installArg.stripedArgument;
+        return { installArg: stripedArgument, profile: parsedProfile.profile, installFolder };
+    }
+
+    private stripCreateArg(profile: Profile) {
+        let parsedProfile = this.stripProfilesArg(profile.createArg);
+        return { createArg: parsedProfile.argument, profile: parsedProfile.profile };
+    }
+
+    private stripBuildArg(profile: Profile) {
+        let buildArg = stripArgument(profile.buildArg, "bf", "build-folder");
+        return { buildArg: buildArg.stripedArgument, buildFolder: buildArg.foundValue };
+    }
+
+    private appendKeysOfMap(array: Array<string>, map: Map<string, Profile | Workspace> | undefined): Array<string> {
         if (map) {
             array = array.concat(Array.from(map.keys()));
         }
         return array;
     }
 
-    getAllNames(): string[] {
-        let names : Array<string> = new Array<string>();
-        names = this.appendKeysOfMap(names,this.profiles);
-        names = this.appendKeysOfMap(names,this.workspaces);
-        if (this.checkUniqueName(names)) {
-            throw new Error("Duplication of names in profile and workspace");
-        }
-        return names;
-    }
-
     private checkUniqueName(names: string[]): boolean {
         return new Set(names).size !== names.length;
     }
 
-    getProfile(name: string): string | ProfileExtended {
-        let { profile, retVal } = this.getActiveProfile(name);
-        if (profile != undefined) {
-            return profile;
+    private convertProfile(profileGeneric: string | undefined, profileSpecific: ConanProfile) {
+        if (profileGeneric && (profileSpecific.build || profileSpecific.host)) {
+            throw new Error("Can't define Profile with Profile-Host or Profile-Build.");
         }
-        if (retVal.build == undefined && retVal.host == undefined) {
-            throw new Error("A profile has to be set for this configuration!");
-        }
-        return retVal;
-    }
-
-    private getActiveProfile(name: string) {
-        let profile: string | undefined;
-        let retVal: ProfileExtended;
-        if (this.workspaces?.has(name)) {
-            let ws = this.workspaces.get(name);
-            if (ws == undefined) {
-                throw new Error("Workspace not found");
-            }
-            profile = ws.profile;
-            retVal = { build: ws.profileBuild, host: ws.profileHost };
-
+        if (profileSpecific.build || profileSpecific.host) {
+            let profileBuild = this.replaceUndefinedDefault(profileSpecific.build);
+            let profileHost = this.replaceUndefinedDefault(profileSpecific.host);
+            return { build: profileBuild, host: profileHost };
         }
         else {
-            let pr = this.profiles?.get(name);
-            if (pr == undefined) {
-                throw new Error("Profile not found");
-            }
-            profile = pr.profile;
-            retVal = { build: pr.profileBuild, host: pr.profileHost };
+            let profile = this.replaceUndefinedDefault(profileGeneric);
+            return { build: profile, host: profile };
         }
-        return { profile, retVal };
+    }
+    private getProfiles(name: string): ConanProfile {
+        let profileConfig: BuildProfile = this.getProfileConfiguration(name);
+        return this.convertProfile(profileConfig.profile, { build: profileConfig.profileBuild, host: profileConfig.profileHost });
+    }
+
+    private getBuildFolder(name: string): string | undefined {
+        let profileConfig: BuildProfile = this.getProfileConfiguration(name);
+        return profileConfig.buildFolder;
+    }
+
+    private getProfileConfiguration(name: string) {
+        let profileConfig:BuildProfile;
+        if (this.profiles?.has(name)) {
+            profileConfig = <BuildProfile>this.profiles.get(name);
+        }
+        else if (this.workspaces?.has(name)) {
+            profileConfig = <BuildProfile>this.workspaces.get(name);
+        }
+        else {
+            throw new Error("The profile configuration does not exist - " + name);
+        }
+        return profileConfig;
+    }
+
+    private replaceUndefinedDefault(value: string | undefined): string {
+        if (value === undefined) {
+            return "default";
+        }
+        return value;
+    }
+
+    getWorkspace(name: string):WorkspaceArgument{
+        let profile = this.workspaces?.get(name);
+        if (profile) {
+            let strippedInstallArgument = this.stripInstallArg(profile);
+            let instProfile = this.getConsoleProfile(strippedInstallArgument.profile, name);
+            let installFolder = strippedInstallArgument.installFolder ? strippedInstallArgument.installFolder : this.getBuildFolder(name);
+            let workspaceArg:WorkspaceArgument = {
+                path: profile.conanworkspacePath,
+                installProfile: instProfile,
+                installArguments: strippedInstallArgument.installArg,
+                installFolder: installFolder
+            };
+            return workspaceArg;
+        }
+        throw Error("No workspace found with this name.");
+
+    }
+    getConan(name: string): ConanArgument {
+        let profile = this.profiles?.get(name);
+        if (profile) {
+            let strippedInstallArg = this.stripInstallArg(profile);
+            let installProfile = this.getConsoleProfile(strippedInstallArg.profile, name);
+            let strippedBuildArg = this.stripBuildArg(profile);
+            let strippedCreateArg = this.stripCreateArg(profile);
+            let createProfile = this.getConsoleProfile(strippedCreateArg.profile, name);
+            let buildFolder = strippedBuildArg.buildFolder ? strippedBuildArg.buildFolder : this.getBuildFolder(name);
+            let installFolder = strippedInstallArg.installFolder ? strippedInstallArg.installFolder : this.getBuildFolder(name);
+            let conanArg: ConanArgument = {
+                path: profile.conanfilePath,
+                user: profile.createUser,
+                channel: profile.createChannel,
+                installProfile: installProfile,
+                installArguments: strippedInstallArg.installArg,
+                createArguments: strippedCreateArg.createArg,
+                buildArguments: strippedBuildArg.buildArg,
+                buildFolder: buildFolder,
+                createProfile: createProfile,
+                installFolder: installFolder
+            };
+            return conanArg;
+        }
+        throw Error("No profile with found with this name.");
+
+    }
+
+    getAllNames(): string[] {
+        let names: Array<string> = new Array<string>();
+        names = this.appendKeysOfMap(names, this.profiles);
+        names = this.appendKeysOfMap(names, this.workspaces);
+        if (this.checkUniqueName(names)) {
+            throw new Error("Duplication of names in profile and workspace");
+        }
+        return names;
     }
 
     isWorkspace(name: string): boolean {
@@ -100,57 +216,5 @@ export class Configurator {
             return this.workspaces.has(name);
         }
         return false;
-    }
-
-    getBuildFolder(name: string): string {
-        let buildFolder = this.workspaces?.has(name)
-            ? this.workspaces.get(name)?.buildFolder
-            : this.profiles?.get(name)?.buildFolder;
-        if (!buildFolder) {
-            throw new Error("No build folder found");
-        }
-        return buildFolder;
-    }
-
-    getInstallArg(name: string): string {
-        let installArg = this.workspaces?.has(name)
-            ? this.workspaces.get(name)?.arg
-            : this.profiles?.get(name)?.installArg;
-        if (!installArg) {
-            installArg = "";
-        }
-        return installArg;
-    }
-
-    getBuildArg(name: string): string {
-        let buildArg = this.profiles?.get(name)?.buildArg;
-        if (!buildArg) {
-            buildArg = "";
-        }
-        return buildArg;
-    }
-
-    getCreateArg(name: string): string {
-        let createArg = this.profiles?.get(name)?.createArg;
-        if (!createArg) {
-            createArg = "";
-        }
-        return createArg;
-    }
-
-    getCreateUser(name: string): string {
-        let createUser = this.profiles?.get(name)?.createUser;
-        if (!createUser) {
-            throw new Error("No createUser found");
-        }
-        return createUser;
-    }
-
-    getCreateChannel(name: string): string {
-        let createChannel = this.profiles?.get(name)?.createChannel;
-        if (!createChannel) {
-            throw new Error("No createChannel found");
-        }
-        return createChannel;
     }
 }

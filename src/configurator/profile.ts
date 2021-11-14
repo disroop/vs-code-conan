@@ -37,9 +37,6 @@ export class BuildProfile {
         profileBuild: string | undefined,
         profileHost: string | undefined) {
 
-        profile = BuildProfile.getDefaultValue(profile,"default");
-        profileBuild = BuildProfile.getDefaultValue(profileBuild,"default");
-        profileHost = BuildProfile.getDefaultValue(profileHost,"default");
         this.buildFolder = "build/" + name;
 
         this.profile = BuildProfile.replaceWorkspaceFolder(profile);
@@ -47,8 +44,11 @@ export class BuildProfile {
         this.profileHost = BuildProfile.replaceWorkspaceFolder(profileHost);
 
     }
-    static replaceWorkspaceFolder(source: string) : string
+    static replaceWorkspaceFolder(source: string|undefined) : string|undefined
     {
+        if(source === undefined){
+            return undefined;
+        }
         const system = container.resolve(SystemPlugin);
         return source.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
     }
@@ -79,7 +79,7 @@ export class Profile extends BuildProfile {
         this.createUser = BuildProfile.getDefaultValue(json.createUser,"");
         this.createChannel = BuildProfile.getDefaultValue(json.createChannel,"");
         let conanfilePath = BuildProfile.getDefaultValue(json.conanFile,".");
-        this.conanfilePath = BuildProfile.replaceWorkspaceFolder(conanfilePath);
+        this.conanfilePath = <string>BuildProfile.replaceWorkspaceFolder(conanfilePath);
     }
 }
 
@@ -91,7 +91,7 @@ export class Workspace extends BuildProfile {
     constructor(json:WorkspaceJson) {
         super(json.name,json.profile,json.profileBuild,json.profileHost);
         let conanWs = BuildProfile.getDefaultValue(json.conanWs,".");
-        this.conanworkspacePath = BuildProfile.replaceWorkspaceFolder(conanWs);
+        this.conanworkspacePath = <string>BuildProfile.replaceWorkspaceFolder(conanWs);
         this.arg = BuildProfile.getDefaultValue(json.arg,"");
     }
 }

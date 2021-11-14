@@ -1,42 +1,15 @@
 import "reflect-metadata";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
-import { Configurator } from '../../../src/configurator/configurator';
+import { ConanArgument, Configurator } from '../../../src/configurator/configurator';
 import { SystemPlugin } from '../../../src/system/plugin';
 import { SystemPluginMock } from '../system-mock';
-interface ConanProfileConfig{
-    conanfile:string;
-    profile:string;
-    installArgument:string;
-    buildArgument:string;
-    createUser:string;
-    createChannel:string;
-    createArgument:string;
-    buildFolder:string;
-}
-interface ConanWorkspaceConfig{
-    workspacePath:string;
-    profile:string;
-    arguments:string;
-}
-function checkConfigurationProfile(configurator:Configurator , name:string, exptected:ConanProfileConfig){
-    expect(configurator.isWorkspace(name)).to.be.false;
-    expect(configurator.getConanFile(name)).to.equal(exptected.conanfile);
-    expect(configurator.getBuildArg(name)).to.equal(exptected.buildArgument);
-    expect(configurator.getBuildFolder(name)).to.equal(exptected.buildFolder);
-    expect(configurator.getCreateArg(name)).to.equal(exptected.createArgument);
-    expect(configurator.getCreateChannel(name)).to.equal(exptected.createChannel);
-    expect(configurator.getCreateUser(name)).to.equal(exptected.createUser);
-    expect(configurator.getInstallArg(name)).to.equal(exptected.installArgument);
-}
-function checkConfigurationWorkspace(configurator:Configurator , name:string, exptected:ConanWorkspaceConfig){
-    expect(configurator.isWorkspace(name)).to.be.true;
-    expect(configurator.getConanFile(name)).to.equal(exptected.workspacePath);
-    expect(configurator.getProfile(name)).to.equal(exptected.profile);
-    expect(configurator.getInstallArg(name)).to.equal(exptected.arguments);
-}
+import exp = require("constants");
+import { config } from "process";
+
 describe('Configurator', () => {
     it('can read profiles', () => {
+        
         const filepath = "path";
 
         const configString = `{"profiles": [{ 
@@ -53,13 +26,13 @@ describe('Configurator', () => {
             "name":"b", 
             "conanFile":"\${workspaceFolder}/b/conanfile.py",
             "profile":"\${workspaceFolder}/.profile/b-profile",
-            "installArg": "",
-            "buildArg":"",
-            "createUser": "disroop",
-            "createChannel": "development",
-            "createArg": "" 
-        }
-        ]}`;
+           "installArg": "",
+           "buildArg":"",
+           "createUser": "disroop",
+           "createChannel": "development",
+           "createArg": "" 
+       }
+       ]}`;
 
         const system = container.resolve(SystemPluginMock);
         
@@ -70,24 +43,33 @@ describe('Configurator', () => {
         const configurator = new Configurator(filepath);
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
-        
-        checkConfigurationProfile(configurator,"a",{ conanfile:"root-workspace/a/conanfile.py",
-            profile:"root-workspace/.profile/a-profile",
-            installArgument:"--build=missing",
-            buildArgument:"test",
-            createUser:"disroop",
-            createChannel:"development",
-            createArgument:"--build=missing",
-            buildFolder:"build/a"});
-       
-        checkConfigurationProfile(configurator,"b",{ conanfile:"root-workspace/b/conanfile.py",
-            profile:"root-workspace/.profile/b-profile",
-            installArgument:"",
-            buildArgument:"",
-            createUser:"disroop",
-            createChannel:"development",
-            createArgument:"",
-            buildFolder:"build/b"});
+
+        expect(configurator.getConan("a")).to.eql({path: "root-workspace/a/conanfile.py",
+            user: "disroop",
+            channel: "development",
+            installProfile: {build: "root-workspace/.profile/a-profile", host: "root-workspace/.profile/a-profile"},
+            installArguments: "--build=missing",
+            createArguments: "--build=missing",
+            buildArguments: "test",
+            buildFolder: "build/a",
+            createProfile: {build: "root-workspace/.profile/a-profile", host: "root-workspace/.profile/a-profile"},
+            installFolder: "build/a",
+        }); 
+
+        expect(configurator.getConan("b")).to.eql({path: "root-workspace/b/conanfile.py",
+            user: "disroop",
+            channel: "development",
+            installProfile: {build: "root-workspace/.profile/b-profile", host: "root-workspace/.profile/b-profile"},
+            installArguments: "",
+            createArguments: "",
+            buildArguments: "",
+            buildFolder: "build/b",
+            createProfile: {build: "root-workspace/.profile/b-profile", host: "root-workspace/.profile/b-profile"},
+            installFolder: "build/b",
+        }); 
+
+        expect(configurator.isWorkspace("a")).to.be.false;
+        expect(configurator.isWorkspace("b")).to.be.false;
         
     });
 
@@ -119,77 +101,21 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names).to.eql(["ws-debug","ws-debug-2"]); 
         
-        checkConfigurationWorkspace(configurator,"ws-debug-2",{ workspacePath:"root-workspace/workspace/ws-arm.yml",
-            profile:"root-workspace/.profile/clang",
-            arguments:"--build=missing"});
-    });
+        expect(configurator.getWorkspace("ws-debug")).to.eql({path: "root-workspace/workspace/ws-linux.yml",
+            installProfile: {build: "root-workspace/.profile/clang-apple-debug", host: "root-workspace/.profile/clang-apple-debug"},
+            installArguments: "--build=missing",
+            installFolder: "build/ws-debug",
+        }); 
 
-    it('can read workspace & profile', () => {
-        const filepath = "path";
+        expect(configurator.getWorkspace("ws-debug-2")).to.eql({path: "root-workspace/workspace/ws-arm.yml",
+            installProfile: {build: "root-workspace/.profile/clang", host: "root-workspace/.profile/clang"},
+            installArguments: "--build=missing",
+            installFolder: "build/ws-debug-2",
+        }); 
 
-        const configString = `{
-            "profiles": [{ 
-                "name":"a", 
-                "conanFile":"\${workspaceFolder}/a/conanfile.py",
-                "profile":"\${workspaceFolder}/.profile/a-profile",
-                "installArg": "--build=missing",
-                "buildArg":"",
-                "createUser": "disroop",
-                "createChannel": "development",
-                "createArg": "--build=missing" 
-            }
-            ],
-            "workspace": [
-            { 
-                "name":"ws-debug",
-                "conanWs": "\${workspaceFolder}/workspace/ws-gcc.yml",
-                "profile": "\${workspaceFolder}/.profile/gcc",
-                "arg": "--build=missing"
-            }
-        ]}`;
+        expect(configurator.isWorkspace("ws-debug")).to.be.true;
+        expect(configurator.isWorkspace("ws-debug-2")).to.be.true;
 
-        const system = container.resolve(SystemPluginMock);
-        
-        system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
-
-        const configurator = new Configurator(filepath);
-        let names = configurator.getAllNames();
-        expect(names).to.eql(["a","ws-debug"]); 
-        
-        checkConfigurationProfile(configurator,"a",{ conanfile:"root-workspace/a/conanfile.py",
-            profile:"root-workspace/.profile/a-profile",
-            installArgument:"--build=missing",
-            buildArgument:"",
-            createUser:"disroop",
-            createChannel:"development",
-            createArgument:"--build=missing",
-            buildFolder:"build/a"});
-
-        checkConfigurationWorkspace(configurator,"ws-debug",{ workspacePath:"root-workspace/workspace/ws-gcc.yml",
-            profile:"root-workspace/.profile/gcc",
-            arguments:"--build=missing"});
-    });
-
-    it('can read none', () => {
-        const filepath = "path";
-
-        const configString = `{}`;
-
-        const system = container.resolve(SystemPluginMock);
-        
-        system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
-
-        const configurator = new Configurator(filepath);
-        let names = configurator.getAllNames();
-        expect(names.length).to.eql(0); 
-        expect(configurator.getBuildArg("x")).to.equal("");
-        expect(() => configurator.getProfile("x")).to.throw('Profile not found');
-        expect(() => configurator.getCreateChannel("x")).to.throw('No createChannel found');
-        expect(() => configurator.getCreateUser("x")).to.throw('No createUser found');
     });
 
     it('can read duplication', () => {
@@ -223,6 +149,33 @@ describe('Configurator', () => {
 
         const configurator = new Configurator(filepath);
         expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
+    });
+
+    it('can read configuration', () => {
+        const filepath = "path";
+
+        const configString = `{"profiles": [{ 
+                "name":"a", 
+                "conanFile":"\${workspaceFolder}/a/conanfile.py",
+                "profile":"\${workspaceFolder}/.profile/a-profile",
+                "installArg": "--build=missing",
+                "buildArg":"",
+                "createUser": "disroop",
+                "createChannel": "development",
+                "createArg": "--build=missing" 
+            }
+            ]}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        let argument = configurator.getConan("a");
+
+        expect(argument.path).to.equal("root-workspace/a/conanfile.py");
     });
 });
 
