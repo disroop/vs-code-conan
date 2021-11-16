@@ -26,14 +26,19 @@ export function stripArgument(argument: string, shortParameter: string, longPara
     if (indexShort === -1 && indexLong === -1) {
         return { stripedArgument: argument, foundValue: undefined };
     }
-    let index = indexShort > -1 ? indexShort : indexLong;
-    index++;
-    let value = argumentList[index];
+    let argumentStartIndex = indexShort > -1 ? indexShort : indexLong;
+    let value = argumentList[argumentStartIndex+1];
     checkParameterValue(value);
-    argumentList = argumentList.splice(index + 1);
-    argumentList = argumentList.splice(index);
+
+    argumentList = removeParameterFromList(argumentList, argumentStartIndex);
     argument = argumentList.join(" ");
     return { stripedArgument: argument, foundValue: value };
 }
 
+
+function removeParameterFromList(argumentList: string[], startArgument: number) {
+    argumentList.splice(startArgument + 1, 1);
+    argumentList.splice(startArgument, 1);
+    return argumentList;
+}
 

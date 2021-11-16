@@ -65,11 +65,11 @@ export class Configurator {
     }
 
     private stripProfilesArg(argument: string): { argument: string, profile: ProfileVariant } {
-        let argStripped = stripArgument(argument, "p:b", "profile:build");
+        let argStripped = stripArgument(argument, "pr:b", "profile:build");
         let installBuildProfile = argStripped.foundValue;
-        argStripped = stripArgument(argStripped.stripedArgument, "p:h", "profile:host");
+        argStripped = stripArgument(argStripped.stripedArgument, "pr:h", "profile:host");
         let installHostProfile = argStripped.foundValue;
-        argStripped = stripArgument(argStripped.stripedArgument, "p", "profile");
+        argStripped = stripArgument(argStripped.stripedArgument, "pr", "profile");
         let profileGeneric = argStripped.foundValue;
         let profile: ProfileVariant = { profileGeneric, profileSpecific: { build: installBuildProfile, host: installHostProfile } };
         return { argument: argStripped.stripedArgument, profile };
@@ -113,7 +113,7 @@ export class Configurator {
 
     private convertProfile(profileGeneric: string | undefined, profileSpecific: ConanProfile) {
         if (profileGeneric && (profileSpecific.build || profileSpecific.host)) {
-            throw new Error("Can't define Profile with Profile-Host or Profile-Build.");
+            throw new Error("Can't define profile with profile-host or profile-build.");
         }
         if (profileSpecific.build || profileSpecific.host) {
             let profileBuild = this.replaceUndefinedDefault(profileSpecific.build);
@@ -157,20 +157,20 @@ export class Configurator {
     }
 
     getWorkspace(name: string):WorkspaceArgument{
-        let profile = this.workspaces?.get(name);
-        if (profile) {
-            let strippedInstallArgument = this.stripInstallArg(profile);
+        let workspace = this.workspaces?.get(name);
+        if (workspace) {
+            let strippedInstallArgument = this.stripInstallArg(workspace);
             let instProfile = this.getConsoleProfile(strippedInstallArgument.profile, name);
             let installFolder = strippedInstallArgument.installFolder ? strippedInstallArgument.installFolder : this.getBuildFolder(name);
             let workspaceArg:WorkspaceArgument = {
-                path: profile.conanworkspacePath,
+                path: workspace.conanworkspacePath,
                 installProfile: instProfile,
                 installArguments: strippedInstallArgument.installArg,
                 installFolder: installFolder
             };
             return workspaceArg;
         }
-        throw Error("No workspace found with this name.");
+        throw Error("No workspace found with this name "+name+".");
 
     }
     getConan(name: string): ConanArgument {
@@ -197,7 +197,7 @@ export class Configurator {
             };
             return conanArg;
         }
-        throw Error("No profile with found with this name.");
+        throw Error("No profile found with this name "+name+".");
 
     }
 

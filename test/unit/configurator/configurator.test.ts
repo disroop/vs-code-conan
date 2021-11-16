@@ -1,3 +1,4 @@
+
 import "reflect-metadata";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
@@ -151,14 +152,14 @@ describe('Configurator', () => {
         expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
     });
 
-    it('can read configuration', () => {
+    it('can read configuration by arguments', () => {
         const filepath = "path";
 
         const configString = `{"profiles": [{ 
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",
-                "profile":"\${workspaceFolder}/.profile/a-profile",
-                "installArg": "--build=missing",
+                "profile":"a-profile",
+                "installArg": "--build=missing -if a/b/c -pr:b b -pr:h a",
                 "buildArg":"",
                 "createUser": "disroop",
                 "createChannel": "development",
@@ -175,7 +176,97 @@ describe('Configurator', () => {
         const configurator = new Configurator(filepath);
         let argument = configurator.getConan("a");
 
-        expect(argument.path).to.equal("root-workspace/a/conanfile.py");
+        expect(argument.installFolder).to.equal("a/b/c");
+        expect(argument.installProfile.build).to.equal("b");
+        expect(argument.installProfile.host).to.equal("a");
+        expect(argument.createProfile?.build).to.equal("a-profile");
+        expect(argument.createProfile?.host).to.equal("a-profile");
+        
+    });
+
+    it('throws error on profile with profile-host/build in argument', () => {
+        const filepath = "path";
+
+        const configString = `{"profiles": [{ 
+                "name":"a", 
+                "conanFile":"\${workspaceFolder}/a/conanfile.py",
+                "profile":"a-profile",
+                "installArg": "--build=missing -if a/b/c -pr c -pr:b b -pr:h a",
+                "buildArg":"",
+                "createUser": "disroop",
+                "createChannel": "development",
+                "createArg": "--build=missing" 
+            }
+            ]}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        
+        expect(() => configurator.getConan("a")).to.throw("Can't define profile with profile-host or profile-build.");
+    });
+
+    it('throws error on no workspace', () => {
+        const filepath = "path";
+
+        const configString = `{}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+        const configurator = new Configurator(filepath);
+        
+        expect(() => configurator.getWorkspace("a")).to.throw("No workspace found with this name a.");
+        
+    });
+
+    it('throws error on no workspace', () => {
+        const filepath = "path";
+
+        const configString = `{}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+        const configurator = new Configurator(filepath);
+        
+        expect(() => configurator.getConan("a")).to.throw("No profile found with this name a.");
+        
+    });
+
+    it('can set default profiles', () => {
+        const filepath = "path";
+
+        const configString = `{"profiles": [{ 
+                "name":"a",
+                "installArg": "--build=missing -pr:h a"
+            }
+            ]}`;
+
+        const system = container.resolve(SystemPluginMock);
+        
+        system.setFile(configString);
+        // We can mock a class at any level in the dependency tree without touching anything else
+        container.registerInstance(SystemPlugin,system);
+
+        const configurator = new Configurator(filepath);
+        let argument = configurator.getConan("a");
+
+        expect(argument.installProfile.build).to.equal("default");
+        expect(argument.installProfile.host).to.equal("a");
+        expect(argument.createProfile?.build).to.equal("default");
+        expect(argument.createProfile?.host).to.equal("default");
+
+
+        
     });
 });
 
