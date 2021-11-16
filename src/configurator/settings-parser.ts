@@ -7,7 +7,6 @@ export class SettingsParser {
     private workspaces: Map<string, Workspace> | undefined;
 
     constructor(jsonData: string){
-        //this.system = container.resolve(SystemPlugin);
         this.update(jsonData);
     }
 
@@ -41,6 +40,7 @@ export class SettingsParser {
         }
         return true;
     }
+    
     private parseProfile(rawJson: string):Map<string, Profile>|undefined{
         const jsonObj: { profiles: ProfileJson[] } = JSON.parse(rawJson);
         if(!jsonObj.profiles){

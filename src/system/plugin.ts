@@ -25,5 +25,25 @@ export class SystemPlugin{
         const data = fs.readFileSync(filepath);
         return data;
     }
+
+    createProgressWindow(_info:string){
+        
+    }
+
+    stopProgressWindow(){
+        
+    }
+
+    abortSysCall():boolean{
+        return true;
+    }
+
+    isSysCallWorking():boolean{
+        return false;
+    }
+
+    executeSysCall(_command:string){
+        //TODO: 
+    }
 }
 
