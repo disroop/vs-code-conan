@@ -2,6 +2,7 @@
   "all": true,
   "check-coverage": false,
   "exclude":[
-    "src/system/*.ts"
+    "src/system/*.ts",
+    "test/**"
   ]
 }
