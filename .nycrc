@@ -3,6 +3,8 @@
   "check-coverage": false,
   "exclude":[
     "src/system/*.ts",
-    "test/**"
+    "test/**",
+    "src/commands/vscode-*",
+    "src/extension.ts"
   ]
 }
