@@ -1,4 +1,7 @@
 {
   "all": true,
-  "check-coverage": false
+  "check-coverage": false,
+  "exclude":[
+    "src/system/*.ts"
+  ]
 }
