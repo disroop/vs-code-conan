@@ -1,16 +1,15 @@
 import {BuildProfile, ConanProfile, Profile, ProfileJson,Workspace, WorkspaceJson} from "./profile";
 
 import { System } from "../system/system";
-import { autoInjectable, inject, injectAll } from "tsyringe";
+import { autoInjectable, container } from "tsyringe";
 
 @autoInjectable()
 export class SettingsParser {
     private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> | undefined;
     private system:System|undefined;
-    constructor(jsonData: string,
-        @inject("System") system?:System){
-        this.system=system;
+    constructor(jsonData: string){
+        this.system=container.resolve("System");
         this.update(jsonData);
         
     }

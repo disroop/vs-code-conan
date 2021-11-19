@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import { SettingsParser } from "./settings-parser";
 import { BuildProfile, Profile, Workspace } from "./profile";
-import { autoInjectable, inject, singleton } from "tsyringe";
+import { autoInjectable, container, inject, singleton } from "tsyringe";
 import { stripArgument } from "./argument-parser";
 import { System } from "../system/system";
 
@@ -41,15 +41,9 @@ export class Configurator {
     private workspaces: Map<string, Workspace> | undefined;
     private system:System;
 
-    constructor(file: string,
-        @inject("System") system?:System) {
+    constructor(file: string) {
         this.file = file;
-        if(system){
-        this.system=system;
-        }
-        else{
-            throw Error("System has to be defined!");
-        }
+        this.system=container.resolve("System");
         this.update();
     }
 

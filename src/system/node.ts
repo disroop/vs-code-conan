@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
-import { autoInjectable, inject, singleton } from "tsyringe";
+import { autoInjectable, container, singleton } from "tsyringe";
 import { System, Executor, Command} from './system';
 
 @singleton()
@@ -10,13 +10,10 @@ export class ExecutorNodeJs implements Executor {
     private subprocess: any;
     private queue: Queue<Command>;
     private system: System;
-    constructor(@inject("System") system?:System) {
+    constructor() {
         this.subprocess=null;
         this.queue = new Queue<Command>();
-        if(!system){
-            throw Error("System has to be defined");
-        }
-        this.system = system;
+        this.system = container.resolve("System");
     }
     private executeConanCommand(command: string, resolve: any, reject: any) {
         this.system.log(`command: ${command}\n`);
