@@ -5,8 +5,6 @@ import { Profile, ProfileJson, Workspace, WorkspaceJson } from '../../../src/con
 import { SystemPlugin } from '../../../src/system/plugin';
 import { SystemPluginMock } from '../system-mock';
 
-container.registerInstance(SystemPlugin, new SystemPluginMock());
-
 describe('Profile', () => {
     it('can be initialized', () => {
 

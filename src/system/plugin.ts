@@ -1,12 +1,19 @@
 /* eslint-disable eqeqeq */
 import { singleton } from "tsyringe";
+import { System } from "./system";
+import { window, workspace } from "vscode";
+
 @singleton()
-export class SystemPlugin{
-    getWorkspaceRootPath() {
-        const vscode = require('vscode');
-        if (vscode.workspace.workspaceFolders !== undefined) {
-            if (vscode.workspace.workspaceFolders.length === 1) {
-                return vscode.workspace.workspaceFolders[0].uri.path;
+export class SystemPlugin implements System {
+    private readonly _outputLog: any;
+
+    constructor() {
+        this._outputLog = window.createOutputChannel("conan");
+    }
+    getWorkspaceRootPath(): string {
+        if (workspace.workspaceFolders !== undefined) {
+            if (workspace.workspaceFolders.length === 1) {
+                return String(workspace.workspaceFolders[0].uri.path);
             }
             else {
                 throw new Error("Multiple workspaces are not supported");
@@ -15,35 +22,22 @@ export class SystemPlugin{
         throw new Error("No workspace folders");
     }
 
-    showWarningMessage(message:string){
-        const vscode = require('vscode');
-        vscode.window.showWarningMessage(message);
+    showWarningMessage(message: string) {
+        window.showWarningMessage(message);
     }
 
-    readFile(filepath:string) : string {
+    readFile(filepath: string): string {
         const fs = require("fs");
         const data = fs.readFileSync(filepath);
         return data;
     }
 
-    createProgressWindow(_info:string){
-        
+    log(message: string) {
+        this._outputLog.append(message);
     }
 
-    stopProgressWindow(){
-        
-    }
-
-    abortSysCall():boolean{
-        return true;
-    }
-
-    isSysCallWorking():boolean{
-        return false;
-    }
-
-    executeSysCall(_command:string){
-        //TODO: 
+    focusLog() {
+        this._outputLog.show();
     }
 }
 

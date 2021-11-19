@@ -2,10 +2,9 @@ import "reflect-metadata";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
 import { Commands } from "../../../src/commands/commands";
-import { SystemPlugin } from '../../../src/system/plugin';
 import { SystemPluginMock } from '../system-mock';
+import { ExecutorMock } from '../executor-mock';
 
-container.registerInstance(SystemPlugin, new SystemPluginMock());
 
 const configStringProfile = `{"profiles": [{ 
     "name":"a", 
@@ -33,8 +32,6 @@ describe('Commands', () => {
         const system = container.resolve(SystemPluginMock);
         
         system.setFile(configStringProfile);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         let commands = new Commands(filepath);
 
@@ -47,8 +44,6 @@ describe('Commands', () => {
         const system = container.resolve(SystemPluginMock);
         
         system.setFile(configStringWorkspace);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         let commands = new Commands(filepath);
 

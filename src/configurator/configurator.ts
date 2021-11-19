@@ -1,9 +1,9 @@
 /* eslint-disable eqeqeq */
 import { SettingsParser } from "./settings-parser";
 import { BuildProfile, Profile, Workspace } from "./profile";
-import { container } from "tsyringe";
-import { SystemPlugin } from "../system/plugin";
+import { autoInjectable, container, inject, injectAll } from "tsyringe";
 import { stripArgument } from "./argument-parser";
+import { System } from "../system/system";
 
 interface ConanProfile {
     build: string | undefined;
@@ -34,18 +34,26 @@ interface installArgumentsExtracted {
     installFolder: string | undefined;
 }
 
+@autoInjectable()
 export class Configurator {
     private readonly file: string;
     private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> | undefined;
-    constructor(file: string) {
+    private system:System;
+    constructor(file: string,
+        @inject("System") system?:System) {
         this.file = file;
+        if(system){
+        this.system=system;
+        }
+        else{
+            throw Error("System has to be defined!");
+        }
         this.updateProfiles();
     }
 
     updateProfiles() {
-        const system = container.resolve(SystemPlugin);
-        let data = system.readFile(this.file);
+        let data = this.system.readFile(this.file);
         let parser = new SettingsParser(data);
         this.profiles = parser.getProfiles();
         this.workspaces = parser.getWorkspaces();

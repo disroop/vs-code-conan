@@ -1,17 +1,23 @@
-import { singleton } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
+import { System } from "../../src/system/system";
+
 @singleton()
-export class SystemPluginMock{
+export class SystemPluginMock implements System{
+
     warningMessage:string | undefined;
     fileContent:string|undefined;
     filePath:string|undefined;
     command:string|undefined;
     sysCallWorking: boolean = false;
     
+    constructor(){
+    }
+
     setFile( content:string){
         this.fileContent = content;
     }
     
-    getWorkspaceRootPath(){
+    getWorkspaceRootPath():string {
         return 'root-workspace';
     }
     showWarningMessage( message:string){
@@ -25,21 +31,9 @@ export class SystemPluginMock{
         return this.fileContent;
     }
 
-    createProgressWindow(){
-
-    }
-    stopProgressWindow(){
-        
-    }
-    abortSysCall():boolean{
-        return true;
+    log(_message:string){
     }
 
-    isSysCallWorking():boolean{
-        return this.sysCallWorking;
-    }
-
-    executeSysCall(command:string){
-        this.command = command;
+    focusLog(){
     }
 }

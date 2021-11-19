@@ -7,9 +7,6 @@ import { SystemPluginMock } from '../system-mock';
 
 describe('SettingParser', () => {
     it('get profiles', () => {
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin, new SystemPluginMock());
-
         const simpleDataSet = `{"profiles": [
             { 
                 "name":"a", 
@@ -39,9 +36,7 @@ describe('SettingParser', () => {
     });
 
     it('non profile name',() => {
-        const system = container.resolve(SystemPluginMock);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
+        const system = <SystemPluginMock>container.resolve("System");
 
         const simpleDataSet = `{"profiles": [
             { 
@@ -56,9 +51,7 @@ describe('SettingParser', () => {
     });
 
     it('double profile name',() => {
-        const system = container.resolve(SystemPluginMock);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
+        const system = <SystemPluginMock>container.resolve("System");
 
         const simpleDataSet = `{"profiles": [
             { 
@@ -76,9 +69,6 @@ describe('SettingParser', () => {
     });
 
     it('get workspace', () => {
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin, new SystemPluginMock());
-
         const simpleDataSet = `{"workspace": [
             { 
                 "name":"ws-debug",
@@ -101,10 +91,7 @@ describe('SettingParser', () => {
     });
 
     it('non workspace name',() => {
-        const system = container.resolve(SystemPluginMock);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
-
+        const system = <SystemPluginMock>container.resolve("System");
         const simpleDataSet = `{"workspace": [
             { 
                 "name":""
@@ -118,9 +105,7 @@ describe('SettingParser', () => {
     });
 
     it('douple workspace name',() => {
-        const system = container.resolve(SystemPluginMock);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
+        const system = <SystemPluginMock>container.resolve("System");
 
         const simpleDataSet = `{"workspace": [
             { 

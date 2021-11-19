@@ -1,7 +1,7 @@
 
-import "reflect-metadata";
+
 import { expect } from 'chai';
-import { container } from 'tsyringe';
+import { container} from 'tsyringe';
 import { ConanArgument, Configurator } from '../../../src/configurator/configurator';
 import { SystemPlugin } from '../../../src/system/plugin';
 import { SystemPluginMock } from '../system-mock';
@@ -34,13 +34,9 @@ describe('Configurator', () => {
            "createArg": "" 
        }
        ]}`;
-
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
-
+   
         const configurator = new Configurator(filepath);
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
@@ -92,11 +88,8 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         const configurator = new Configurator(filepath);
         let names = configurator.getAllNames();
@@ -142,11 +135,8 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         const configurator = new Configurator(filepath);
         expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
@@ -167,11 +157,8 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         const configurator = new Configurator(filepath);
         let argument = configurator.getConan("a");
@@ -199,11 +186,8 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         const configurator = new Configurator(filepath);
         
@@ -215,11 +199,9 @@ describe('Configurator', () => {
 
         const configString = `{}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
+
         const configurator = new Configurator(filepath);
         
         expect(() => configurator.getWorkspace("a")).to.throw("No workspace found with this name a.");
@@ -231,11 +213,9 @@ describe('Configurator', () => {
 
         const configString = `{}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
+
         const configurator = new Configurator(filepath);
         
         expect(() => configurator.getConan("a")).to.throw("No profile found with this name a.");
@@ -251,11 +231,8 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
-        // We can mock a class at any level in the dependency tree without touching anything else
-        container.registerInstance(SystemPlugin,system);
 
         const configurator = new Configurator(filepath);
         let argument = configurator.getConan("a");

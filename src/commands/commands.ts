@@ -1,15 +1,14 @@
 import { container } from 'tsyringe';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
-import { SystemPlugin } from '../system/plugin';
+import { Executor } from '../system/executor';
 
 export class Commands{
     private config:Configurator;
-    private sysCall:SysCallQueue;
-
+    private executor:Executor;
     constructor(settingsFile:string){
         this.config = new Configurator(settingsFile);
         this.config.updateProfiles();
-        this.sysCall = new SysCallQueue();
+        this.executor = container.resolve(Executor);
     }
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
@@ -27,54 +26,8 @@ export class Commands{
         let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
         let installFolderArg = `--install-folder ${buildFolder}`;
         const stringCommand = `${installCommand} ${profileCommand} ${installArg} ${installFolderArg} ${conanfile}`;
-        let command = { executionCommand: stringCommand, info: "installing" };
-        this.sysCall.pushCommand(command);
+        let command = { executionCommand: stringCommand, description: "installing" };
+        this.executor.pushCommand(command);
     }
     
-}
-
-//SysCallQueue
-interface Command{
-    executionCommand: string;
-    info: string;
-}
-
-class SysCallQueue{
-    sysCallQueue: Command[];
-    private system: SystemPlugin;
-    
-    constructor(){
-        this.system = container.resolve(SystemPlugin);
-        this.sysCallQueue = [];
-    }
-
-    private pop(): Command | undefined {
-      return this.sysCallQueue.shift();
-    }
-
-    pushCommand(command:Command){
-        this.sysCallQueue.push(command);
-        this.dequeueAndExecute();
-    }
-
-    clearQueue(){
-        this.system.stopProgressWindow();
-        this.system.abortSysCall();
-        this.sysCallQueue = [];
-    }
-
-    private dequeueAndExecute(){
-        if(!this.system.isSysCallWorking())
-        {
-            let command = this.sysCallQueue.pop();
-            if(command){
-                //Create Async Command
-                this.system.createProgressWindow(command.info);
-                this.system.executeSysCall(command.executionCommand);
-                //WAIT TILL ASYNC Is finished
-                this.system.stopProgressWindow();
-                this.dequeueAndExecute();
-            }
-        }
-    }
 }

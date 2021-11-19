@@ -1,13 +1,18 @@
 import {BuildProfile, ConanProfile, Profile, ProfileJson,Workspace, WorkspaceJson} from "./profile";
-import { container } from "tsyringe";
-import { SystemPlugin } from "../system/plugin";
 
+import { System } from "../system/system";
+import { autoInjectable, inject, injectAll } from "tsyringe";
+
+@autoInjectable()
 export class SettingsParser {
     private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> | undefined;
-
-    constructor(jsonData: string){
+    private system:System|undefined;
+    constructor(jsonData: string,
+        @inject("System") system?:System){
+        this.system=system;
         this.update(jsonData);
+        
     }
 
     update(jsonData:string){
@@ -31,11 +36,11 @@ export class SettingsParser {
 
     private checkProfile(profile:ConanProfile, profiles : Map<string, BuildProfile> ) : boolean{
         if(!this.isParameterCorrectlyDefined(profile.name)){
-            SettingsParser.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
+            this.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
             return false;
         }
         if(!this.isParameterNameAlreadyDefined(profile.name,profiles)){
-            SettingsParser.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
+            this.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
             return false;
         }
         return true;
@@ -78,9 +83,12 @@ export class SettingsParser {
         return this.workspaces;
     }
 
-    static showWarningMessage(message:string){
-        const system = container.resolve(SystemPlugin);
-        system.showWarningMessage(message);
-        
+    private showWarningMessage(message:string){
+        if(this.system){
+            this.system.showWarningMessage(message);
+        }
+        else{
+            throw Error("System is not defined");
+        }
     }
 }

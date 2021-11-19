@@ -1,7 +1,8 @@
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
-import {Executor} from '../executor/executor';
+import {Executor} from '../system/executor';
+import { container } from 'tsyringe';
 
 
 export interface AppState {
@@ -22,7 +23,7 @@ const ALL = "[all]";
 export class CommandController {
 
     private _state: AppState;
-    private readonly executor: Executor = new Executor();
+    private readonly executor: Executor = container.resolve(Executor);
     private context: vscode.ExtensionContext;
 
     constructor(context: vscode.ExtensionContext, state: AppState) {
