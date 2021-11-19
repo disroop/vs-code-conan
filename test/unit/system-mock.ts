@@ -7,7 +7,6 @@ export class SystemPluginMock implements System{
     warningMessage:string | undefined;
     fileContent:string|undefined;
     filePath:string|undefined;
-    command:string|undefined;
     sysCallWorking: boolean = false;
     
     constructor(){

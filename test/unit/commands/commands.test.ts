@@ -27,27 +27,21 @@ const configStringWorkspace = `{"workspace": [
 
 describe('Commands', () => {
     it('can profile install', () => {
-        const filepath = "path";
-
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configStringProfile);
-
-        let commands = new Commands(filepath);
-
+        const executor = <ExecutorMock>container.resolve("Executor");
+        let commands = new Commands("path");
         commands.install("a");
-        expect(system.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder build/a root-workspace/a/conanfile.py"); 
+        expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder build/a root-workspace/a/conanfile.py"); 
     });
     it('can workspace install', () => {
-        const filepath = "path";
-
-        const system = container.resolve(SystemPluginMock);
-        
+        const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configStringWorkspace);
+        const executor = <ExecutorMock>container.resolve("Executor");
 
-        let commands = new Commands(filepath);
+        let commands = new Commands("path");
 
         commands.install("ws-debug");
-        expect(system.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
+        expect(executor.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
     });
 });

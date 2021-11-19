@@ -1,18 +1,12 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
-import { autoInjectable, container, inject, injectAll, singleton } from "tsyringe";
-import { System } from './system';
-
-
-export interface Command{
-    executionCommand: string;
-    description: string;
-}
+import { autoInjectable, inject, singleton } from "tsyringe";
+import { System, Executor, Command} from './system';
 
 @singleton()
 @autoInjectable()
-export class Executor {
+export class ExecutorNodeJs implements Executor {
     private subprocess: any;
     private queue: Queue<Command>;
     private system: System;

@@ -1,8 +1,8 @@
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
-import {Executor} from '../system/executor';
-import { container } from 'tsyringe';
+import {Executor} from '../system/system';
+import { inject } from 'tsyringe';
 
 
 export interface AppState {
@@ -23,14 +23,23 @@ const ALL = "[all]";
 export class CommandController {
 
     private _state: AppState;
-    private readonly executor: Executor = container.resolve(Executor);
+    private readonly executor: Executor;
     private context: vscode.ExtensionContext;
 
-    constructor(context: vscode.ExtensionContext, state: AppState) {
+    constructor(context: vscode.ExtensionContext, 
+        state: AppState,
+        @inject("Executor") executor?:Executor) {
+        if(executor){
+            this.executor = executor;
+        }
+        else{
+            throw Error("executor has to be defined!");
+        }
         this._state = this.updateState(state);
 
         this.context = context;
         state.activeProfile = ALL;
+
     }
 
     private updateState(state: AppState): AppState {

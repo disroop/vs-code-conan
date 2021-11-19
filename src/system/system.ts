@@ -10,3 +10,15 @@ export interface System {
     focusLog():void;
     
 }
+
+export interface Command{
+    executionCommand: string;
+    description: string;
+}
+
+export interface Executor {
+
+    processIsStillRunning():boolean ;
+
+    pushCommand(command: Command):void;
+}

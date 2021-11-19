@@ -1,14 +1,21 @@
-import { container } from 'tsyringe';
+import { autoInjectable, container, inject } from 'tsyringe';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
-import { Executor } from '../system/executor';
+import { Executor } from '../system/system';
 
+@autoInjectable()
 export class Commands{
     private config:Configurator;
     private executor:Executor;
-    constructor(settingsFile:string){
+    constructor(settingsFile:string,
+        @inject("Executor") executor?:Executor){
         this.config = new Configurator(settingsFile);
         this.config.updateProfiles();
-        this.executor = container.resolve(Executor);
+        if(executor){
+            this.executor = executor;
+        }
+        else{
+            throw Error("executor has to be defined!");
+        }
     }
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
