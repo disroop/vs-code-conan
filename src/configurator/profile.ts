@@ -30,25 +30,25 @@ export class BuildProfile {
     public readonly profileHost: string | undefined;
     public readonly profileBuild: string | undefined;
     public readonly buildFolder: string | undefined;
-
+    private readonly system:System;
     constructor(name: string,
         profile: string | undefined,
         profileBuild: string | undefined,
-        profileHost: string | undefined,
-        @inject("System") system?: System) {
+        profileHost: string | undefined) {
 
+        this.system=container.resolve("System");
         this.buildFolder = "build/" + name;
 
-        this.profile = BuildProfile.replaceWorkspaceFolder(system, profile);
-        this.profileBuild = BuildProfile.replaceWorkspaceFolder(system, profileBuild);
-        this.profileHost = BuildProfile.replaceWorkspaceFolder(system, profileHost);
+        this.profile = this.replaceWorkspaceFolder(profile);
+        this.profileBuild = this.replaceWorkspaceFolder(profileBuild);
+        this.profileHost = this.replaceWorkspaceFolder(profileHost);
 
     }
-    static replaceWorkspaceFolder(system: System | undefined, source: string | undefined): string | undefined {
-        if (source === undefined || system === undefined) {
+    replaceWorkspaceFolder(source: string | undefined): string | undefined {
+        if (source === undefined) {
             return undefined;
         }
-        return source.replace("${workspaceFolder}", system.getWorkspaceRootPath()!);
+        return source.replace("${workspaceFolder}", this.system.getWorkspaceRootPath()!);
     }
     static getDefaultValue(value: string | undefined, defaultValue: string): string {
         if (value === undefined) {
@@ -68,8 +68,7 @@ export class Profile extends BuildProfile {
 
 
     constructor(
-        json: ProfileJson,
-        @inject("System") system?: System) {
+        json: ProfileJson) {
 
         super(json.name, json.profile, json.profileBuild, json.profileHost);
 
@@ -79,7 +78,7 @@ export class Profile extends BuildProfile {
         this.createUser = BuildProfile.getDefaultValue(json.createUser, "");
         this.createChannel = BuildProfile.getDefaultValue(json.createChannel, "");
         let conanfilePath = BuildProfile.getDefaultValue(json.conanFile, ".");
-        this.conanfilePath = <string>BuildProfile.replaceWorkspaceFolder(system, conanfilePath);
+        this.conanfilePath = <string>this.replaceWorkspaceFolder(conanfilePath);
     }
 }
 
@@ -88,11 +87,10 @@ export class Workspace extends BuildProfile {
     public readonly conanworkspacePath: string;
     public readonly arg: string;
 
-    constructor(json: WorkspaceJson,
-        @inject("System") system?: System) {
+    constructor(json: WorkspaceJson) {
         super(json.name, json.profile, json.profileBuild, json.profileHost);
         let conanWs = BuildProfile.getDefaultValue(json.conanWs, ".");
-        this.conanworkspacePath = <string>BuildProfile.replaceWorkspaceFolder(system, conanWs);
+        this.conanworkspacePath = <string>this.replaceWorkspaceFolder(conanWs);
         this.arg = BuildProfile.getDefaultValue(json.arg, "");
     }
 }
