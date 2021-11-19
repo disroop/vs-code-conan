@@ -4,7 +4,8 @@ import { container } from 'tsyringe';
 import { Commands } from "../../../src/commands/commands";
 import { SystemPluginMock } from '../system-mock';
 import { ExecutorMock } from '../executor-mock';
-
+import { Configurator } from "../../../src/configurator/configurator";
+import * as testconfig from "../utils";
 
 const configStringProfile = `{"profiles": [{ 
     "name":"a", 
@@ -27,16 +28,14 @@ const configStringWorkspace = `{"workspace": [
 
 describe('Commands', () => {
     it('can profile install', () => {
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configStringProfile);
+        testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
         let commands = new Commands();
         commands.install("a");
         expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder build/a root-workspace/a/conanfile.py"); 
     });
     it('can workspace install', () => {
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configStringWorkspace);
+        testconfig.loadConfig(configStringWorkspace);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();
@@ -46,8 +45,7 @@ describe('Commands', () => {
     });
 
     it('can build profile', () => {
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configStringProfile);
+        testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();
@@ -57,8 +55,7 @@ describe('Commands', () => {
     });
 
     it('can create profile', () => {
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configStringProfile);
+        testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();
@@ -67,3 +64,4 @@ describe('Commands', () => {
         expect(executor.command).to.eql("conan create --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing root-workspace/a/conanfile.py disroop/development"); 
     });
 });
+

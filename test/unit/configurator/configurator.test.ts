@@ -5,6 +5,8 @@ import { container} from 'tsyringe';
 import { Configurator } from '../../../src/configurator/configurator';
 import { SystemPluginMock } from '../system-mock';
 import exp = require("constants");
+import * as testconfig from "../utils";
+
 
 describe('Configurator', () => {
     it('can read profiles', () => {
@@ -32,10 +34,8 @@ describe('Configurator', () => {
            "createArg": "" 
        }
        ]}`;
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-   
-        const configurator = new Configurator(filepath);
+        testconfig.loadConfig(configString);
+        const configurator = container.resolve(Configurator);
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
 
@@ -86,10 +86,8 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
-        const configurator = new Configurator(filepath);
+        testconfig.loadConfig(configString);
+        const configurator = container.resolve(Configurator);
         let names = configurator.getAllNames();
         expect(names).to.eql(["ws-debug","ws-debug-2"]); 
         
@@ -133,10 +131,8 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
-        const configurator = new Configurator(filepath);
+        testconfig.loadConfig(configString);
+        const configurator = container.resolve(Configurator);
         expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
     });
 
@@ -155,10 +151,8 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
-        const configurator = new Configurator(filepath);
+        testconfig.loadConfig(configString);
+        const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
 
         expect(argument.installFolder).to.equal("a/b/c");
@@ -182,9 +176,7 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
+        testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("Can't define profile with profile-host or profile-build.");
@@ -193,9 +185,7 @@ describe('Configurator', () => {
     it('throws error on no workspace', () => {
         const configString = `{}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
+        testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getWorkspace("a")).to.throw("No workspace found with this name a.");
@@ -205,9 +195,7 @@ describe('Configurator', () => {
     it('throws error on no workspace', () => {
         const configString = `{}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
+        testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("No profile found with this name a.");
@@ -221,9 +209,7 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        const system = <SystemPluginMock>container.resolve("System");
-        system.setFile(configString);
-
+        testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
 

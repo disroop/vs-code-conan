@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
     const rootPath: string = system.getWorkspaceRootPath();
     const settingsFile: string = rootPath+'/.vscode/conan-settings.json';
     const config = new Configurator(settingsFile);
-    container.registerInstance("Configurator",config);
+    container.registerInstance(Configurator,config);
 
     let commandController: CommandController;
     let barItems;
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
     function loadConfig(workspaceFolderPath: string) {
         const fs = require('fs');
         if (fs.existsSync(settingsFile)) {
-            config.updateProfiles();
+            config.update();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];
             return {rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile};

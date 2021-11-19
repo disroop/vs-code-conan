@@ -25,7 +25,8 @@ export class SystemPluginMock implements System{
     readFile( file:string) : string{
         this.filePath = file;
         if(this.fileContent === undefined){
-            throw new Error('define file content');
+            console.log("HELLO")
+            return "{}";
         }
         return this.fileContent;
     }
