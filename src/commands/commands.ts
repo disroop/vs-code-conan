@@ -1,4 +1,5 @@
 import { autoInjectable, container, inject } from 'tsyringe';
+import { systemDefaultPlatform } from 'vscode-test/out/util';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import { Executor } from '../system/system';
 
@@ -37,4 +38,27 @@ export class Commands{
         this.executor.pushCommand(command);
     }
     
+    build(idName: any) {
+        let argument = this.config.getConan(idName);
+        let conanfile = argument.path;
+        let buildFolder = argument.buildFolder;
+        let buildArg = argument.buildArguments;
+        let buildFolderArg = `--build-folder ${buildFolder}`;
+        const stringCommand = `conan build ${buildArg} ${buildFolderArg} ${conanfile}`;
+        let command = { executionCommand: stringCommand, description: "building" };
+        this.executor.pushCommand(command);
+    }
+
+    create(profileToCreate: any) {
+        let argument = this.config.getConan(profileToCreate);
+        let conanfile = argument.path;
+        let profile = argument.installProfile;
+        let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
+        let createUser = argument.user;
+        let createChannel = argument.channel;
+        let createArg = argument.createArguments;
+        const stringCommand = `conan create ${profileCommand} ${createArg} ${conanfile} ${createUser}/${createChannel}`;
+        let command = { executionCommand: stringCommand, description: "creating a package" };
+        this.executor.pushCommand(command);
+    }
 }

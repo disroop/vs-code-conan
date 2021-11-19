@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
 import {Executor} from '../system/system';
 import { inject } from 'tsyringe';
+import { Commands } from './commands';
 
 
 export interface AppState {
@@ -25,6 +26,7 @@ export class CommandController {
     private _state: AppState;
     private readonly executor: Executor;
     private context: vscode.ExtensionContext;
+    private commands: Commands;
 
     constructor(context: vscode.ExtensionContext, 
         state: AppState,
@@ -35,6 +37,7 @@ export class CommandController {
         else{
             throw Error("executor has to be defined!");
         }
+        this.commands=new Commands(".vscode/conan-settings.json");
         this._state = this.updateState(state);
 
         this.context = context;
@@ -52,70 +55,15 @@ export class CommandController {
         this._state = this.updateState(state);
     }
 
-    private install(profileToRun: any) {
-        try {
-            let installCommand = this._state.config.isWorkspace(profileToRun) ? "conan workspace install" : "conan install";
-            let argument : WorkspaceArgument;
-            if(this._state.config.isWorkspace(profileToRun)){
-                argument = this._state.config.getConan(profileToRun);
-            }
-            else{
-                argument = this._state.config.getWorkspace(profileToRun);
-            }
-            let conanfile = argument.path;
-            let buildFolder = argument.installFolder;
-            let installArg = argument.installArguments;
-            let profile = argument.installProfile;
-            let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
-            let installFolderArg = `--install-folder ${this._state.rootPath}/${buildFolder}`;
-            const stringCommand = `${installCommand} ${conanfile} ${profileCommand} ${installArg} ${installFolderArg}`;
-            let command = { executionCommand: stringCommand, description: "installing" };
-            this.executor.pushCommand(command);
-        } catch (err) {
-            vscode.window.showErrorMessage("Install process canceled: " + err);
-        }
-    }
-
-    private build(profileToBuild: any) {
-        try {
-            let argument = this._state.config.getConan(profileToBuild);
-            let conanfile = argument.path;
-            let buildFolder = argument.buildFolder;
-            let buildArg = argument.buildArguments;
-            let buildFolderArg = `--build-folder ${this._state.rootPath}/${buildFolder}`;
-            const stringCommand = `conan build ${conanfile} ${buildArg} ${buildFolderArg}`;
-            let command = { executionCommand: stringCommand, description: "building" };
-            this.executor.pushCommand(command);
-        } catch (err) {
-            vscode.window.showErrorMessage("Create process canceled: " + err);
-        }
-    }
-
-    private create(profileToCreate: any) {
-        try {
-            let argument = this._state.config.getConan(profileToCreate);
-            let conanfile = argument.path;
-            let profile = argument.installProfile;
-            let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
-            let createUser = argument.user;
-            let createChannel = argument.channel;
-            let createArg = argument.createArguments;
-            const stringCommand = `conan create ${conanfile} ${createUser}/${createChannel} ${createArg} ${profileCommand}`;
-            let command = { executionCommand: stringCommand, description: "creating a package" };
-            this.executor.pushCommand(command);
-        } catch (err) {
-            vscode.window.showErrorMessage("Create process canceled: " + err);
-        }
-    }
 
     registerInstallCommand() {
         const installCommand = 'vs-code-conan.install';
         let command = vscode.commands.registerCommand(installCommand, () => {
             if (!this.executor.processIsStillRunning()) {
                 if (this._state.activeProfile === ALL) {
-                    this._state.config.getAllNames().forEach(item => this.install(item));
+                    this._state.config.getAllNames().forEach(item => this.commands.install(item));
                 } else {
-                    this.install(this._state.activeProfile);
+                    this.commands.install(this._state.activeProfile);
                 }
             } else {
                 vscode.window.showWarningMessage("Process is already running - Install will not be processed!");
@@ -131,10 +79,10 @@ export class CommandController {
             if (!this.executor.processIsStillRunning()) {
                 if (this._state.activeProfile === ALL) {
                     this._state.config.getAllNames().forEach(item => {
-                        if (!this._state.config.isWorkspace(item)) { this.build(item); }
+                        if (!this._state.config.isWorkspace(item)) { this.commands.build(item); }
                     });
                 } else {
-                    this.build(this._state.activeProfile);
+                    this.commands.build(this._state.activeProfile);
                 }
             } else {
                 vscode.window.showWarningMessage("Process is already running - Build will not be processed!");
@@ -151,10 +99,10 @@ export class CommandController {
             if (!this.executor.processIsStillRunning()) {
                 if (this._state.activeProfile === ALL) {
                     this._state.config.getAllNames().forEach(item => {
-                        if (!this._state.config.isWorkspace(item)) { this.create(item); }
+                        if (!this._state.config.isWorkspace(item)) { this.commands.create(item); }
                     });
                 } else {
-                    this.create(this._state.activeProfile);
+                    this.commands.create(this._state.activeProfile);
                 }
             } else {
                 vscode.window.showWarningMessage("Process is already running - Create will not be processed!");

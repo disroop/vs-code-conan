@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import * as vscode from 'vscode';
 import {Configurator} from './configurator/configurator';
-import {CommandController} from "./commands/control";
-import {CommandView} from "./commands/view";
+import {CommandController} from "./commands/register-commands";
+import {CommandView} from "./commands/register-view";
 
 export function activate(context: vscode.ExtensionContext) {
 
