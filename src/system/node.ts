@@ -10,9 +10,12 @@ export class ExecutorNodeJs implements Executor {
     private subprocess: any;
     private queue: Queue<Command>;
     private system: System;
-    constructor(@inject("System") system:System) {
+    constructor(@inject("System") system?:System) {
         this.subprocess=null;
         this.queue = new Queue<Command>();
+        if(!system){
+            throw Error("System has to be defined");
+        }
         this.system = system;
     }
     private executeConanCommand(command: string, resolve: any, reject: any) {

@@ -30,7 +30,7 @@ describe('Commands', () => {
         const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
-        let commands = new Commands("path");
+        let commands = new Commands();
         commands.install("a");
         expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder build/a root-workspace/a/conanfile.py"); 
     });
@@ -39,7 +39,7 @@ describe('Commands', () => {
         system.setFile(configStringWorkspace);
         const executor = <ExecutorMock>container.resolve("Executor");
 
-        let commands = new Commands("path");
+        let commands = new Commands();
 
         commands.install("ws-debug");
         expect(executor.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
@@ -50,7 +50,7 @@ describe('Commands', () => {
         system.setFile(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
-        let commands = new Commands("path");
+        let commands = new Commands();
 
         commands.build("a");
         expect(executor.command).to.eql("conan build test --build-folder build/a root-workspace/a/conanfile.py"); 
@@ -61,7 +61,7 @@ describe('Commands', () => {
         system.setFile(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
-        let commands = new Commands("path");
+        let commands = new Commands();
 
         commands.create("a");
         expect(executor.command).to.eql("conan create --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing root-workspace/a/conanfile.py disroop/development"); 

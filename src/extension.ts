@@ -3,13 +3,42 @@ import * as vscode from 'vscode';
 import {Configurator} from './configurator/configurator';
 import {CommandController} from "./commands/vscode-control";
 import {CommandView} from "./commands/vscode-view";
+import { container } from "tsyringe";
+import { SystemPlugin } from "./system/plugin";
+import { ExecutorNodeJs } from "./system/node";
 
 export function activate(context: vscode.ExtensionContext) {
 
+    const system = new SystemPlugin();
+    container.registerInstance("System",system);
+    container.registerInstance("Executor", new ExecutorNodeJs());
+    const rootPath: string = system.getWorkspaceRootPath();
+    const settingsFile: string = rootPath+'/.vscode/conan-settings.json';
+    const config = new Configurator(settingsFile);
+    container.registerInstance("Configurator",config);
+
     let commandController: CommandController;
     let barItems;
-    const rootPath: string | undefined = vscode.workspace.rootPath;
-    const settingsFile: string = rootPath+'/.vscode/conan-settings.json';
+
+    try {
+        setupConanSettingsFileWatcher();
+        let state = loadConfig(rootPath);
+        commandController = new CommandController(context, state);
+        let installCommand = commandController.registerInstallCommand();
+        let buildCommand = commandController.registerBuildCommand();
+        let createCommand = commandController.registerCreateCommand();
+        let installButton = CommandView.registerInstallButton(installCommand);
+        let buildButton = CommandView.registerBuildButton(buildCommand);
+        let createButton = CommandView.registerCreateButton(createCommand);
+        barItems = {install: installButton, build: buildButton, create: createButton};
+        commandController.registerProfilePick(barItems);
+    } catch (err) {
+        let errormessage = "Error in Setup Plugin";
+        if(err instanceof Error) {
+            errormessage = (err as Error).message;
+        }
+        vscode.window.showErrorMessage(errormessage);
+    }
 
     function setupConanSettingsFileWatcher() {
         const folder = vscode.workspace.workspaceFolders?.[0];
@@ -33,33 +62,9 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
-    if (rootPath) {
-        try {
-            setupConanSettingsFileWatcher();
-            let state = loadConfig(rootPath);
-            commandController = new CommandController(context, state);
-            let installCommand = commandController.registerInstallCommand();
-            let buildCommand = commandController.registerBuildCommand();
-            let createCommand = commandController.registerCreateCommand();
-
-            let installButton = CommandView.registerInstallButton(installCommand);
-            let buildButton = CommandView.registerBuildButton(buildCommand);
-            let createButton = CommandView.registerCreateButton(createCommand);
-            barItems = {install: installButton, build: buildButton, create: createButton};
-            commandController.registerProfilePick(barItems);
-        } catch (err) {
-            let errormessage = "Error in Setup Plugin";
-            if(err instanceof Error) {
-                errormessage = (err as Error).message;
-            }
-            vscode.window.showErrorMessage(errormessage);
-        }
-    }
-
     function loadConfig(workspaceFolderPath: string) {
         const fs = require('fs');
         if (fs.existsSync(settingsFile)) {
-            let config = new Configurator(settingsFile);
             config.updateProfiles();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];

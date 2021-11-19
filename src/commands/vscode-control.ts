@@ -2,7 +2,7 @@ import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
 import {Executor} from '../system/system';
-import { inject } from 'tsyringe';
+import { autoInjectable, container, inject } from 'tsyringe';
 import { Commands } from './commands';
 
 
@@ -21,6 +21,7 @@ export interface StatusBarItems {
 
 const ALL = "[all]";
 
+@autoInjectable()
 export class CommandController {
 
     private _state: AppState;
@@ -31,13 +32,12 @@ export class CommandController {
     constructor(context: vscode.ExtensionContext, 
         state: AppState,
         @inject("Executor") executor?:Executor) {
-        if(executor){
-            this.executor = executor;
+        if(!executor){
+            throw Error("executor has to be defined");
         }
-        else{
-            throw Error("executor has to be defined!");
-        }
-        this.commands=new Commands(".vscode/conan-settings.json");
+        this.commands=new Commands();
+        this.executor = executor;
+        this.commands=container.resolve(Commands);
         this._state = this.updateState(state);
 
         this.context = context;

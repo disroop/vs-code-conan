@@ -1,4 +1,4 @@
-import { injectable, singleton } from "tsyringe";
+import { singleton } from "tsyringe";
 import { System } from "../../src/system/system";
 
 @singleton()

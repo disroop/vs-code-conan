@@ -1,7 +1,6 @@
 import { SettingsParser } from "../../../src/configurator/settings-parser";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
-import { SystemPlugin } from "../../../src/system/plugin";
 import { SystemPluginMock } from '../system-mock';
 
 

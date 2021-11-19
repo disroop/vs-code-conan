@@ -1,9 +1,6 @@
 import "reflect-metadata";
 import { expect } from 'chai';
-import { container } from 'tsyringe';
 import { Profile, ProfileJson, Workspace, WorkspaceJson } from '../../../src/configurator/profile';
-import { SystemPlugin } from '../../../src/system/plugin';
-import { SystemPluginMock } from '../system-mock';
 
 describe('Profile', () => {
     it('can be initialized', () => {

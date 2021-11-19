@@ -2,11 +2,9 @@
 
 import { expect } from 'chai';
 import { container} from 'tsyringe';
-import { ConanArgument, Configurator } from '../../../src/configurator/configurator';
-import { SystemPlugin } from '../../../src/system/plugin';
+import { Configurator } from '../../../src/configurator/configurator';
 import { SystemPluginMock } from '../system-mock';
 import exp = require("constants");
-import { config } from "process";
 
 describe('Configurator', () => {
     it('can read profiles', () => {
@@ -172,8 +170,6 @@ describe('Configurator', () => {
     });
 
     it('throws error on profile with profile-host/build in argument', () => {
-        const filepath = "path";
-
         const configString = `{"profiles": [{ 
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",
@@ -189,42 +185,36 @@ describe('Configurator', () => {
         const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
 
-        const configurator = new Configurator(filepath);
+        const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("Can't define profile with profile-host or profile-build.");
     });
 
     it('throws error on no workspace', () => {
-        const filepath = "path";
-
         const configString = `{}`;
 
         const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
 
-        const configurator = new Configurator(filepath);
+        const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getWorkspace("a")).to.throw("No workspace found with this name a.");
         
     });
 
     it('throws error on no workspace', () => {
-        const filepath = "path";
-
         const configString = `{}`;
 
         const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
 
-        const configurator = new Configurator(filepath);
+        const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("No profile found with this name a.");
         
     });
 
     it('can set default profiles', () => {
-        const filepath = "path";
-
         const configString = `{"profiles": [{ 
                 "name":"a",
                 "installArg": "--build=missing -pr:h a"
@@ -234,16 +224,13 @@ describe('Configurator', () => {
         const system = <SystemPluginMock>container.resolve("System");
         system.setFile(configString);
 
-        const configurator = new Configurator(filepath);
+        const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
 
         expect(argument.installProfile.build).to.equal("default");
         expect(argument.installProfile.host).to.equal("a");
         expect(argument.createProfile?.build).to.equal("default");
-        expect(argument.createProfile?.host).to.equal("default");
-
-
-        
+        expect(argument.createProfile?.host).to.equal("default");        
     });
 });
 

@@ -7,16 +7,12 @@ import { Executor } from '../system/system';
 export class Commands{
     private config:Configurator;
     private executor:Executor;
-    constructor(settingsFile:string,
-        @inject("Executor") executor?:Executor){
-        this.config = new Configurator(settingsFile);
-        this.config.updateProfiles();
-        if(executor){
-            this.executor = executor;
+    constructor(@inject("Executor") executor?:Executor){
+        this.config=container.resolve(Configurator);
+        if(!executor){
+            throw Error("executor has to be defined");
         }
-        else{
-            throw Error("executor has to be defined!");
-        }
+        this.executor = executor;
     }
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
