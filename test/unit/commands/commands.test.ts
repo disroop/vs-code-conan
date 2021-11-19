@@ -32,7 +32,7 @@ describe('Commands', () => {
         const executor = <ExecutorMock>container.resolve("Executor");
         let commands = new Commands();
         commands.install("a");
-        expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder build/a root-workspace/a/conanfile.py"); 
+        expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder root-workspace/build/a root-workspace/a/conanfile.py"); 
     });
     it('can workspace install', () => {
         testconfig.loadConfig(configStringWorkspace);
@@ -41,7 +41,7 @@ describe('Commands', () => {
         let commands = new Commands();
 
         commands.install("ws-debug");
-        expect(executor.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
+        expect(executor.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder root-workspace/build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
     });
 
     it('can build profile', () => {
@@ -51,7 +51,7 @@ describe('Commands', () => {
         let commands = new Commands();
 
         commands.build("a");
-        expect(executor.command).to.eql("conan build test --build-folder build/a root-workspace/a/conanfile.py"); 
+        expect(executor.command).to.eql("conan build test --build-folder root-workspace/build/a root-workspace/a/conanfile.py"); 
     });
 
     it('can create profile', () => {

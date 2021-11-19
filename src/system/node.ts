@@ -21,13 +21,13 @@ export class ExecutorNodeJs implements Executor {
     private executeConanCommand(command: string, resolve: any, reject: any) {
         this.system.log(`command: ${command}\n`);
         
-        this.subprocess = child.spawnSync(command, {
+        this.subprocess = child.spawn(command, {
             stdio: [
                 'pipe', // Use parent's stdin for child
                 'pipe', // Pipe child's stdout to parent
                 'pipe', // Pipe child's stderror to parent
             ],
-            shell: false, 
+            shell: true, 
         });
 
         this.subprocess.stdout.on("data", (data: string) => {

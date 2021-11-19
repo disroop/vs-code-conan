@@ -1,18 +1,17 @@
 import { autoInjectable, container, inject } from 'tsyringe';
 import { systemDefaultPlatform } from 'vscode-test/out/util';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
-import { Executor } from '../system/system';
+import { Executor, System } from '../system/system';
 
 @autoInjectable()
 export class Commands{
     private config:Configurator;
     private executor:Executor;
-    constructor(@inject("Executor") executor?:Executor){
+    private system:System;
+    constructor(){
         this.config=container.resolve(Configurator);
-        if(!executor){
-            throw Error("executor has to be defined");
-        }
-        this.executor = executor;
+        this.executor = container.resolve("Executor");
+        this.system = container.resolve("System");
     }
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
@@ -27,8 +26,9 @@ export class Commands{
         let buildFolder = argument.installFolder;
         let installArg = argument.installArguments;
         let profile = argument.installProfile;
+        let workspacePath= this.system.getWorkspaceRootPath();
         let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
-        let installFolderArg = `--install-folder ${buildFolder}`;
+        let installFolderArg = `--install-folder ${workspacePath}/${buildFolder}`;
         const stringCommand = `${installCommand} ${profileCommand} ${installArg} ${installFolderArg} ${conanfile}`;
         let command = { executionCommand: stringCommand, description: "installing" };
         this.executor.pushCommand(command);
@@ -39,7 +39,8 @@ export class Commands{
         let conanfile = argument.path;
         let buildFolder = argument.buildFolder;
         let buildArg = argument.buildArguments;
-        let buildFolderArg = `--build-folder ${buildFolder}`;
+        let workspacePath= this.system.getWorkspaceRootPath();
+        let buildFolderArg = `--build-folder ${workspacePath}/${buildFolder}`;
         const stringCommand = `conan build ${buildArg} ${buildFolderArg} ${conanfile}`;
         let command = { executionCommand: stringCommand, description: "building" };
         this.executor.pushCommand(command);
