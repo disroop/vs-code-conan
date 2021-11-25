@@ -1,16 +1,20 @@
-import {Configurator, WorkspaceArgument} from '../configurator/configurator';
+import {Configurator} from '../configurator/configurator';
 import * as vscode from 'vscode';
 import {StatusBarItem} from 'vscode';
 import {Executor} from '../system/system';
 import { autoInjectable, container, inject } from 'tsyringe';
 import { Commands } from './commands';
 
+export type ProfileName = string;
 
 export interface AppState {
+    // string -> Uri
     rootPath: string;
     config: Configurator;
-    activeProfile: string;
-    profiles: string[];
+    // ggf. (falls zutreffend) dem nen sprechenden alias-name geben.
+    activeProfile: ProfileName;
+    // auch hier.
+    profiles: ProfileName[];
 }
 
 export interface StatusBarItems {

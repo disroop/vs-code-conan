@@ -4,7 +4,11 @@ function getIndex(argumentList: Array<string>, parameter: string): number {
     if (index === lastIndex) {
         return index;
     }
-    throw new Error("Same parameter in arguments is multiple defined - " + parameter);
+    // Anstatt String-Concat (nicht nur hier):
+    // throw new Error("Same parameter in arguments is defined multiple times - " + parameter);
+
+    // würd ich eher string-interpolation verwenden, so:
+    throw new Error(`Same parameter in arguments is defined multiple times: ${parameter}.`);
 }
 function checkParameterValue(value: string | undefined) {
     if (value === undefined) {
@@ -18,16 +22,21 @@ function checkParameterValue(value: string | undefined) {
 }
 export function stripArgument(argument: string, shortParameter: string, longParameter: string): { stripedArgument: string, foundValue: string | undefined } {
     let argumentList = argument.split(" ");
-    let indexShort = getIndex(argumentList, "-" + shortParameter);
-    let indexLong = getIndex(argumentList, "--" + longParameter);
+    // Wenn immer möglich würd ich "const" anstatt "let" nehmen.
+    const indexShort = getIndex(argumentList, "-" + shortParameter);
+    const indexLong = getIndex(argumentList, "--" + longParameter);
     if (indexShort > -1 && indexLong > -1) {
-        throw new Error("Same parameter (" + shortParameter + "/" + longParameter + ") in arguments multiple defined");
+        // String-concat:
+        // throw new Error("Same parameter (" + shortParameter + "/" + longParameter + ") in arguments multiple defined");
+        
+        // Dünkt mich leserlicher: String-interpolation:
+        throw new Error(`Same parameter (${shortParameter}/${longParameter}) in arguments multiple defined`);
     }
     if (indexShort === -1 && indexLong === -1) {
         return { stripedArgument: argument, foundValue: undefined };
     }
-    let argumentStartIndex = indexShort > -1 ? indexShort : indexLong;
-    let value = argumentList[argumentStartIndex+1];
+    const argumentStartIndex = indexShort > -1 ? indexShort : indexLong;
+    const value = argumentList[argumentStartIndex+1];
     checkParameterValue(value);
 
     argumentList = removeParameterFromList(argumentList, argumentStartIndex);

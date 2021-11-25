@@ -1,4 +1,5 @@
 export interface System {
+    // getWorkspaceRootPath(): Uri <--- Uri anstatt string
     getWorkspaceRootPath():string;
 
     showWarningMessage(message:string):void;

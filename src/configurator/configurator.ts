@@ -4,6 +4,7 @@ import { BuildProfile, Profile, Workspace } from "./profile";
 import { autoInjectable, container, inject, singleton } from "tsyringe";
 import { stripArgument } from "./argument-parser";
 import { System } from "../system/system";
+import { ProfileName } from "../commands/vscode-control";
 
 interface ConanProfile {
     build: string | undefined;
@@ -37,7 +38,13 @@ interface installArgumentsExtracted {
 @autoInjectable()
 export class Configurator {
     private readonly file: string;
-    private profiles: Map<string, Profile> | undefined;
+    // Hab hier mal nen alias hinzugefügt. Ich nehme an der key ist ein ProfileName oder so was
+    // (rein zu dokumentationszwecken wenn man den code liest; sieht man schneller was was ist).
+    //
+    // weiterer vorteil: Man kann auch danach suchen im Projekt. Schauen wo dieser Profile-name
+    // überall verwendet wird.
+    private profiles: Map<ProfileName, Profile> | undefined;
+    // der String hier, ist das auch ProfileName oder ein WorkspaceName oder so was?
     private workspaces: Map<string, Workspace> | undefined;
     private system:System;
 
@@ -128,6 +135,7 @@ export class Configurator {
             return { build: profile, host: profile };
         }
     }
+
     private getProfiles(name: string): ConanProfile {
         let profileConfig: BuildProfile = this.getProfileConfiguration(name);
         return this.convertProfile(profileConfig.profile, { build: profileConfig.profileBuild, host: profileConfig.profileHost });
@@ -135,10 +143,15 @@ export class Configurator {
 
     private getBuildFolder(name: string): string | undefined {
         let profileConfig: BuildProfile = this.getProfileConfiguration(name);
+        // hier: dünkt mich sollte "Uri" anstatt "string" sein
         return profileConfig.buildFolder;
     }
 
-    private getProfileConfiguration(name: string) {
+    // Neu: "name: ProfileName": Generell: Würde etwas mehr type-aliases verwenden, so rein zu
+    // zu dokumentationszwecken, dann sieht man besser was was ist.
+    //
+    // habs mal nur dieser methode hinzugefügt...
+    private getProfileConfiguration(name: ProfileName) {
         let profileConfig:BuildProfile;
         if (this.profiles?.has(name)) {
             profileConfig = <BuildProfile>this.profiles.get(name);

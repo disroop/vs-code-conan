@@ -48,6 +48,9 @@ export class SettingsParser {
     private parseProfile(rawJson: string):Map<string, Profile>|undefined{
         const jsonObj: { profiles: ProfileJson[] } = JSON.parse(rawJson);
         if(!jsonObj.profiles){
+            // Habs jetzt nicht im Detail angeschaut, aber ist das so eine art ein silent-fallback
+            // wenn was in der Konfiguration (das "profiles") vergessen wurde? Falls ja: finde
+            // ich nicht so schön, wenn es solches zeugs stillschweigend akzeptiert ohne user-feedback.
             return this.profiles;
         }
         let profiles = new Map<string, Profile>();
@@ -62,6 +65,7 @@ export class SettingsParser {
     private parseWorkspace(rawJson: string):Map<string, Workspace> | undefined{
         const jsonObj: { workspace: WorkspaceJson[] } = JSON.parse(rawJson);
         if(!jsonObj.workspace){
+            // Siehe oben.
             return this.workspaces;
         }
         let workspaces = new Map<string, Workspace>();

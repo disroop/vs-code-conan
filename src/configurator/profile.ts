@@ -29,6 +29,7 @@ export class BuildProfile {
     public readonly profile: string | undefined;
     public readonly profileHost: string | undefined;
     public readonly profileBuild: string | undefined;
+    // besser: public readonly buildFolder: Uri | undefined;
     public readonly buildFolder: string | undefined;
     private readonly system:System;
     constructor(name: string,
@@ -37,19 +38,30 @@ export class BuildProfile {
         profileHost: string | undefined) {
 
         this.system=container.resolve("System");
+        // falls möglich auch hier wieder auf string-concats bei pfaden verzichten.
         this.buildFolder = "build/" + name;
 
-        this.profile = this.replaceWorkspaceFolder(profile);
-        this.profileBuild = this.replaceWorkspaceFolder(profileBuild);
-        this.profileHost = this.replaceWorkspaceFolder(profileHost);
+        this.profile = this.maybeReplaceWorkspaceFolder(profile);
+        this.profileBuild = this.maybeReplaceWorkspaceFolder(profileBuild);
+        this.profileHost = this.maybeReplaceWorkspaceFolder(profileHost);
 
     }
-    replaceWorkspaceFolder(source: string | undefined): string | undefined {
+
+    maybeReplaceWorkspaceFolder(source: string | undefined): string | undefined {
         if (source === undefined) {
             return undefined;
         }
+        return this.replaceWorkspaceFolder(source);
+    }
+
+    // wenn du das auftrennst in eine "maybe" und non-maybe methode (oder wie man das auch immer 
+    // nennen will), dann brauchst das casting nicht (siehst fehler besser).
+    //
+    // siehe: this.conanfilePath = <string>this.maybeReplaceWorkspaceFolder(conanfilePath);
+    replaceWorkspaceFolder(source: string): string {
         return source.replace("${workspaceFolder}", this.system.getWorkspaceRootPath()!);
     }
+    
     static getDefaultValue(value: string | undefined, defaultValue: string): string {
         if (value === undefined) {
             return defaultValue;
@@ -78,7 +90,11 @@ export class Profile extends BuildProfile {
         this.createUser = BuildProfile.getDefaultValue(json.createUser, "");
         this.createChannel = BuildProfile.getDefaultValue(json.createChannel, "");
         let conanfilePath = BuildProfile.getDefaultValue(json.conanFile, ".");
-        this.conanfilePath = <string>this.replaceWorkspaceFolder(conanfilePath);
+        
+        // das casting <string> brauchts somit nicht mehr
+        // ALT: this.conanfilePath = <string>this.maybeReplaceWorkspaceFolder(conanfilePath);
+        // NEU (ohne <string>):
+        this.conanfilePath = this.replaceWorkspaceFolder(conanfilePath);
     }
 }
 
@@ -90,7 +106,7 @@ export class Workspace extends BuildProfile {
     constructor(json: WorkspaceJson) {
         super(json.name, json.profile, json.profileBuild, json.profileHost);
         let conanWs = BuildProfile.getDefaultValue(json.conanWs, ".");
-        this.conanworkspacePath = <string>this.replaceWorkspaceFolder(conanWs);
+        this.conanworkspacePath = <string>this.maybeReplaceWorkspaceFolder(conanWs);
         this.arg = BuildProfile.getDefaultValue(json.arg, "");
     }
 }

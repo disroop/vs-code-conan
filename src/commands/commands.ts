@@ -1,7 +1,7 @@
 import { autoInjectable, container, inject } from 'tsyringe';
-import { systemDefaultPlatform } from 'vscode-test/out/util';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import { Executor, System } from '../system/system';
+import {executorInjectionToken, systemInjectionToken} from '../extension';
 
 @autoInjectable()
 export class Commands{
@@ -10,8 +10,8 @@ export class Commands{
     private system:System;
     constructor(){
         this.config=container.resolve(Configurator);
-        this.executor = container.resolve("Executor");
-        this.system = container.resolve("System");
+        this.executor = container.resolve(executorInjectionToken);
+        this.system = container.resolve(systemInjectionToken);
     }
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
@@ -46,7 +46,7 @@ export class Commands{
         this.executor.pushCommand(command);
     }
 
-    create(profileToCreate: any) {
+    create(profileToCreate: any) { // any: kann man das nicht typisieren, string oder so? Oder ProfileName?
         let argument = this.config.getConan(profileToCreate);
         let conanfile = argument.path;
         let profile = argument.installProfile;
