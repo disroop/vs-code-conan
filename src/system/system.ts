@@ -3,7 +3,7 @@ export interface System {
 
     showWarningMessage(message:string):void;
 
-    readFile(filepath:string) : string;
+    readFile(filepath: string): Promise<string>;
 
     log(message:string):void;
 

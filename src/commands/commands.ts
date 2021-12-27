@@ -1,5 +1,4 @@
-import { autoInjectable, container, inject } from 'tsyringe';
-import { systemDefaultPlatform } from 'vscode-test/out/util';
+import { autoInjectable, container } from 'tsyringe';
 import {Configurator, WorkspaceArgument} from '../configurator/configurator';
 import { Executor, System } from '../system/system';
 
@@ -13,6 +12,8 @@ export class Commands{
         this.executor = container.resolve("Executor");
         this.system = container.resolve("System");
     }
+
+    
     install(idName:string){
         let installCommand = this.config.isWorkspace(idName) ? "conan workspace install" : "conan install";
         let argument : WorkspaceArgument;

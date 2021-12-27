@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import { singleton } from "tsyringe";
 import { System } from "./system";
-import { window, workspace } from "vscode";
+import { TextDocument, Uri, window, workspace } from "vscode";
 
 @singleton()
 export class SystemPlugin implements System {
@@ -25,11 +25,17 @@ export class SystemPlugin implements System {
     showWarningMessage(message: string) {
         window.showWarningMessage(message);
     }
+    async readFile(filepath: string): Promise<string> {
+        return (await workspace.openTextDocument(filepath)).getText();
+    }
 
-    readFile(filepath: string): string {
-        const fs = require("fs");
-        const data = fs.readFileSync(filepath);
-        return data;
+    fileExist(filepath: string): boolean {
+        try {
+            workspace.fs.stat(Uri.file(filepath));
+        } catch {
+            return false;
+        }
+        return true;
     }
 
     log(message: string) {

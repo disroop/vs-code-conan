@@ -9,7 +9,7 @@ import * as testconfig from "../utils";
 
 
 describe('Configurator', () => {
-    it('can read profiles', () => {
+    it('can read profiles', async () => {
         
         const filepath = "path";
 
@@ -34,7 +34,7 @@ describe('Configurator', () => {
            "createArg": "" 
        }
        ]}`;
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
@@ -68,7 +68,7 @@ describe('Configurator', () => {
         
     });
 
-    it('can read workspaces', () => {
+    it('can read workspaces', async () => {
         const filepath = "path";
 
         const configString = `{"workspace": [
@@ -86,7 +86,7 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let names = configurator.getAllNames();
         expect(names).to.eql(["ws-debug","ws-debug-2"]); 
@@ -108,7 +108,7 @@ describe('Configurator', () => {
 
     });
 
-    it('can read duplication', () => {
+    it('can read duplication', async () => {
         const filepath = "path";
 
         const configString = `{"profiles": [{ 
@@ -131,12 +131,12 @@ describe('Configurator', () => {
             }
         ]}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         expect(() => configurator.getAllNames()).to.throw('Duplication of names in profile and workspace');
     });
 
-    it('can read configuration by arguments', () => {
+    it('can read configuration by arguments', async () => {
         const filepath = "path";
 
         const configString = `{"profiles": [{ 
@@ -151,7 +151,7 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
 
@@ -163,7 +163,7 @@ describe('Configurator', () => {
         
     });
 
-    it('throws error on profile with profile-host/build in argument', () => {
+    it('throws error on profile with profile-host/build in argument', async () => {
         const configString = `{"profiles": [{ 
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",
@@ -176,7 +176,7 @@ describe('Configurator', () => {
             }
             ]}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("Can't define profile with profile-host or profile-build.");
@@ -192,24 +192,24 @@ describe('Configurator', () => {
         
     });
 
-    it('throws error on no workspace', () => {
+    it('throws error on no profile', async () => {
         const configString = `{}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         
         expect(() => configurator.getConan("a")).to.throw("No profile found with this name a.");
         
     });
 
-    it('can set default profiles', () => {
+    it('can set default profiles', async () => {
         const configString = `{"profiles": [{ 
                 "name":"a",
                 "installArg": "--build=missing -pr:h a"
             }
             ]}`;
 
-        testconfig.loadConfig(configString);
+        await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
 

@@ -22,13 +22,15 @@ export class SystemPluginMock implements System{
     showWarningMessage( message:string){
         this.warningMessage = message;
     }
-    readFile( file:string) : string{
+    readFile( file:string) : Promise<string> {
         this.filePath = file;
-        if(this.fileContent === undefined){
-            console.log("HELLO")
-            return "{}";
-        }
-        return this.fileContent;
+        return new Promise<string>((res,rej) => {
+            if(this.fileContent !== undefined) { 
+                res(this.fileContent);
+            }else{
+                rej("{}");
+            }
+        });
     }
 
     log(_message:string){

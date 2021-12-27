@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import * as vscode from 'vscode';
 import {Configurator} from './configurator/configurator';
-import {CommandController} from "./commands/vscode-control";
+import {AppState, CommandController} from "./commands/vscode-control";
 import {CommandView} from "./commands/vscode-view";
 import { container } from "tsyringe";
 import { SystemPlugin } from "./system/plugin";
@@ -22,16 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
         setupConanSettingsFileWatcher();
-        let state = loadConfig(rootPath);
-        commandController = new CommandController(context, state);
-        let installCommand = commandController.registerInstallCommand();
-        let buildCommand = commandController.registerBuildCommand();
-        let createCommand = commandController.registerCreateCommand();
-        let installButton = CommandView.registerInstallButton(installCommand);
-        let buildButton = CommandView.registerBuildButton(buildCommand);
-        let createButton = CommandView.registerCreateButton(createCommand);
-        barItems = {install: installButton, build: buildButton, create: createButton};
-        commandController.registerProfilePick(barItems);
+        loadConfig(rootPath).then(value => registerUIElements(value));
     } catch (err) {
         let errormessage = "Error in Setup Plugin";
         if(err instanceof Error) {
@@ -55,17 +46,27 @@ export function activate(context: vscode.ExtensionContext) {
 
     }
 
-    function onConanSettingChanged() {
-        console.log('onConanSettingChanged');
+    function registerUIElements(config: AppState){
+        commandController = new CommandController(context, config);
+        let installCommand = commandController.registerInstallCommand();
+        let buildCommand = commandController.registerBuildCommand();
+        let createCommand = commandController.registerCreateCommand();
+        let installButton = CommandView.registerInstallButton(installCommand);
+        let buildButton = CommandView.registerBuildButton(buildCommand);
+        let createButton = CommandView.registerCreateButton(createCommand);
+        barItems = {install: installButton, build: buildButton, create: createButton};
+        commandController.registerProfilePick(barItems);
+    }
+
+    async function onConanSettingChanged() {
         if(rootPath) {
-            commandController.setState(loadConfig(rootPath));
+            commandController.setState(await loadConfig(rootPath));
         }
     }
 
-    function loadConfig(workspaceFolderPath: string) {
-        const fs = require('fs');
-        if (fs.existsSync(settingsFile)) {
-            config.update();
+    async function loadConfig(workspaceFolderPath: string) {
+        if (system.fileExist(settingsFile)) {
+            await config.update();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];
             return {rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile};

@@ -47,8 +47,8 @@ export class Configurator {
         this.update();
     }
 
-    update() {
-        let data = this.system.readFile(this.file);
+    async update() {
+        var data = await(this.system.readFile(this.file)).then(value => {return value;});
         let parser = new SettingsParser(data);
         this.profiles = parser.getProfiles();
         this.workspaces = parser.getWorkspaces();

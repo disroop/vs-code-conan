@@ -27,15 +27,15 @@ const configStringWorkspace = `{"workspace": [
     }]}`;
 
 describe('Commands', () => {
-    it('can profile install', () => {
-        testconfig.loadConfig(configStringProfile);
+    it('can profile install', async () => {
+        await testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
         let commands = new Commands();
         commands.install("a");
         expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder root-workspace/build/a root-workspace/a/conanfile.py"); 
     });
-    it('can workspace install', () => {
-        testconfig.loadConfig(configStringWorkspace);
+    it('can workspace install', async () => {
+        await testconfig.loadConfig(configStringWorkspace);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();
@@ -44,8 +44,8 @@ describe('Commands', () => {
         expect(executor.command).to.eql("conan workspace install --profile:build root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --profile:host root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug --build=missing --install-folder root-workspace/build/ws-debug root-workspace/.infrastructure/workspace/ws-linux.yml"); 
     });
 
-    it('can build profile', () => {
-        testconfig.loadConfig(configStringProfile);
+    it('can build profile', async () => {
+        await testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();
@@ -54,8 +54,8 @@ describe('Commands', () => {
         expect(executor.command).to.eql("conan build test --build-folder root-workspace/build/a root-workspace/a/conanfile.py"); 
     });
 
-    it('can create profile', () => {
-        testconfig.loadConfig(configStringProfile);
+    it('can create profile', async () => {
+        await testconfig.loadConfig(configStringProfile);
         const executor = <ExecutorMock>container.resolve("Executor");
 
         let commands = new Commands();

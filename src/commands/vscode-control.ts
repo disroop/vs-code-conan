@@ -1,7 +1,7 @@
-import {Configurator, WorkspaceArgument} from '../configurator/configurator';
+import { Configurator, WorkspaceArgument } from '../configurator/configurator';
 import * as vscode from 'vscode';
-import {StatusBarItem} from 'vscode';
-import {Executor} from '../system/system';
+import { StatusBarItem } from 'vscode';
+import { Executor } from '../system/system';
 import { autoInjectable, container, inject } from 'tsyringe';
 import { Commands } from './commands';
 
@@ -39,10 +39,8 @@ export class CommandController {
         this.executor = executor;
         this.commands=container.resolve(Commands);
         this._state = this.updateState(state);
-
         this.context = context;
         state.activeProfile = ALL;
-
     }
 
     private updateState(state: AppState): AppState {
@@ -71,6 +69,7 @@ export class CommandController {
         });
         this.context.subscriptions.push(command);
         return installCommand;
+
     }
 
     registerBuildCommand(): string {
@@ -154,7 +153,7 @@ export class CommandController {
             barItems.install.show();
             if (state.activeProfile === ALL) {
                 barItems.install.tooltip = "Run conan install / conan workspace install";
-            }else{
+            } else {
                 barItems.install.tooltip = "Run conan install";
             }
             barItems.build.show();
