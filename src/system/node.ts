@@ -3,6 +3,7 @@ import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
 import { autoInjectable, container, singleton } from "tsyringe";
 import { System, Executor, Command} from './system';
+import { stdout } from 'process';
 
 @singleton()
 @autoInjectable()
@@ -74,6 +75,21 @@ export class ExecutorNodeJs implements Executor {
         if(!this.processIsStillRunning()) {this.dequeueCommand();}
     }
 
+    private executeSyncCommand(command:string):[executed: boolean, stdout:string]{
+        if(this.processIsStillRunning()){
+            return [false, ""];
+        }else{
+            return [true, child.execSync(command).toString()];
+        }
+    }
+    executeShortCommand(command: string):string{
+        let [executed, stdout] = this.executeSyncCommand(command);
+        if(executed){
+            return stdout;
+        }
+        throw Error(`Not able to execute command: ${command}. Process is still running!`);
+    }
+
     private dequeueCommand(){ 
         if(this.queue.length > 0){
             let command = this.queue.dequeue();
@@ -92,8 +108,6 @@ export class ExecutorNodeJs implements Executor {
                 kill(this.subprocess.pid);
             });
             progress.report({message: `I am ${command.description}`});
-
-
             return new Promise((resolve, reject) => {
                 this.executeConanCommand(command.executionCommand, resolve, reject);
             }).then(() => {

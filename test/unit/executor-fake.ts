@@ -21,4 +21,8 @@ export class ExecutorFake implements Executor {
         this.command=command.executionCommand;
         this.queue.append(command);
     }
+
+    executeShortCommand():string{
+        return "Hello";
+    }
 }

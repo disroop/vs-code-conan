@@ -29,9 +29,9 @@ export class SystemPlugin implements System {
         return (await workspace.openTextDocument(filepath)).getText();
     }
 
-    fileExist(filepath: string): boolean {
+    async fileExist(filepath: string): Promise<boolean> {
         try {
-            workspace.fs.stat(Uri.file(filepath));
+            await workspace.fs.stat(Uri.file(filepath));
         } catch {
             return false;
         }

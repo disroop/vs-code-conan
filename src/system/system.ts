@@ -21,4 +21,6 @@ export interface Executor {
     processIsStillRunning():boolean ;
 
     pushCommand(command: Command):void;
+
+    executeShortCommand(command: string): string;
 }
