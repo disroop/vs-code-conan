@@ -21,8 +21,15 @@ export function activate(context: vscode.ExtensionContext) {
     let barItems;
 
     try {
-        setupConanSettingsFileWatcher();
-        loadConfig(rootPath).then(value => registerUIElements(value));
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: "Setup Conan Plugin",
+        }, async (progress) => {
+            setupConanSettingsFileWatcher();
+            progress.report({message: `Loading Conan config`});
+            const config = await loadConfig(rootPath);
+            return registerUIElements(config);;
+            });
     } catch (err) {
         let errormessage = "Error in Setup Plugin";
         if(err instanceof Error) {
