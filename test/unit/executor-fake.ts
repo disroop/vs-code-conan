@@ -5,7 +5,7 @@ import { Command,Executor } from '../../src/system/system';
 
 
 @singleton()
-export class ExecutorMock implements Executor {
+export class ExecutorFake implements Executor {
 
     queue: Queue<Command>;
     command:string|undefined;

@@ -1,7 +1,7 @@
 import { SettingsParser } from "../../../src/configurator/settings-parser";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
-import { SystemPluginMock } from '../system-mock';
+import { SystemPluginFake } from '../system-fake';
 
 
 describe('SettingParser', () => {
@@ -35,7 +35,7 @@ describe('SettingParser', () => {
     });
 
     it('non profile name',() => {
-        const system = <SystemPluginMock>container.resolve("System");
+        const system = <SystemPluginFake>container.resolve("System");
 
         const simpleDataSet = `{"profiles": [
             { 
@@ -50,7 +50,7 @@ describe('SettingParser', () => {
     });
 
     it('double profile name',() => {
-        const system = <SystemPluginMock>container.resolve("System");
+        const system = <SystemPluginFake>container.resolve("System");
 
         const simpleDataSet = `{"profiles": [
             { 
@@ -90,7 +90,7 @@ describe('SettingParser', () => {
     });
 
     it('non workspace name',() => {
-        const system = <SystemPluginMock>container.resolve("System");
+        const system = <SystemPluginFake>container.resolve("System");
         const simpleDataSet = `{"workspace": [
             { 
                 "name":""
@@ -104,7 +104,7 @@ describe('SettingParser', () => {
     });
 
     it('douple workspace name',() => {
-        const system = <SystemPluginMock>container.resolve("System");
+        const system = <SystemPluginFake>container.resolve("System");
 
         const simpleDataSet = `{"workspace": [
             { 

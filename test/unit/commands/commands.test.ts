@@ -2,8 +2,8 @@ import "reflect-metadata";
 import { expect } from 'chai';
 import { container } from 'tsyringe';
 import { Commands } from "../../../src/commands/commands";
-import { SystemPluginMock } from '../system-mock';
-import { ExecutorMock } from '../executor-mock';
+import { SystemPluginFake } from '../system-fake';
+import { ExecutorFake } from '../executor-fake';
 import { Configurator } from "../../../src/configurator/configurator";
 import * as testconfig from "../utils";
 
@@ -29,14 +29,14 @@ const configStringWorkspace = `{"workspace": [
 describe('Commands', () => {
     it('can profile install', async () => {
         await testconfig.loadConfig(configStringProfile);
-        const executor = <ExecutorMock>container.resolve("Executor");
+        const executor = <ExecutorFake>container.resolve("Executor");
         let commands = new Commands();
         commands.install("a");
         expect(executor.command).to.eql("conan install --profile:build root-workspace/.profile/a-profile --profile:host root-workspace/.profile/a-profile --build=missing --install-folder root-workspace/build/a root-workspace/a/conanfile.py"); 
     });
     it('can workspace install', async () => {
         await testconfig.loadConfig(configStringWorkspace);
-        const executor = <ExecutorMock>container.resolve("Executor");
+        const executor = <ExecutorFake>container.resolve("Executor");
 
         let commands = new Commands();
 
@@ -46,7 +46,7 @@ describe('Commands', () => {
 
     it('can build profile', async () => {
         await testconfig.loadConfig(configStringProfile);
-        const executor = <ExecutorMock>container.resolve("Executor");
+        const executor = <ExecutorFake>container.resolve("Executor");
 
         let commands = new Commands();
 
@@ -56,7 +56,7 @@ describe('Commands', () => {
 
     it('can create profile', async () => {
         await testconfig.loadConfig(configStringProfile);
-        const executor = <ExecutorMock>container.resolve("Executor");
+        const executor = <ExecutorFake>container.resolve("Executor");
 
         let commands = new Commands();
 

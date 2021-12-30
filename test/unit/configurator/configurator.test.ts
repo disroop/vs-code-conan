@@ -3,7 +3,7 @@
 import { expect } from 'chai';
 import { container} from 'tsyringe';
 import { Configurator } from '../../../src/configurator/configurator';
-import { SystemPluginMock } from '../system-mock';
+import { SystemPluginFake } from '../system-fake';
 import exp = require("constants");
 import * as testconfig from "../utils";
 

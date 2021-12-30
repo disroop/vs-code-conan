@@ -2,7 +2,7 @@ import { singleton } from "tsyringe";
 import { System } from "../../src/system/system";
 
 @singleton()
-export class SystemPluginMock implements System{
+export class SystemPluginFake implements System{
 
     warningMessage:string | undefined;
     fileContent:string|undefined;
