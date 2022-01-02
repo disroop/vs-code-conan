@@ -1,7 +1,8 @@
 /* eslint-disable eqeqeq */
 import { singleton } from "tsyringe";
 import { System } from "./system";
-import { TextDocument, Uri, window, workspace } from "vscode";
+import { TextDocument, Uri, window, workspace, FileSystemProvider } from "vscode";
+import { TextEncoder } from "util";
 
 @singleton()
 export class SystemPlugin implements System {
@@ -10,6 +11,7 @@ export class SystemPlugin implements System {
     constructor() {
         this._outputLog = window.createOutputChannel("conan");
     }
+
     getWorkspaceRootPath(): string {
         if (workspace.workspaceFolders !== undefined) {
             if (workspace.workspaceFolders.length === 1) {
@@ -45,5 +47,16 @@ export class SystemPlugin implements System {
     focusLog() {
         this._outputLog.show();
     }
+
+    async findAllFilesInWorkspace(filename:string): Promise<Uri[]>{
+        return workspace.findFiles(`**/${filename}`);
+    }
+
+    async writeFile(filepath: string, content: string): Promise<void>{
+        const finalUri = Uri.file(filepath);
+        let enc = new TextEncoder(); 
+        await workspace.fs.writeFile(finalUri,enc.encode(content));
+    }
+
 }
 

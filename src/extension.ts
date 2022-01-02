@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import * as vscode from 'vscode';
 import { Configurator } from './configurator/configurator';
+import { Generator } from './configurator/generator';
 import { AppState, CommandController } from "./commands/vscode-control";
 import { CommandView } from "./commands/vscode-view";
 import { container } from "tsyringe";
@@ -18,6 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
     const config = new Configurator(settingsFile);
     container.registerInstance(Configurator, config);
 
+    const generator = new Generator(settingsFile);
+    container.registerInstance(Generator, generator);
     let commandController: CommandController;
     let barItems;
 
@@ -91,8 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (error.message === errorSettingsFileNotFound) {
                 vscode.window.showInformationMessage(error.message, ...[`Create template`, `Cancel`]).then(selection => {
                     if(selection === "Create template"){
-                        //TODO: Create a template
-                        console.log(`TODO Create a template`);
+                        generator.generateConfigTemplate();
                     }
                     else{
                         //TODO: Exit Plugin

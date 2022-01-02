@@ -26,7 +26,7 @@ describe('SettingParser', () => {
         const a_value = profiles?.get("a");
         expect(a_value?.buildArg).to.equal("");
         expect(a_value?.buildFolder).to.equal("build/a");
-        expect(a_value?.conanfilePath).to.equal("root-workspace/a/conanfile.py");
+        expect(a_value?.conanfilePath).to.equal("/root-workspace/a/conanfile.py");
         expect(a_value?.buildArg).to.equal("");
         expect(a_value?.installArg).to.equal("--build=missing");
         expect(a_value?.createUser).to.equal("disroop");
@@ -84,9 +84,9 @@ describe('SettingParser', () => {
         expect(workspaces?.has("ws-debug")).true;
         const wsdebug = workspaces?.get("ws-debug");
         expect(wsdebug?.buildFolder).to.equal("build/ws-debug");
-        expect(wsdebug?.conanworkspacePath).to.equal("root-workspace/.infrastructure/workspace/ws-linux.yml");
+        expect(wsdebug?.conanworkspacePath).to.equal("/root-workspace/.infrastructure/workspace/ws-linux.yml");
         expect(wsdebug?.arg).to.equal("--build=missing");
-        expect(wsdebug?.profile).to.equal("root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug");
+        expect(wsdebug?.profile).to.equal("/root-workspace/.infrastructure/conan_config/profiles/clang-apple-debug");
     });
 
     it('non workspace name',() => {

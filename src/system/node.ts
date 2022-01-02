@@ -75,19 +75,20 @@ export class ExecutorNodeJs implements Executor {
         if(!this.processIsStillRunning()) {this.dequeueCommand();}
     }
 
-    private executeSyncCommand(command:string):[executed: boolean, stdout:string]{
-        if(this.processIsStillRunning()){
-            return [false, ""];
-        }else{
-            return [true, child.execSync(command).toString()];
-        }
-    }
     executeShortCommand(command: string):string{
         let [executed, stdout] = this.executeSyncCommand(command);
         if(executed){
             return stdout;
         }
         throw Error(`Not able to execute command: ${command}. Process is still running!`);
+    }
+
+    private executeSyncCommand(command:string):[executed: boolean, stdout:string]{
+        if(this.processIsStillRunning()){
+            return [false, ""];
+        }else{
+            return [true, child.execSync(command).toString()];
+        }
     }
 
     private dequeueCommand(){ 

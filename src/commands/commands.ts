@@ -59,4 +59,13 @@ export class Commands{
         let command = { executionCommand: stringCommand, description: "creating a package" };
         this.executor.pushCommand(command);
     }
+
+    getAllProfiles():Array<string>{
+        let stdout : string = this.executor.executeShortCommand("conan profile list");
+        let profiles = stdout.split("\n");
+        if((profiles.length-1)===profiles.lastIndexOf("")){
+            profiles.pop();//Remove empty last line
+        }
+        return profiles;
+    };
 }

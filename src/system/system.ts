@@ -1,3 +1,5 @@
+import { URI } from "vscode-uri";
+
 export interface System {
     getWorkspaceRootPath():string;
 
@@ -5,9 +7,13 @@ export interface System {
 
     readFile(filepath: string): Promise<string>;
 
+    writeFile(filepath: string, content: string): void;
+
     log(message:string):void;
 
     focusLog():void;
+
+    findAllFilesInWorkspace(filename:string): Promise<URI[]>;
     
 }
 

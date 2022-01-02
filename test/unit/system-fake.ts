@@ -1,4 +1,5 @@
 import { singleton } from "tsyringe";
+import { URI } from "vscode-uri";
 import { System } from "../../src/system/system";
 
 @singleton()
@@ -8,8 +9,11 @@ export class SystemPluginFake implements System{
     fileContent:string|undefined;
     filePath:string|undefined;
     sysCallWorking: boolean = false;
+    writeFileContent: string | undefined;
+    writeFilePath: string | undefined;
     
     constructor(){
+
     }
 
     setFile( content:string){
@@ -17,7 +21,7 @@ export class SystemPluginFake implements System{
     }
     
     getWorkspaceRootPath():string {
-        return 'root-workspace';
+        return '/root-workspace';
     }
     showWarningMessage( message:string){
         this.warningMessage = message;
@@ -37,5 +41,22 @@ export class SystemPluginFake implements System{
     }
 
     focusLog(){
+    }
+
+    findAllFilesInWorkspace(filename:string): Promise<URI[]>{
+        var rootWorkspace = this.getWorkspaceRootPath();
+        return new Promise<URI[]>((res,rej) => {
+            if(filename !== undefined) { 
+                let uri = URI.file(`${rootWorkspace}/${filename}`);
+                res([uri]);
+            }else{
+                rej("{}");
+            }
+        });
+    }
+
+    writeFile(filepath: string, content: string): void{
+        this.writeFileContent = content;
+        this.writeFilePath = filepath;
     }
 }

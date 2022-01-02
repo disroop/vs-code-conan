@@ -3,16 +3,11 @@
 import { expect } from 'chai';
 import { container} from 'tsyringe';
 import { Configurator } from '../../../src/configurator/configurator';
-import { SystemPluginFake } from '../system-fake';
-import exp = require("constants");
 import * as testconfig from "../utils";
 
 
 describe('Configurator', () => {
     it('can read profiles', async () => {
-        
-        const filepath = "path";
-
         const configString = `{"profiles": [{ 
             "name":"a", 
             "conanFile":"\${workspaceFolder}/a/conanfile.py",
@@ -39,27 +34,27 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
 
-        expect(configurator.getConan("a")).to.eql({path: "root-workspace/a/conanfile.py",
+        expect(configurator.getConan("a")).to.eql({path: "/root-workspace/a/conanfile.py",
             user: "disroop",
             channel: "development",
-            installProfile: {build: "root-workspace/.profile/a-profile", host: "root-workspace/.profile/a-profile"},
+            installProfile: {build: "/root-workspace/.profile/a-profile", host: "/root-workspace/.profile/a-profile"},
             installArguments: "--build=missing",
             createArguments: "--build=missing",
             buildArguments: "test",
             buildFolder: "build/a",
-            createProfile: {build: "root-workspace/.profile/a-profile", host: "root-workspace/.profile/a-profile"},
+            createProfile: {build: "/root-workspace/.profile/a-profile", host: "/root-workspace/.profile/a-profile"},
             installFolder: "build/a",
         }); 
 
-        expect(configurator.getConan("b")).to.eql({path: "root-workspace/b/conanfile.py",
+        expect(configurator.getConan("b")).to.eql({path: "/root-workspace/b/conanfile.py",
             user: "disroop",
             channel: "development",
-            installProfile: {build: "root-workspace/.profile/b-profile", host: "root-workspace/.profile/b-profile"},
+            installProfile: {build: "/root-workspace/.profile/b-profile", host: "/root-workspace/.profile/b-profile"},
             installArguments: "",
             createArguments: "",
             buildArguments: "",
             buildFolder: "build/b",
-            createProfile: {build: "root-workspace/.profile/b-profile", host: "root-workspace/.profile/b-profile"},
+            createProfile: {build: "/root-workspace/.profile/b-profile", host: "/root-workspace/.profile/b-profile"},
             installFolder: "build/b",
         }); 
 
@@ -69,8 +64,6 @@ describe('Configurator', () => {
     });
 
     it('can read workspaces', async () => {
-        const filepath = "path";
-
         const configString = `{"workspace": [
             { 
                 "name":"ws-debug",
@@ -91,14 +84,14 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names).to.eql(["ws-debug","ws-debug-2"]); 
         
-        expect(configurator.getWorkspace("ws-debug")).to.eql({path: "root-workspace/workspace/ws-linux.yml",
-            installProfile: {build: "root-workspace/.profile/clang-apple-debug", host: "root-workspace/.profile/clang-apple-debug"},
+        expect(configurator.getWorkspace("ws-debug")).to.eql({path: "/root-workspace/workspace/ws-linux.yml",
+            installProfile: {build: "/root-workspace/.profile/clang-apple-debug", host: "/root-workspace/.profile/clang-apple-debug"},
             installArguments: "--build=missing",
             installFolder: "build/ws-debug",
         }); 
 
-        expect(configurator.getWorkspace("ws-debug-2")).to.eql({path: "root-workspace/workspace/ws-arm.yml",
-            installProfile: {build: "root-workspace/.profile/clang", host: "root-workspace/.profile/clang"},
+        expect(configurator.getWorkspace("ws-debug-2")).to.eql({path: "/root-workspace/workspace/ws-arm.yml",
+            installProfile: {build: "/root-workspace/.profile/clang", host: "/root-workspace/.profile/clang"},
             installArguments: "--build=missing",
             installFolder: "build/ws-debug-2",
         }); 
@@ -109,8 +102,6 @@ describe('Configurator', () => {
     });
 
     it('can read duplication', async () => {
-        const filepath = "path";
-
         const configString = `{"profiles": [{ 
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",
@@ -137,8 +128,6 @@ describe('Configurator', () => {
     });
 
     it('can read configuration by arguments', async () => {
-        const filepath = "path";
-
         const configString = `{"profiles": [{ 
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",

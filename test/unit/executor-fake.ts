@@ -22,7 +22,10 @@ export class ExecutorFake implements Executor {
         this.queue.append(command);
     }
 
-    executeShortCommand():string{
-        return "Hello";
+    executeShortCommand(command: string):string{
+        if(command === "conan profile list"){
+            return "default\ngcc";
+        }
+        return command;
     }
 }
