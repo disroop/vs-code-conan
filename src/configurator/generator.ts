@@ -1,9 +1,9 @@
 import path = require("path");
-import { autoInjectable, container, singleton } from "tsyringe";
-import { URI } from "vscode-uri";
-import { Commands } from "../commands/commands";
-import { System } from "../system/system";
-import { ProfileJson } from "./profile";
+import {autoInjectable, container, singleton} from "tsyringe";
+import {URI} from "vscode-uri";
+import {Commands} from "../commands/commands";
+import {System} from "../system/system";
+import {ProfileJson} from "./profile";
 
 @singleton()
 @autoInjectable()
@@ -51,9 +51,9 @@ export class Generator {
         }
         if (profile !== "default") {
             name += `-${profile}`;
-        };
+        }
         let conanfilePath = conanfile.path.replace(`${this.system.getWorkspaceRootPath()}`,"${workspaceFolder}");
-        let object: ProfileJson = {
+        return {
             name: name,
             conanFile: conanfilePath,
             profile: profile,
@@ -63,6 +63,5 @@ export class Generator {
             createChannel: "development",
             createArg: ""
         };
-        return object;
     }
 }

@@ -11,10 +11,6 @@ export class SystemPluginFake implements System{
     sysCallWorking: boolean = false;
     writeFileContent: string | undefined;
     writeFilePath: string | undefined;
-    
-    constructor(){
-
-    }
 
     setFile( content:string){
         this.fileContent = content;

@@ -3,7 +3,6 @@ import * as child from 'child_process';
 import { Queue } from 'queue-typescript';
 import { autoInjectable, container, singleton } from "tsyringe";
 import { System, Executor, Command} from './system';
-import { stdout } from 'process';
 
 @singleton()
 @autoInjectable()
@@ -64,10 +63,7 @@ export class ExecutorNodeJs implements Executor {
     }
 
     processIsStillRunning():boolean {
-        if(this.subprocess === null) {
-            return false;
-        }
-        return true;
+        return this.subprocess !== null;
     }
 
     pushCommand(command: Command){
@@ -76,9 +72,9 @@ export class ExecutorNodeJs implements Executor {
     }
 
     executeShortCommand(command: string):string{
-        let [executed, stdout] = this.executeSyncCommand(command);
+        let [executed, commandOutput] = this.executeSyncCommand(command);
         if(executed){
-            return stdout;
+            return commandOutput;
         }
         throw Error(`Not able to execute command: ${command}. Process is still running!`);
     }

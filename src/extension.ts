@@ -24,7 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
         location: vscode.ProgressLocation.Notification,
         title: "Setup Conan Plugin",
     }, async (progress) => {
-        //setupConanSettingsFileWatcher();
         progress.report({ message: `Loading Conan config` });
         try{
             const config = await loadConfig(rootPath);
@@ -100,8 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
                         container.resolve(Generator).generateConfigTemplate();
                     }
                     else{
-                        //TODO: Exit Plugin
-                        console.log(`TODO Goodbye`);
+                        deactivate();
                     }
                 });
             }

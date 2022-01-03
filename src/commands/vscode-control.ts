@@ -1,4 +1,4 @@
-import { Configurator, WorkspaceArgument } from '../configurator/configurator';
+import { Configurator } from '../configurator/configurator';
 import * as vscode from 'vscode';
 import { StatusBarItem } from 'vscode';
 import { Executor } from '../system/system';
@@ -37,19 +37,19 @@ export class CommandController {
         }
         this.executor = executor;
         this.commands=container.resolve(Commands);
-        this._state = this.updateState(state);
+        this._state = CommandController.updateState(state);
         this.context = context;
         state.activeProfile = ALL;
     }
 
-    private updateState(state: AppState): AppState {
+    private static updateState(state: AppState): AppState {
         let _state: AppState = state;
         _state.profiles.push(ALL);
         return _state;
     }
 
     setState(state: AppState) {
-        this._state = this.updateState(state);
+        this._state = CommandController.updateState(state);
     }
 
 
@@ -141,7 +141,6 @@ export class CommandController {
     private static updateProfile(state: AppState, barItems: StatusBarItems, activeProfileStatusBarItem: StatusBarItem) {
         activeProfileStatusBarItem.text = state.activeProfile;
         activeProfileStatusBarItem.show();
-        //TODO: Refactor this
         if (isWorkspace(state.activeProfile)) {
             barItems.install.show();
             barItems.install.tooltip = "Run conan workspace install";
@@ -163,8 +162,7 @@ export class CommandController {
             let onlyHasWorkspaces: boolean = state.config.isWorkspace(activeProfile);
             if (activeProfile === ALL) {
                 onlyHasWorkspaces = true;
-                for (let i = 0; i < state.profiles.length; i++) {
-                    let currentProfile = state.profiles[i];
+                for (let currentProfile of state.profiles) {
                     if (!state.config.isWorkspace(currentProfile) && currentProfile !== ALL) {
                         onlyHasWorkspaces = false;
                         break;

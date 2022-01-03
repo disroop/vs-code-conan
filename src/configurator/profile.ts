@@ -1,7 +1,7 @@
 
 // some other file
 import "reflect-metadata";
-import { autoInjectable, container, inject, injectAll } from "tsyringe";
+import { autoInjectable, container } from "tsyringe";
 import { System } from "../system/system";
 
 export interface ConanProfile {

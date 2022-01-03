@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import { singleton } from "tsyringe";
 import { System } from "./system";
-import { TextDocument, Uri, window, workspace, FileSystemProvider } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import { TextEncoder } from "util";
 
 @singleton()

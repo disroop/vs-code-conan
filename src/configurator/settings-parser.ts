@@ -19,26 +19,21 @@ export class SettingsParser {
         this.workspaces = this.parseWorkspace(jsonData);
     }
 
-    private isParameterCorrectlyDefined(parameter: string):boolean {
-        if(parameter.length>0){
-            return true;
-        }
-        return false;
+    private static isParameterCorrectlyDefined(parameter: string):boolean {
+        return parameter.length > 0;
     }
 
-    private isParameterNameAlreadyDefined(name: string, container: Map<string, BuildProfile>):boolean {
-        if(container.has(name)){
-            return false;
-        }
-        return true;
+    private static isParameterNameAlreadyDefined(name: string, map: Map<string, BuildProfile>):boolean {
+        return !map.has(name);
+
     }
 
     private checkProfile(profile:ConanProfile, profiles : Map<string, BuildProfile> ) : boolean{
-        if(!this.isParameterCorrectlyDefined(profile.name)){
+        if(!SettingsParser.isParameterCorrectlyDefined(profile.name)){
             this.showWarningMessage("Profile name has to be defined!, This Profile will be skipped!");
             return false;
         }
-        if(!this.isParameterNameAlreadyDefined(profile.name,profiles)){
+        if(!SettingsParser.isParameterNameAlreadyDefined(profile.name,profiles)){
             this.showWarningMessage("Profile with name: " + profile.name + " already exist! Use first setting in settings.json.");
             return false;
         }

@@ -67,5 +67,5 @@ export class Commands{
             profiles.pop();//Remove empty last line
         }
         return profiles;
-    };
+    }
 }
