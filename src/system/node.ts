@@ -83,7 +83,7 @@ export class ExecutorNodeJs implements Executor {
         if(this.processIsStillRunning()){
             return [false, ""];
         }else{
-            return [true, child.execSync(command).toString()];
+            return [true, child.execSync(command).toString()]; //NOSONAR this executes only a short command
         }
     }
 
