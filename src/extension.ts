@@ -15,16 +15,11 @@ export function activate(context: vscode.ExtensionContext) {
     container.registerInstance("System", system);
     container.registerInstance("Executor", new ExecutorNodeJs());
     const rootPath: string = system.getWorkspaceRootPath();
-    const settingsFile: string = rootPath + '/.vscode/conan-settings.json';
-    const config = new Configurator(settingsFile);
-    container.registerInstance(Configurator, config);
-
-    const generator = new Generator(settingsFile);
-    container.registerInstance(Generator, generator);
     let commandController: CommandController;
     let barItems;
 
     
+
     vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
         title: "Setup Conan Plugin",
@@ -44,10 +39,11 @@ export function activate(context: vscode.ExtensionContext) {
         if (folder) {
             //Could not use new RelativePath solution
             //https://github.com/disroop/vs-code-conan/issues/4#issuecomment-748337898
+            const settingsFile = container.resolve(Configurator).file;
             let watcher = vscode.workspace.createFileSystemWatcher(settingsFile);
             watcher.onDidChange(onConanSettingChanged);
             watcher.onDidCreate(onConanSettingChanged);
-            //watcher.onDidDelete(onConanSettingChanged);
+            watcher.onDidDelete(onConanSettingChanged);
         } else {
             throw Error("Unexpected error");
         }
@@ -79,8 +75,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     async function loadConfig(workspaceFolderPath: string) {
+        let settingsFile = <string> await vscode.workspace.getConfiguration(`disroopConan`).get('settingsFile');
+        settingsFile = settingsFile.replace(`\${workspaceFolder}`,workspaceFolderPath);
+        container.registerInstance(Configurator, new Configurator(settingsFile));
+        container.registerInstance(Generator, new Generator(settingsFile));
+        
         if (await system.fileExist(settingsFile)) {
+            const config = container.resolve(Configurator);
             await config.update();
+            setupConanSettingsFileWatcher();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];
             return { rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile };
@@ -94,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
             if (error.message === errorSettingsFileNotFound) {
                 vscode.window.showInformationMessage(error.message, ...[`Create template`, `Cancel`]).then(selection => {
                     if(selection === "Create template"){
-                        generator.generateConfigTemplate();
+                        container.resolve(Generator).generateConfigTemplate();
                     }
                     else{
                         //TODO: Exit Plugin

@@ -23,6 +23,18 @@
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
+		"configuration": {
+			"title": "DisroopConan",
+			"properties": {
+				"disroopConan.settingsFile": {
+					"type": [
+						"string"
+					],
+					"default": "${workspaceFolder}/.vscode/conan-settings.json",
+					"description": "Specifies the configuration of the disroop conan plugin."
+				}
+			}
+		},
 		"commands": [
 			{
 				"command": "vs-code-conan.profilePick",

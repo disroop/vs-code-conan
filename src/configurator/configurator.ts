@@ -34,9 +34,10 @@ interface installArgumentsExtracted {
     installFolder: string | undefined;
 }
 
+@singleton()
 @autoInjectable()
 export class Configurator {
-    private readonly file: string;
+    readonly file: string;
     private profiles: Map<string, Profile> | undefined;
     private workspaces: Map<string, Workspace> | undefined;
     private system:System;

@@ -35,7 +35,6 @@ export class CommandController {
         if(!executor){
             throw Error("executor has to be defined");
         }
-        this.commands=new Commands();
         this.executor = executor;
         this.commands=container.resolve(Commands);
         this._state = this.updateState(state);

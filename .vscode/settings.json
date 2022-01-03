@@ -16,6 +16,12 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "mochaExplorer.files": "test/unit/**/*.ts",
-  "mochaExplorer.require": ["ts-node/register", "test/unit/fixtures.ts"],
+  "mochaExplorer.require": [
+    "ts-node/register",
+    "test/unit/fixtures.ts"
+  ],
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
   
 }

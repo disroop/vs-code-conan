@@ -1,12 +1,11 @@
 import path = require("path");
-import { autoInjectable, container } from "tsyringe";
+import { autoInjectable, container, singleton } from "tsyringe";
 import { URI } from "vscode-uri";
 import { Commands } from "../commands/commands";
-import { SystemPlugin } from "../system/plugin";
 import { System } from "../system/system";
-import { Configurator } from "./configurator";
 import { ProfileJson } from "./profile";
 
+@singleton()
 @autoInjectable()
 export class Generator {
     private system:System;
