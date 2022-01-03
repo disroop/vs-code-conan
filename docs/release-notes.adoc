@@ -1,0 +1,57 @@
+= Release Notes
+
+== 0.7.1
+- Fix Bug Cancel Process
+
+== 0.7.0
+- Fix Bug Cancel Process
+- Add Text to Icons
+- Support Windows
+
+== 0.6.1
+- Fix Bugs Profile-Build/Profile-Host
+
+== 0.6.0
+- Add Profile Build and Profile Host functionality
+- Default install and build folder can be overwritten in InstallArg and BuildArg
+
+== 0.5.1
+- Fix information dialog view count of builds
+
+== 0.5.0
+- Add Filewatcher for Linux
+- Add All functionality to Build all Profile/Workspaces at once
+
+== 0.3.1
+
+- remove cleanup before installing
+
+== 0.3.0
+
+- add progress window
+- cancel conan process
+
+== 0.2.2
+
+- bugfix: workspace: enable profiles from workspace same as profile
+
+== 0.2.1
+
+- bugfix: continue if profiles or workspace doesn't exist
+
+== 0.2.0
+
+- enable conan workspace install
+- add tooltip hint over buttons
+
+== 0.1.0
+
+- use profile from workspace-folder
+
+== 0.0.1
+
+- Install Conan packages
+- Build Conan Packages
+- Create Conan Packages
+- Supports Multiple Profiles
+- Set conanFile parameter in settings

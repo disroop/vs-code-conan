@@ -1,0 +1,73 @@
+= Configure 
+
+Set the settings in the `./vscode/conan-settings.json` file.
+
+== conan-settings.json
+
+The conan-settings.json is the central element of configuring the plugin. With the profile settings how a conan package should be installed, build and created and with the workspace settings how a conan workspace should be installed can be configured. Multiple profiles and workspaces can be configured.
+
+For example:
+
+[source,json]
+----
+{
+    "profiles": [
+        {
+            "name":"linux",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profile":"clang-linux-debug",
+            "installArg": "--build missing -if install",
+            "buildArg":"-bf install",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
+        },
+        {
+            "name":"linux-2",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profileBuild":"clang-linux-release",
+            "profileHost":"clang-linux-debug",
+            "installArg": "--build missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
+        },
+        {
+            "name":"arm-debug",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profile":"arm-cortex-m4-debug",
+            "installArg": "--build missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
+        },
+        {
+            "name":"arm-release",
+            "conanFile": "${workspaceFolder}/conanfile.py",
+            "profile":"${workspaceFolder}/arm-cortex-m4-release",
+            "installArg": "--build missing",
+            "buildArg":"",
+            "createUser": "disroop",
+            "createChannel": "development",
+            "createArg":"--build=missing"
+        }
+    ],
+    "workspace":[
+        {
+            "name":"ws-arm",
+            "conanWs": "${workspaceFolder}/conan-ws",
+            "profile":"arm-cortex-m4-release",
+            "arg": "--build missing"
+        },
+        {
+            "name":"ws-arm-2",
+            "conanWs": "${workspaceFolder}/conan-ws",
+            "profileBuild":"clang-linux-debug",
+            "profileHost":"arm-cortex-m4-release",
+            "arg": "--build missing"
+        }
+    ]
+}
+----
