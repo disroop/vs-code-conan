@@ -13,9 +13,13 @@ The extension integrating https://conan.io/[conan] into https://code.visualstudi
 - Create Conan Packages
 - Supports Multiple Profiles
 
+Example.
+
+image:docs/images/installbuild.gif[Build and install]
+
 === Requirements
 
-Conan needs to be installed.
+conan has to be installed.
 
 === Manual
 

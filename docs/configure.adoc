@@ -1,10 +1,37 @@
 = Configure 
 
+This page describes how to configure the disroop conan plugin. 
+
+== Keywords for configuration
+
+Use the following keywords in the configuration of settings.json and conan-settings.json
+
+[cols="1,4"]
+|===
+|Parameter |Description
+
+|${workspaceFolder}
+|Defines the path to the current workspace.
+|===
+
+== settings.json
+
+To configure the disroop conan plugin use the usual approach and set the following parameters in the settings.json file. 
+
 Set the settings in the `./vscode/conan-settings.json` file.
+
+[cols="1,3,1"]
+|===
+|Parameter |Description |Default
+
+|disroopConan.settingsFile
+|This parameter defines the path of the conan-settings.json file, which is the central element of configuring the plugin.
+|${workspaceFolder}/.vscode/conan-settings.json
+|===
 
 == conan-settings.json
 
-The conan-settings.json is the central element of configuring the plugin. With the profile settings how a conan package should be installed, build and created and with the workspace settings how a conan workspace should be installed can be configured. Multiple profiles and workspaces can be configured.
+The conan-settings.json is the central element of configuring the plugin. With the profile settings, how a conan package should be installed, built and created and with the workspace settings how a conan workspace should be installed can be configured. Multiple profiles and workspaces can be configured.
 
 === Profiles Array 
 
@@ -15,11 +42,11 @@ This part describes how the profiles to install, build, conan packages can be co
 |Parameter |Description |Default
 
 |name
-|This is the name which will be displayed at the profile picker and maps at the settings with the UI.
+|This is the name that will be displayed at the profile picker and maps at the settings with the UI.
 |This parameter is mandatory.
 
 |conanFile
-|The path to the conanfile which should be build. Absolutpaths can be used or you can use the keyword ${workspaceFolder} to create relative paths to your workspace. 
+|The path to the conanfile which should be built. Absolute paths can be used, or you can use the keyword ${workspaceFolder} to create relative paths to your workspace. 
 |"."
 
 |profile
@@ -27,15 +54,15 @@ This part describes how the profiles to install, build, conan packages can be co
 |"default"
 
 |profileBuild
-|The build profile which should be used to build the conanfile. If this parameter is set and the profile is set then an error will occure.
+|The build profile should be used to build the conanfile. An error will occur if this parameter and the profile parameter is set.
 |"default"
 
 |profileHost
-|The host profile which should be used to build the conanfile. If this parameter is set and the profile is set then an error will occure.
+|The host profile should be used to build the conanfile. An error will occur if this parameter and the profile parameter is set.
 |"default"
 
 |installArg
-|Install arguments can be passed as a string as you would use the conan cli. If the parameter "install-folder" (-if/--install-folder) then the default install-folder will be overwritten. The profile to install a conan package also can be set via argument and will overwrite the profileHost, profileBuild and profile parameter. Examples how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
+|Install arguments can be passed as a string as you would use the conan cli. If the parameter "install-folder" (-if/--install-folder), then the default install-folder will be overwritten. The profile to install a conan package also can be set via argument and will overwrite the profileHost, profileBuild and profile parameter. Examples how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
 |"" (Empty)
 
 |buildArg
@@ -43,11 +70,11 @@ This part describes how the profiles to install, build, conan packages can be co
 |"" (Empty)
 
 |createArg
-|Install arguments can be passed as a string as you would use the conan cli. The profile to create a conan package also can be set via argument and will overwrite the profileHost, profileBuild and profile parameter. Examples how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
+|Install arguments can be passed as a string as you would use the conan cli. The profile to create a conan package also can be set via argument; this will overwrite the profileHost, profileBuild and profile parameter. Examples of how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
 |"" (Empty)
 
 |createUser
-|This parameter defines the user which will be used to create a conan package
+|This parameter defines the user, which will be used to create a conan package
 |"" (Empty)
 
 |createChannel
@@ -58,17 +85,17 @@ This part describes how the profiles to install, build, conan packages can be co
 
 === Workspace Array 
 
-This part describes how the workspackes to installconan workspaces can be configured. 
+This part describes how the workspaces to install conan workspaces can be configured. 
 
 [cols="1,3,1"]
 |===
 |Parameter |Description |Default
 |name
-|This is the name which will be displayed at the profile picker and maps at the settings with the UI.
+|This is the name that will be displayed at the profile picker and maps at the settings with the UI.
 |This parameter is mandatory.
 
 |conanWs
-|The path to the conan workspace which should be installed. Absolutpaths can be used or you can use the keyword ${workspaceFolder} to create relative paths to your workspace. 
+|The path to the conan workspace which should be installed. Absolute paths can be used, or you can use the keyword ${workspaceFolder} to create relative paths to your workspace. 
 |"."
 
 |profile
@@ -76,15 +103,15 @@ This part describes how the workspackes to installconan workspaces can be config
 |"default"
 
 |profileBuild
-|The build profile which should be used to build the conan workspace. If this parameter is set and the profile is set then an error will occure.
+|The build profile should be used to build the conan workspace. An error will occur if this parameter and the profile parameter is set.
 |"default"
 
 |profileHost
-|The host profile which should be used to build the conanfile. If this parameter is set and the profile is set then an error will occure.
+|The host profile should be used to build the conanfile. An error will occur if this parameter and the profile parameter is set.
 |"default"
 
 |arg
-|Install arguments can be passed as a string as you would use the conan cli. If the parameter "install-folder" (-if/--install-folder) then the default install-folder will be overwritten. The profile to install a conan workspace also can be set via argument and will overwrite the profileHost, profileBuild and profile parameter. Examples how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
+|Install arguments can be passed as a string as you would use the conan cli. If the parameter "install-folder" (-if/--install-folder), then the default install-folder will be overwritten. The profile to install a conan workspace also can be set via argument and will overwrite the profileHost, profileBuild and profile parameter. Examples of how the arguments interact with the json parameters can be found in the chapter "Example: Profile Arguments vs Parameters"
 |"" (Empty)
 
 |===

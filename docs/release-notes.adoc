@@ -1,5 +1,9 @@
 = Release Notes
 
+== 0.8.0
+- Set conan-settings.json path over settings.json
+- If conan-settings.json does not exist, a dialog window appears to create a template.
+
 == 0.7.1
 - Fix Bug Cancel Process
 
