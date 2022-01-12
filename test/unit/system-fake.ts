@@ -55,4 +55,9 @@ export class SystemPluginFake implements System{
         this.writeFileContent = content;
         this.writeFilePath = filepath;
     }
+
+    showCreateTemplateDialog(_error:Error, _generateTemplate: ()=>any, _cancelfunction: ()=>any){
+
+    }
+
 }

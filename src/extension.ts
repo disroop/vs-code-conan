@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
             const config = await loadConfig(rootPath);
             return registerUIElements(config);
         }catch(error){
-            createTemplate(error);
+            showcreateTemplateDialog(error);
         }
     });
 
@@ -51,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     function registerUIElements(config: AppState) {
         commandController = new CommandController(context, config);
+        commandController.registerCreateTemplate(createTemplate);
         let installCommand = commandController.registerInstallCommand();
         let buildCommand = commandController.registerBuildCommand();
         let createCommand = commandController.registerCreateCommand();
@@ -67,7 +68,8 @@ export function activate(context: vscode.ExtensionContext) {
                 commandController.setState(await loadConfig(rootPath));
             }
             catch (error) {
-                createTemplate(error);
+                vscode.window.showErrorMessage("Not able to load config of conan-settings.json");
+                deactivate();
             }
 
         }
@@ -91,17 +93,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
-    function createTemplate(error: unknown) {
+    function showcreateTemplateDialog(error: unknown) {
         if (error instanceof Error) {
             if (error.message === errorSettingsFileNotFound) {
-                vscode.window.showInformationMessage(error.message, ...[`Create template`, `Cancel`]).then(selection => {
-                    if(selection === "Create template"){
-                        container.resolve(Generator).generateConfigTemplate();
-                    }
-                    else{
-                        deactivate();
-                    }
-                });
+                system.showCreateTemplateDialog(error, createTemplate, deactivate);
             }
             else {
                 vscode.window.showErrorMessage(error.message);
@@ -111,6 +106,16 @@ export function activate(context: vscode.ExtensionContext) {
             throw Error("Unexpected error");
         }
 
+    }
+
+    async function createTemplate(){
+        const config = container.resolve(Configurator);
+        if(await system.fileExist(config.file)){
+            system.showWarningMessage("Cant create a template settings.json, file already exist");
+            
+        }else{
+            container.resolve(Generator).generateConfigTemplate();
+        }
     }
 }
 

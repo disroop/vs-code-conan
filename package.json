@@ -38,19 +38,23 @@
 		"commands": [
 			{
 				"command": "vs-code-conan.profilePick",
-				"title": "Conan: Pick profile "
+				"title": "Disroop Conan: Pick profile"
 			},
 			{
 				"command": "vs-code-conan.install",
-				"title": "Conan: Install packages"
+				"title": "Disroop Conan: Install"
 			},
 			{
 				"command": "vs-code-conan.build",
-				"title": "Conan: Build"
+				"title": "Disroop Conan: Build"
 			},
 			{
 				"command": "vs-code-conan.create",
-				"title": "Conan: Create package"
+				"title": "Disroop Conan: Create package"
+			},
+			{
+				"command": "vs-code-conan.createTemplate",
+				"title": "Disroop Conan: Create Template"
 			}
 		]
 	},

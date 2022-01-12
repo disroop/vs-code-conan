@@ -58,5 +58,16 @@ export class SystemPlugin implements System {
         await workspace.fs.writeFile(finalUri,enc.encode(content));
     }
 
+    showCreateTemplateDialog(error:Error, generateTemplate: ()=>any, cancel: ()=>any){
+        window.showInformationMessage(error.message, ...[`Create template`, `Cancel`]).then(selection => {
+            if(selection === "Create template"){
+                generateTemplate();
+            }
+            else{
+                cancel();
+            }
+        });
+    }
+
 }
 

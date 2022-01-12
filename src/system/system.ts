@@ -14,6 +14,8 @@ export interface System {
     focusLog():void;
 
     findAllFilesInWorkspace(filename:string): Promise<URI[]>;
+
+    showCreateTemplateDialog(error:Error, generateTemplate: ()=>any, cancel: ()=>any):void;
     
 }
 

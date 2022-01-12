@@ -2,19 +2,23 @@
 
 This page explains how to install, build and create conan packages and how to install workspaces.
 
+== Create a Configuration Template
+
+On Startup if a conanfile.py or a conanfile.txt exisit in the workspace and no configuration file exisit a dialog will appear where a conan-settings.json template can be created. More to the configuration is explained in the configure guide. The template conan-settings.json file can also be created over the "Disroop Conan: Create Template" command.
+
 == Packages 
 
-To install, build and create conan packages the profile settings in conan-settings.json file is used. The profile with the corresponding name can be chosen to build, install, or create with the profile picker. 
+To install, build and create conan packages the profile settings in conan-settings.json file is used. The profile with the corresponding name can be chosen to build, install, or create with the profile picker. To pick a profile the the button at the bottom or "Disroop Conan: Pick profile" command can be used.
 
 === Install and build
 
-To install and build your conan package use the _install_ and _build_ button at the bottom!
+To install and build your conan package use the _install_ and _build_ button at the bottom or use the "Disroop Conan: Install" and "Disroop Conan: Build" command. 
 
 image:images/installbuild.gif[Build and install]
 
 === Create 
 
-To create package use the create button at the bottom!
+To create package use the create button at the bottom or use the "Disroop Conan: Create package" command.
 
 image:images/create.gif[Create Package]
 
@@ -25,6 +29,6 @@ You can choose the workspace with the corresponding name with the profile picker
 
 == Install Workspace
 
-To install a conan workspace use the _install workspace_ button at the bottom!
+To install a conan workspace use the _install workspace_ button at the bottom or use the "Disroop Conan: Install" command. 
 
 image:images/workspace.gif[Install Workspace]

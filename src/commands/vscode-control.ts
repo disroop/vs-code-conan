@@ -110,6 +110,11 @@ export class CommandController {
         return createCommand;
     }
 
+    registerCreateTemplate(createTemplate:()=>any) {
+        let command = vscode.commands.registerCommand('vs-code-conan.createTemplate',createTemplate)
+        this.context.subscriptions.push(command);
+    }
+
 
     registerProfilePick(barItems: StatusBarItems) {
         const myCommandId = 'vs-code-conan.profilePick';

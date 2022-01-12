@@ -1,6 +1,6 @@
 = Configure 
 
-This page describes how to configure the disroop conan plugin. 
+This page describes how to configure the disroop conan plugin. You can create a template of the configuration which is explained in howto guide. 
 
 == Keywords for configuration
 
