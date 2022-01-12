@@ -10,7 +10,7 @@ RUN apt-get update && apt install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 #install nodjs version 16.x
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -\
-    && apt-get install -y --no-install-recommends pnodejs=16.13.2-deb-1nodesource1 \
+    && apt-get install -y --no-install-recommends nodejs=16.13.2-deb-1nodesource1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 #install vsce
