@@ -81,7 +81,7 @@ jobs:
 
     - name: Upload a Build Artifact
       if: contains('refs/heads/master', github.ref)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: ./*.vsix
 
