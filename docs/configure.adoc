@@ -16,9 +16,7 @@ Use the following keywords in the configuration of settings.json and conan-setti
 
 == settings.json
 
-To configure the disroop conan plugin use the usual approach and set the following parameters in the settings.json file. 
-
-Set the settings in the `./vscode/conan-settings.json` file.
+To configure the path of the disroop conan plugin setting file set the following parameters in the settings.json file. 
 
 [cols="1,3,1"]
 |===
