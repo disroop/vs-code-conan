@@ -1,4 +1,6 @@
 = Release Notes
+== 0.8.1
+- Add package information
 
 == 0.8.0
 - Set conan-settings.json path over settings.json
