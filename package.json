@@ -5,7 +5,6 @@
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"homepage": "https://github.com/disroop/vs-code-conan/blob/master/README.adoc",
 	"keywords": ["c/c++","conan","dependecy-management"],
-	"badges": ["https://github.com/disroop/vs-code-conan/actions/workflows/vsce-build-publish.yml/badge.svg"],
 	"version": "0.8.1",
 	"publisher": "disroop",
 	"icon": "images/disroop-icon.png",
