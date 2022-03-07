@@ -14,6 +14,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -\
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 #install vsce
-RUN npm install -g vsce@2.6.3
+RUN npm install -g vsce@2.6.7
 #RUN build.py
 ENTRYPOINT ["/bin/bash", "-c", "python3 ./build.py"]

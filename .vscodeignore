@@ -1,11 +1,9 @@
-.vscode/**
-.vscode-test/**
-out/test/**
-src/**
-.gitignore
-vsc-extension-quickstart.md
-**/tsconfig.json
-**/.eslintrc.json
-**/*.map
-**/*.ts
-conan_example_project
+# Ignore
+**
+
+# Keep
+!LICENSE
+!images/
+!out/src/**/*.js
+!README.adoc
+!node_modules
