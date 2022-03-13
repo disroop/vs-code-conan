@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apt-get update && apt install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates=20210119~20.04.2\
     curl=7.68.0-1ubuntu2.7 \
     python3=3.8.2-0ubuntu2 \
