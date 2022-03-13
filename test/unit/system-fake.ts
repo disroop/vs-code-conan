@@ -15,10 +15,11 @@ export class SystemPluginFake implements System{
     setFile( content:string){
         this.fileContent = content;
     }
-    
-    getWorkspaceRootPath():string {
-        return '/root-workspace';
+
+    getRelativePathToWorkspace(file:string):string {
+        return `.${file}`;
     }
+
     showWarningMessage( message:string){
         this.warningMessage = message;
     }
@@ -40,10 +41,9 @@ export class SystemPluginFake implements System{
     }
 
     findAllFilesInWorkspace(filename:string): Promise<URI[]>{
-        var rootWorkspace = this.getWorkspaceRootPath();
         return new Promise<URI[]>((res,rej) => {
             if(filename !== undefined) { 
-                let uri = URI.file(`${rootWorkspace}/${filename}`);
+                let uri = URI.file(`${filename}`);
                 res([uri]);
             }else{
                 rej("{}");

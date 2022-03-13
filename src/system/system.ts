@@ -1,7 +1,7 @@
 import { URI } from "vscode-uri";
 
 export interface System {
-    getWorkspaceRootPath():string;
+    getRelativePathToWorkspace(file:string):string;
 
     showWarningMessage(message:string):void;
 

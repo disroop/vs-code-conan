@@ -3,6 +3,7 @@
 import "reflect-metadata";
 import { autoInjectable, container } from "tsyringe";
 import { System } from "../system/system";
+import { Utility } from "../utility";
 
 export interface ConanProfile {
     name: string;
@@ -30,13 +31,13 @@ export class BuildProfile {
     public readonly profileHost: string | undefined;
     public readonly profileBuild: string | undefined;
     public readonly buildFolder: string | undefined;
-    private readonly system:System;
+    private readonly utility:Utility;
     constructor(name: string,
         profile: string | undefined,
         profileBuild: string | undefined,
         profileHost: string | undefined) {
 
-        this.system=container.resolve("System");
+        this.utility=container.resolve(Utility);
         this.buildFolder = "build/" + name;
 
         this.profile = this.replaceWorkspaceFolder(profile);
@@ -48,7 +49,7 @@ export class BuildProfile {
         if (source === undefined) {
             return undefined;
         }
-        return source.replace("${workspaceFolder}", this.system.getWorkspaceRootPath()!);
+        return this.utility.replaceWorkspaceRootPath(source);
     }
     static getDefaultValue(value: string | undefined, defaultValue: string): string {
         if (value === undefined) {

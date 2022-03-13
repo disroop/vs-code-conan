@@ -34,27 +34,27 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names).to.eql(["a", "b"]); 
 
-        expect(configurator.getConan("a")).to.eql({path: "/root-workspace/a/conanfile.py",
+        expect(configurator.getConan("a")).to.eql({path: "./a/conanfile.py",
             user: "disroop",
             channel: "development",
-            installProfile: {build: "/root-workspace/.profile/a-profile", host: "/root-workspace/.profile/a-profile"},
+            installProfile: {build: "./.profile/a-profile", host: "./.profile/a-profile"},
             installArguments: "--build=missing",
             createArguments: "--build=missing",
             buildArguments: "test",
             buildFolder: "build/a",
-            createProfile: {build: "/root-workspace/.profile/a-profile", host: "/root-workspace/.profile/a-profile"},
+            createProfile: {build: "./.profile/a-profile", host: "./.profile/a-profile"},
             installFolder: "build/a",
         }); 
 
-        expect(configurator.getConan("b")).to.eql({path: "/root-workspace/b/conanfile.py",
+        expect(configurator.getConan("b")).to.eql({path: "./b/conanfile.py",
             user: "disroop",
             channel: "development",
-            installProfile: {build: "/root-workspace/.profile/b-profile", host: "/root-workspace/.profile/b-profile"},
+            installProfile: {build: "./.profile/b-profile", host: "./.profile/b-profile"},
             installArguments: "",
             createArguments: "",
             buildArguments: "",
             buildFolder: "build/b",
-            createProfile: {build: "/root-workspace/.profile/b-profile", host: "/root-workspace/.profile/b-profile"},
+            createProfile: {build: "./.profile/b-profile", host: "./.profile/b-profile"},
             installFolder: "build/b",
         }); 
 
@@ -84,14 +84,14 @@ describe('Configurator', () => {
         let names = configurator.getAllNames();
         expect(names).to.eql(["ws-debug","ws-debug-2"]); 
         
-        expect(configurator.getWorkspace("ws-debug")).to.eql({path: "/root-workspace/workspace/ws-linux.yml",
-            installProfile: {build: "/root-workspace/.profile/clang-apple-debug", host: "/root-workspace/.profile/clang-apple-debug"},
+        expect(configurator.getWorkspace("ws-debug")).to.eql({path: "./workspace/ws-linux.yml",
+            installProfile: {build: "./.profile/clang-apple-debug", host: "./.profile/clang-apple-debug"},
             installArguments: "--build=missing",
             installFolder: "build/ws-debug",
         }); 
 
-        expect(configurator.getWorkspace("ws-debug-2")).to.eql({path: "/root-workspace/workspace/ws-arm.yml",
-            installProfile: {build: "/root-workspace/.profile/clang", host: "/root-workspace/.profile/clang"},
+        expect(configurator.getWorkspace("ws-debug-2")).to.eql({path: "./workspace/ws-arm.yml",
+            installProfile: {build: "./.profile/clang", host: "./.profile/clang"},
             installArguments: "--build=missing",
             installFolder: "build/ws-debug-2",
         }); 

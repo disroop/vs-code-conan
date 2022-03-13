@@ -14,8 +14,8 @@ describe('Generator', () => {
         let expectedJsonFile = `{
             "profiles":[
                 {
-                    "name":"root-workspace",
-                    "conanFile":"\${workspaceFolder}/conanfile.py",
+                    "name":"root",
+                    "conanFile":"\./conanfile.py",
                     "profile":"default",
                     "installArg":"",
                     "buildArg":"",
@@ -24,8 +24,8 @@ describe('Generator', () => {
                     "createArg":""
                 },
                 {
-                    "name":"root-workspace-txt",
-                    "conanFile":"\${workspaceFolder}/conanfile.txt",
+                    "name":"root-txt",
+                    "conanFile":"\./conanfile.txt",
                     "profile":"default",
                     "installArg":"",
                     "buildArg":"",
@@ -34,8 +34,8 @@ describe('Generator', () => {
                     "createArg":""
                 },
                 {
-                    "name":"root-workspace-gcc",
-                    "conanFile":"\${workspaceFolder}/conanfile.py",
+                    "name":"root-gcc",
+                    "conanFile":"\./conanfile.py",
                     "profile":"gcc",
                     "installArg":"",
                     "buildArg":"",
@@ -44,8 +44,8 @@ describe('Generator', () => {
                     "createArg":""
                 },
                 {
-                    "name":"root-workspace-txt-gcc",
-                    "conanFile":"\${workspaceFolder}/conanfile.txt",
+                    "name":"root-txt-gcc",
+                    "conanFile":"\./conanfile.txt",
                     "profile":"gcc",
                     "installArg":"",
                     "buildArg":"",

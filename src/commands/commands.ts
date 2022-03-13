@@ -27,9 +27,8 @@ export class Commands{
         let buildFolder = argument.installFolder;
         let installArg = argument.installArguments;
         let profile = argument.installProfile;
-        let workspacePath= this.system.getWorkspaceRootPath();
         let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
-        let installFolderArg = `--install-folder ${workspacePath}/${buildFolder}`;
+        let installFolderArg = `--install-folder ${buildFolder}`;
         const stringCommand = `${installCommand} ${profileCommand} ${installArg} ${installFolderArg} ${conanfile}`;
         let command = { executionCommand: stringCommand, description: "installing" };
         this.executor.pushCommand(command);
@@ -40,8 +39,7 @@ export class Commands{
         let conanfile = argument.path;
         let buildFolder = argument.buildFolder;
         let buildArg = argument.buildArguments;
-        let workspacePath= this.system.getWorkspaceRootPath();
-        let buildFolderArg = `--build-folder ${workspacePath}/${buildFolder}`;
+        let buildFolderArg = `--build-folder ${buildFolder}`;
         const stringCommand = `conan build ${buildArg} ${buildFolderArg} ${conanfile}`;
         let command = { executionCommand: stringCommand, description: "building" };
         this.executor.pushCommand(command);

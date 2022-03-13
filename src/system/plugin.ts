@@ -12,18 +12,18 @@ export class SystemPlugin implements System {
         this._outputLog = window.createOutputChannel("conan");
     }
 
-    getWorkspaceRootPath(): string {
-        if (workspace.workspaceFolders !== undefined) {
-            if (workspace.workspaceFolders.length === 1) {
-                return String(workspace.workspaceFolders[0].uri.path);
-            }
-            else {
-                throw new Error("Multiple workspaces are not supported");
-            }
-        }
-        throw new Error("No workspace folders");
+    getRelativePathToWorkspace(file:string):string {
+        return workspace.asRelativePath(file);
     }
 
+    replaceWorkspaceRootPath(filepath:string):string{
+        if (filepath.startsWith(`\${workspaceFolder}`)){
+            filepath = filepath.replace(`\${workspaceFolder}`,"");
+            filepath = this.getRelativePathToWorkspace(filepath);
+
+        }
+        return filepath;
+    }
     showWarningMessage(message: string) {
         window.showWarningMessage(message);
     }

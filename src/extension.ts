@@ -14,7 +14,6 @@ export function activate(context: vscode.ExtensionContext) {
     const system = new SystemPlugin();
     container.registerInstance("System", system);
     container.registerInstance("Executor", new ExecutorNodeJs());
-    const rootPath: string = system.getWorkspaceRootPath();
     let commandController: CommandController;
     let barItems;
 
@@ -26,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
     }, async (progress) => {
         progress.report({ message: `Loading Conan config` });
         try{
-            const config = await loadConfig(rootPath);
+            const config = await loadConfig();
             return registerUIElements(config);
         }catch(error){
             showcreateTemplateDialog(error);
@@ -63,21 +62,18 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     async function onConanSettingChanged() {
-        if (rootPath) {
-            try {
-                commandController.setState(await loadConfig(rootPath));
+        try {
+                commandController.setState(await loadConfig());
             }
             catch (error) {
                 vscode.window.showErrorMessage("Not able to load config of conan-settings.json");
                 deactivate();
             }
-
-        }
     }
 
-    async function loadConfig(workspaceFolderPath: string) {
+    async function loadConfig() {
         let settingsFile = <string> await vscode.workspace.getConfiguration(`disroopConan`).get('settingsFile');
-        settingsFile = settingsFile.replace(`\${workspaceFolder}`,workspaceFolderPath);
+        settingsFile = system.replaceWorkspaceRootPath(settingsFile)
         container.registerInstance(Configurator, new Configurator(settingsFile));
         container.registerInstance(Generator, new Generator(settingsFile));
         
@@ -87,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
             setupConanSettingsFileWatcher();
             let profiles = config.getAllNames();
             let activeProfile = config.getAllNames()[0];
-            return { rootPath: workspaceFolderPath, config: config, profiles: profiles, activeProfile: activeProfile };
+            return { config: config, profiles: profiles, activeProfile: activeProfile };
         } else {
             throw Error(errorSettingsFileNotFound);
         }
