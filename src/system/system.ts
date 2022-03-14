@@ -35,4 +35,6 @@ export interface Executor {
     pushCommand(command: Command): void;
 
     executeShortCommand(command: string): string;
+
+    normalizePathForExecution(filePath: string):string;
 }

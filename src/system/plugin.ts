@@ -24,7 +24,7 @@ export class SystemPlugin implements System {
         throw new Error("No workspace folders");
     }
     getWorkspaceRootPath(): string {
-        return this.getWorkspaceUri().fsPath;
+        return this.getWorkspaceUri().path;
     }
 
     replaceWorkspaceRoot(filepath:string):string{       
@@ -37,7 +37,8 @@ export class SystemPlugin implements System {
 
     addWorkspaceRoot(filepath:string):string{
         let rootUri = this.getWorkspaceUri();
-        return Uri.joinPath(rootUri,filepath).fsPath;
+        let uripath=Uri.joinPath(rootUri,filepath);
+        return uripath.path;
     }
     
     showWarningMessage(message: string) {

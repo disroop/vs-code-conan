@@ -23,7 +23,7 @@ export class Commands{
         else{
             argument = this.config.getConan(idName);
         }
-        let conanfile = argument.path;
+        let conanfile = this.executor.normalizePathForExecution(argument.path);
         let buildFolder = this.addRootFolder(argument.installFolder);
         let installArg = argument.installArguments;
         let profile = argument.installProfile;
@@ -39,12 +39,12 @@ export class Commands{
             throw Error("InstallFolder needs to be defined!");
         }
         let folderWithRoot = this.system.addWorkspaceRoot(filePath);
-        return folderWithRoot;
+        return this.executor.normalizePathForExecution(folderWithRoot);
     }
 
     build(idName: any) {
         let argument = this.config.getConan(idName);
-        let conanfile = argument.path;
+        let conanfile = this.executor.normalizePathForExecution(argument.path);
         let buildFolder = this.addRootFolder(argument.buildFolder);
         let buildArg = argument.buildArguments;
         let buildFolderArg = `--build-folder ${buildFolder}`;
@@ -55,7 +55,7 @@ export class Commands{
 
     create(profileToCreate: any) {
         let argument = this.config.getConan(profileToCreate);
-        let conanfile = argument.path;
+        let conanfile = this.executor.normalizePathForExecution(argument.path);
         let profile = argument.installProfile;
         let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
         let createUser = argument.user;

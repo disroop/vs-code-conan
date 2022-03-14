@@ -28,4 +28,8 @@ export class ExecutorFake implements Executor {
         }
         return command;
     }
+
+    normalizePathForExecution(filePath: string):string{
+        return filePath;
+    }
 }

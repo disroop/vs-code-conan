@@ -4,8 +4,12 @@
 	"displayName": "conan",
 	"description": "Conan C/C++ package manager integration for VS-Code",
 	"homepage": "https://github.com/disroop/vs-code-conan/blob/master/README.adoc",
-	"keywords": ["c/c++","conan","dependecy-management"],
-	"version": "0.8.2",
+	"keywords": [
+		"c/c++",
+		"conan",
+		"dependecy-management"
+	],
+	"version": "0.8.3",
 	"publisher": "disroop",
 	"icon": "images/disroop-icon.png",
 	"preview": true,
@@ -87,7 +91,6 @@
 		"mocha-lcov-reporter": "^1.3.0",
 		"nyc": "^15.1.0",
 		"prettier": "2.5.1",
-		
 		"ts-node": "^10.2.1",
 		"typescript": "^4.4.3",
 		"typescript-eslint": "^0.0.1-alpha.0",
@@ -97,9 +100,9 @@
 	"dependencies": {
 		"exec-sh": "^0.4.0",
 		"queue-typescript": "^1.0.1",
+		"reflect-metadata": "^0.1.13",
 		"tree-kill": "^1.2.2",
 		"tsyringe": "^4.6.0",
-		"reflect-metadata": "^0.1.13",
 		"vsce": "^2.0.0"
 	}
 }
