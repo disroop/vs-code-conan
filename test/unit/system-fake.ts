@@ -19,6 +19,17 @@ export class SystemPluginFake implements System{
     getWorkspaceRootPath():string {
         return '/root-workspace';
     }
+    replaceWorkspaceRoot(filepath: string): string{
+        if (filepath.startsWith(`\${workspaceFolder}/`)) {
+            let rootFolder=this.getWorkspaceRootPath();
+            filepath = filepath.replace(`\${workspaceFolder}/`, rootFolder);
+        }
+        return filepath;
+    }
+    addWorkspaceRoot(filepath:string):string{
+        let rootFolder=this.getWorkspaceRootPath();
+        return `${rootFolder}/${filepath}`;
+    }
     showWarningMessage( message:string){
         this.warningMessage = message;
     }

@@ -12,10 +12,10 @@ export class SystemPlugin implements System {
         this._outputLog = window.createOutputChannel("conan");
     }
 
-    getWorkspaceRootPath(): string {
+    private getWorkspaceUri(): Uri{
         if (workspace.workspaceFolders !== undefined) {
             if (workspace.workspaceFolders.length === 1) {
-                return String(workspace.workspaceFolders[0].uri.path);
+                return workspace.workspaceFolders[0].uri;
             }
             else {
                 throw new Error("Multiple workspaces are not supported");
@@ -23,7 +23,23 @@ export class SystemPlugin implements System {
         }
         throw new Error("No workspace folders");
     }
+    getWorkspaceRootPath(): string {
+        return this.getWorkspaceUri().fsPath;
+    }
 
+    replaceWorkspaceRoot(filepath:string):string{       
+        if (filepath.startsWith(`\${workspaceFolder}/`)) {
+            filepath = filepath.replace(`\${workspaceFolder}/`, "");
+            filepath = this.addWorkspaceRoot(filepath);
+        }
+        return filepath;
+    }
+
+    addWorkspaceRoot(filepath:string):string{
+        let rootUri = this.getWorkspaceUri();
+        return Uri.joinPath(rootUri,filepath).fsPath;
+    }
+    
     showWarningMessage(message: string) {
         window.showWarningMessage(message);
     }

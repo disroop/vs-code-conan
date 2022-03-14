@@ -7,7 +7,6 @@ import { Commands } from './commands';
 
 
 export interface AppState {
-    rootPath: string;
     config: Configurator;
     activeProfile: string;
     profiles: string[];
