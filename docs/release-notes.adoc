@@ -1,7 +1,10 @@
 = Release Notes
 
-== 0.8.3
+== 0.8.4
 - Fix windows path issues
+
+== 0.8.3
+- Fix windows path issues (dev artifact published)
 
 == 0.8.2
 - Fix startup-process

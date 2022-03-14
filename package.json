@@ -9,7 +9,7 @@
 		"conan",
 		"dependecy-management"
 	],
-	"version": "0.8.3",
+	"version": "0.8.4",
 	"publisher": "disroop",
 	"icon": "images/disroop-icon.png",
 	"preview": true,
