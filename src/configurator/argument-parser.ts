@@ -17,6 +17,8 @@ function checkParameterValue(value: string | undefined) {
     }
 }
 export function stripArgument(argument: string, shortParameter: string, longParameter: string): { stripedArgument: string, foundValue: string | undefined } {
+    argument = replaceEqualSignWithSpace(argument, "--" + longParameter);
+    argument = replaceEqualSignWithSpace(argument, "-" + shortParameter);
     let argumentList = argument.split(" ");
     let indexShort = getIndex(argumentList, "-" + shortParameter);
     let indexLong = getIndex(argumentList, "--" + longParameter);
@@ -27,7 +29,7 @@ export function stripArgument(argument: string, shortParameter: string, longPara
         return { stripedArgument: argument, foundValue: undefined };
     }
     let argumentStartIndex = indexShort > -1 ? indexShort : indexLong;
-    let value = argumentList[argumentStartIndex+1];
+    let value = argumentList[argumentStartIndex + 1];
     checkParameterValue(value);
 
     argumentList = removeParameterFromList(argumentList, argumentStartIndex);
@@ -40,5 +42,16 @@ function removeParameterFromList(argumentList: string[], startArgument: number) 
     argumentList.splice(startArgument + 1, 1);
     argumentList.splice(startArgument, 1);
     return argumentList;
+}
+
+function replaceEqualSignWithSpace(argumentString: string, search: string): string {
+    let argumentList = argumentString.split(" ");
+    for (const index in argumentList) {
+        let argument = argumentList[index];
+        if (argument.startsWith(`${search}=`)) {
+            argumentList[index] = argument.replace(`${search}=`, `${search} `);
+        }
+    }
+    return argumentList.join(" ");
 }
 

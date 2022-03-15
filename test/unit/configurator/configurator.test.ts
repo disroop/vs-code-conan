@@ -132,7 +132,7 @@ describe('Configurator', () => {
                 "name":"a", 
                 "conanFile":"\${workspaceFolder}/a/conanfile.py",
                 "profile":"a-profile",
-                "installArg": "--build=missing -if a/b/c -pr:b b -pr:h a",
+                "installArg": "--build=missing -if=a/b/c -pr:b b -pr:h a",
                 "buildArg":"",
                 "createUser": "disroop",
                 "createChannel": "development",
@@ -143,7 +143,8 @@ describe('Configurator', () => {
         await testconfig.loadConfig(configString);
         const configurator = container.resolve(Configurator);
         let argument = configurator.getConan("a");
-
+        
+        expect(argument.installArguments).to.equal("--build=missing");
         expect(argument.installFolder).to.equal("a/b/c");
         expect(argument.installProfile.build).to.equal("b");
         expect(argument.installProfile.host).to.equal("a");

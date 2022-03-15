@@ -1,5 +1,8 @@
 = Release Notes
 
+== 0.8.5
+- Fix equal sign in argument
+
 == 0.8.4
 - Fix windows path issues
 
