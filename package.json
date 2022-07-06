@@ -25,7 +25,12 @@
 	],
 	"activationEvents": [
 		"workspaceContains:${workspaceFolder}/conanfile.py",
-		"workspaceContains:${workspaceFolder}/.vscode/conan-settings.json"
+		"workspaceContains:${workspaceFolder}/.vscode/conan-settings.json",
+		"onCommand:extension.profilePick",
+		"onCommand:extension.install",
+		"onCommand:extension.build",
+		"onCommand:extension.create",
+		"onCommand:extension.createTemplate"
 	],
 	"main": "out/src/extension",
 	"contributes": {
