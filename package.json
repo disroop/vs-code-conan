@@ -70,7 +70,7 @@
 		],
 		"jsonValidation": [
 			{
-				"fileMatch": "${workspaceFolder}/.vscode/conan-settings.json",
+				"fileMatch": "conan-settings.json",
 				"schema": {
 					"type": "object",
 					"properties": {
