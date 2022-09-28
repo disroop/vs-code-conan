@@ -77,7 +77,7 @@
 		"@danmasta/mocha-sonar": "^1.0.1",
 		"@types/chai": "^4.2.22",
 		"@types/glob": "^8.0.0",
-		"@types/mocha": "^9.0.0",
+		"@types/mocha": "^10.0.0",
 		"@types/node": "^18.0.0",
 		"@types/vscode": "^1.46.0",
 		"@typescript-eslint/eslint-plugin": "^5.0.0",
