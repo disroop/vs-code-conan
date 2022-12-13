@@ -27,7 +27,15 @@ export class Commands{
         let buildFolder = this.addRootFolder(argument.installFolder);
         let installArg = argument.installArguments;
         let profile = argument.installProfile;
-        let profileCommand = `--profile:build ${profile.build} --profile:host ${profile.host}`; 
+        let profileCommand:string = "";
+        if (${profile.build})
+        {
+            profileCommand = profileCommand + ` --profile:build ${profile.build}`;
+        }
+        if (${profile.host})
+        {
+            profileCommand = profileCommand + ` --profile:host ${profile.host}`;
+        }
         let installFolderArg = `--install-folder ${buildFolder}`;
         const stringCommand = `${installCommand} ${profileCommand} ${installArg} ${installFolderArg} ${conanfile}`;
         let command = { executionCommand: stringCommand, description: "installing" };
