@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:kinetic
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
