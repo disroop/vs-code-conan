@@ -24,8 +24,13 @@
 		"Other"
 	],
 	"activationEvents": [
-		"workspaceContains:**/conanfile.py",
-		"workspaceContains:**/.vscode/conan-settings.json"
+		"workspaceContains:${workspaceFolder}/conanfile.py",
+		"workspaceContains:${workspaceFolder}/.vscode/conan-settings.json",
+		"onCommand:extension.profilePick",
+		"onCommand:extension.install",
+		"onCommand:extension.build",
+		"onCommand:extension.create",
+		"onCommand:extension.createTemplate"
 	],
 	"main": "out/src/extension",
 	"contributes": {
@@ -61,6 +66,18 @@
 			{
 				"command": "vs-code-conan.createTemplate",
 				"title": "Disroop Conan: Create Template"
+			}
+		],
+		"jsonValidation": [
+			{
+				"fileMatch": "conan-settings.json",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"profiles" : { "type": "array" },
+						"workspaces" : { "type": "array" },
+					}
+				}
 			}
 		]
 	},
